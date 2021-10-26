@@ -4,15 +4,15 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var path = require('path');
 
-var connection = mysql.createConnection({
+var db = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'AdminPrzepisy',
 	password : 'password123',
 	database : 'db_przepisy'
 });
 
-connection.connect((err) => {
-	if(err) throw err;
+db.connect((error) => {
+	if(error) throw error;
 	console.log("connected");
 })
 
@@ -34,13 +34,17 @@ app.post('/auth', function(request, response) {
 	var username = request.body.username;
 	var password = request.body.password;
 	if (username && password) {
-		connection.query(
-			'SELECT * FROM ACCOUNTS WHERE _LOGIN = ? AND _PASSWORD = ?', 
+		db.query(
+			'SELECT * FROM ACCOUNTS WHERE LOGIN = ? AND PASSWORD = ?', 
 			[username, password], 
 			function(error, results, fields) {
-				if (results.length > 0) {
-					request.session.loggedin = true;
-					request.session.username = username;
+				if(error) throw error;
+				if (results.length == 1) {
+					var data = JSON.parse(JSON.stringify(results[0]));
+					request.session.logged = true;
+					request.session.username = data.nick;
+					request.session.email = data.email;
+					request.session.type = data.type;
 					response.redirect('/home');
 				} else {
 					response.send('Incorrect Username and/or Password!');
@@ -55,7 +59,7 @@ app.post('/auth', function(request, response) {
 });
 
 app.get('/home', function(request, response) {
-	if (request.session.loggedin) {
+	if (request.session.logged) {
 		response.send('Welcome back, ' + request.session.username + '!');
 	} else {
 		response.send('Please login to view this page!');
