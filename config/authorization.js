@@ -19,7 +19,7 @@ acessAdmin = (req, res) => {
 };
 
 verifyToken = (req, res, next) => {
-    let token = req.headers["x-access-token"];
+    let token = req.headers["access-token"];
   
     if (!token) {
       return res.status(403).send({
@@ -27,6 +27,7 @@ verifyToken = (req, res, next) => {
       });
     }
   
+    console.log(`otrzymany token ${token}`);
     jwt.verify(token, config.jwtKey, (err, decoded) => {
       if (err) {
         return res.status(401).send({
@@ -67,4 +68,17 @@ isPremium = (req, res, next) => {
         return;
     };
     next();
-};
+}
+
+const AuthF = {
+    acessPublic : acessPublic,
+    acessUser : acessUser,
+    acessMod : acessMod,
+    acessAdmin : acessAdmin,
+    verifyToken : verifyToken,
+    isAdmin : isAdmin,
+    isMod : isMod,
+    isPremium : isPremium
+}
+
+module.exports = AuthF;

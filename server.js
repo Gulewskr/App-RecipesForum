@@ -7,6 +7,7 @@ const path = require('path');
 const port = 3001
 
 const jwt = require('jsonwebtoken');
+const AuthF = require('./config/authorization');
 
 const db = mysql.createConnection({
 	host     : 'localhost',
@@ -22,11 +23,14 @@ db.connect((error) => {
 
 const app = express();
 
+/*
 app.use(session({
 	secret: 'secret',
 	resave: true,
 	saveUninitialized: true
 }));
+*/
+
 
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
@@ -37,7 +41,7 @@ app.use(function(request, response, next){
     // allowed request metod
     response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     // allowed request headers
-    response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type');
+    response.setHeader('Access-Control-Allow-Headers', 'Access-token, content-type');
     // allow cookies in requests
     response.setHeader('Access-Control-Allow-Credentials', true);
     // Pass to next layer of middleware
@@ -56,6 +60,7 @@ app.get('/', function(request, response) {
 		1 - błędny login/hasło
 		2 - błąd serwera
 */
+
 app.post('/auth', function(request, response) {
 	var username = request.body.username;
 	var password = request.body.password;
@@ -65,7 +70,6 @@ app.post('/auth', function(request, response) {
 			[username, password], 
 			function(error, results, fields) {
 				if(error){
-					//response.send("Error Occured.");
 					console.log(error);
 					response.sendStatus(500);
 					response.end();
@@ -73,23 +77,26 @@ app.post('/auth', function(request, response) {
 				}
 				if (results.length == 1) {
 					var data = JSON.parse(JSON.stringify(results[0]));
-					request.session.logged = true;
-					request.session.token = 
-					request.session.username = data.nick;
-					request.session.email = data.email;
-					request.session.type = data.type;
+					
+					//komentarz
 					console.log("User: " + data.nick + " logged in.");
 
 					var token = jwt.sign({id: data.id, lvl: data.type }, config.jwtKey);
-					response.cookie('token', token, { httpOnly: true });
+					
+					//TODO (do późniejszej zmiany tylko liczbe przesyłam)
+					var accType = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
+
 					response.send({
 						token: token,
+						nick: data.nick,
+						type: data.type, 
+
+						lvl: accType,
 						error: 0
 					});
 				} else {
 					console.log("Błędne logowanie user: " + username  + " " + password);
 					response.send({
-						token: null,
 						error: 1
 					});
 				}		 	
@@ -100,20 +107,47 @@ app.post('/auth', function(request, response) {
 	} else {
 		console.log("Nie podano danych logowania");
 		response.send({
-			token: null,
 			error: 2
 		});
 		response.end();
 	}
 });
 
-app.get('/home', function(request, response) {
-	if (request.session.logged) {
-		response.send('Welcome back, ' + request.session.username + '!');
-	} else {
-		response.send('Please login to view this page!');
+app.post('/authByJWT', [AuthF.verifyToken], function(req, res) {
+	if(req.userLvL && req.userId){
+		db.query(
+			'SELECT * FROM ACCOUNTS WHERE ID = ? AND TYPE = ?', 
+			[req.userId, req.userLvL], 
+			function(error, results, fields) {
+				if(error){
+					console.log(error);
+					res.sendStatus(500);
+					res.end();
+					return;
+				}
+				if (results.length == 1) {
+					var data = JSON.parse(JSON.stringify(results[0]));					
+					console.log("User: " + data.nick + " is online again in.");
+
+					//TODO
+					var accType = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
+
+					res.send({
+						nick: data.nick,
+						type: accType
+					});
+					res.end();
+				} else {
+					res.status(403).send();
+				}		 	
+			}
+		);
+	}else{
+		res.status(403).send({
+			message: "Server not prepared for POST"
+		});
+		res.end();
 	}
-	response.end();
 });
 
 app.listen(port, () => { console.log(`Server is working on port ${port}`)});
