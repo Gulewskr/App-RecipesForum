@@ -5,6 +5,13 @@ import {UserContext} from '../data/User';
 //Styles
 import '../styles/App.scss';
 
+/*
+  TODO 
+  -dodać szyfrowanie hasła
+  -dodać walidacje wprowadzonych danych
+
+*/
+
 const Login = () => {
 
   const LoginForm = () => {

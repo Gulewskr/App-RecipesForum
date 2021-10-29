@@ -23,15 +23,6 @@ db.connect((error) => {
 
 const app = express();
 
-/*
-app.use(session({
-	secret: 'secret',
-	resave: true,
-	saveUninitialized: true
-}));
-*/
-
-
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
@@ -51,7 +42,6 @@ app.use(function(request, response, next){
 app.get('/', function(request, response) {
 	response.sendFile(path.join(__dirname + '/login.html'));
 });
-
 
 /*
 	Logowanie:
@@ -222,5 +212,26 @@ app.post('/authByJWT', [AuthF.verifyToken], function(req, res) {
 		res.end();
 	}
 });
+
+app.post('/recipe', [AuthF.verifyToken], function(req, res) {});
+//sprawdzanie czy uprawniony użytkownik
+app.post('/profile', [AuthF.verifyToken], function(req, res) {});
+//id przepisu i ewentualnie id komentarza do którego pisana jest odpowiedź
+app.post('/recipe/comment', [AuthF.verifyToken], function(req, res) {});
+
+
+//Moderatorzy i użytkownicy do których należy post
+app.delete('/recipe/comment', [AuthF.verifyToken], function(req, res) {});
+app.delete('/recipe', [AuthF.verifyToken], function(req, res) {});
+app.delete('/profile', [AuthF.verifyToken], function(req, res) {});
+
+app.put('/profile', [AuthF.verifyToken], function(req, res) {});
+app.put('/recipe', [AuthF.verifyToken], function(req, res) {});
+app.put('/recipe/comment', [AuthF.verifyToken], function(req, res) {});
+
+app.get('/recipes', [AuthF.verifyToken], function(req, res) {});
+app.get('/recipe', [AuthF.verifyToken], function(req, res) {});
+
+
 
 app.listen(port, () => { console.log(`Server is working on port ${port}`)});

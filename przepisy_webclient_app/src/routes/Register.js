@@ -5,6 +5,16 @@ import {UserContext} from '../data/User';
 //Styles
 import '../styles/App.scss';
 
+/*
+TODO
+Walidacja danych:
+  -czy hasła te same
+  -czy brak znaków niedozwolonych
+  -czy hasło spełnia wymogi
+  -czy format email poprawny
+  -czy nick poprawny
+*/
+
 const Register = () => {
     const { USER, setToken, setUser } = useContext(UserContext);
     if(USER.nick != undefined)
@@ -20,15 +30,6 @@ const Register = () => {
         const [_email, setEmail] = useState(0);
         const [_loginError, setLoginError] = useState(0);
 
-        //TODO
-        /*
-        Walidacja danych:
-        -czy hasła te same
-        -czy brak znaków niedozwolonych
-        -czy hasło spełnia wymogi
-        -czy format email poprawny
-        -czy nick poprawny
-        */
         const tryRegister = () => {
         if(_password === _repPassword){
           fetch(`${API_ADDRESS}/register`, {
