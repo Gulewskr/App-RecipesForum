@@ -1,22 +1,32 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, Children } from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 import { API_ADDRESS } from './API_VARIABLES';
 
 const UserContext = createContext();
 
 const UserContextProvider = ({ children }) => {
     const [ USER , setUser ] = useState({
-        nick : "",
-        type :  4,
-        token : ""
+        nick : undefined,
+        type :  undefined,
+        token : undefined
     });
     const [ token , setToken ] = useState(() => {
         const saved = localStorage.getItem("token");
-        const initialValue = JSON.parse(saved);
-        return initialValue || "";
+        if(saved !== 'undefined'){
+          return JSON.parse(saved);
+        }else{
+          return "";
+        }
     });
-    const [ nick , setNick ] = useState("");
-    const [ type , setType ] = useState("");
     
+    const LogOut = () => {  
+      localStorage.setItem("token", undefined);
+      console.log(`wylogowano`);
+      setUser({
+          nick: undefined,
+          type: undefined,
+          token: undefined
+      });
+    }
     
     useEffect(() => {
         localStorage.setItem("token", JSON.stringify(token));
@@ -49,8 +59,6 @@ const UserContextProvider = ({ children }) => {
                     type: data.type,
                     token: token
                 });
-                setNick(data.nick);
-                setType(data.type);
             };
           })
           .catch(err => {
@@ -59,8 +67,8 @@ const UserContextProvider = ({ children }) => {
     }, [token]);
 
     const v = useMemo(
-        () => ({ USER, setToken, setNick, setType }),
-        [ USER, setToken, setNick, setType ],
+        () => ({ USER, setToken, setUser, LogOut }),
+        [ USER, setToken, setUser, LogOut ],
     );
 
     return (
@@ -70,12 +78,5 @@ const UserContextProvider = ({ children }) => {
     );
 };
 
-const GetUser = () => {
-    const { USER, setToken, setNick, setType } = useContext(UserContext);
-    return(
-      {USER, setToken, setNick, setType}
-    );
-};
-
-export { UserContext, GetUser }
+export { UserContext }
 export default UserContextProvider;

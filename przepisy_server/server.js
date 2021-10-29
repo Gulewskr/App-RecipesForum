@@ -113,6 +113,79 @@ app.post('/auth', function(request, response) {
 	}
 });
 
+app.post('/register', function(request, response) {
+	var username = request.body.username;
+	var password = request.body.password;
+	var nick = request.body.nick;
+	var email = request.body.email;
+	/**
+	 * username : _username,
+              password : _password,
+              nick: _nick,
+              email: _email
+	 */
+	if (username && password && nick && email) {
+		db.query(
+			'INSERT INTO accounts (login, password, nick, email, type) VALUES ( ?, ?, ?, ?, 4);', 
+			[username, password, nick, email], 
+			function(error, results, fields) {
+				if(error){
+					console.log(error);
+					response.sendStatus(500);
+					response.end();
+					return;
+				}
+				db.query(
+					'SELECT * FROM ACCOUNTS WHERE LOGIN = ? AND PASSWORD = ?', 
+					[username, password], 
+					function(error, results, fields) {
+						if(error){
+							console.log(error);
+							response.sendStatus(500);
+							response.end();
+							return;
+						}
+						if (results.length == 1) {
+							var data = JSON.parse(JSON.stringify(results[0]));
+							
+							//komentarz
+							console.log("User: " + data.nick + " logged in.");
+		
+							var token = jwt.sign({id: data.id, lvl: data.type }, config.jwtKey);
+							
+							//TODO (do późniejszej zmiany tylko liczbe przesyłam)
+							var accType = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
+		
+							response.send({
+								token: token,
+								nick: data.nick,
+								type: data.type, 
+		
+								lvl: accType,
+								error: 0
+							});
+						} else {
+							console.log("Błędne logowanie user: " + username  + " " + password);
+							response.send({
+								error: 1
+							});
+						}		 	
+						response.end();
+						return;
+					}
+				);
+				return;
+			}
+		);
+	} else {
+		console.log("Nie podano danych logowania");
+		response.send({
+			error: 2
+		});
+		response.end();
+	}
+});
+
 app.post('/authByJWT', [AuthF.verifyToken], function(req, res) {
 	if(req.userLvL && req.userId){
 		db.query(
