@@ -1,6 +1,11 @@
+import { Buttons } from "../components";
+
 const RecipeList = () => {
     return (
-      <h2>RecipeList</h2>
+      <div>
+        <h2>RecipeList</h2>
+        <Buttons.AddRecipeButton />
+      </div>
     );
   }
   

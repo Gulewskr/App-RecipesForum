@@ -4,7 +4,7 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-import { Home, Login, Profile, Register, Recipe, RecipesList } from './routes';
+import { Home, Login, Profile, Register, Recipe, RecipeNew,  RecipesList } from './routes';
 import { Navbar } from './components';
 
 //DATA
@@ -48,6 +48,10 @@ const App = () => {
           </Route>
           <Route path="/recipe">
             <Recipe />
+          </Route>
+          {/* TODO - naprawić żeby dobrze przekierowywało bo przekierowywuje źle sadge :( */}
+          <Route path="/recipe/new" >
+            <RecipeNew />
           </Route>
           <Route path="/recipes">
             <RecipesList />

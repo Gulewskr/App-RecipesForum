@@ -7,4 +7,5 @@ import RecipesList from "./RecipesList";
 
 export { Home, Login, Profile, Register, Recipe, RecipesList };*/
 import Navbar from "./Navbar";
-export { Navbar };
+import Buttons from "./NavButtons";
+export { Navbar, Buttons };

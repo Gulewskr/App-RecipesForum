@@ -1,25 +1,13 @@
-const mysql = require('mysql');
 const express = require('express');
-const session = require('express-session');
 const bodyParser = require('body-parser');
-const config = require('./config/config');
-const path = require('path');
 const port = 3001
 
-const jwt = require('jsonwebtoken');
 const AuthF = require('./config/authorization');
-
-const db = mysql.createConnection({
-	host     : 'localhost',
-	user     : 'AdminPrzepisy',
-	password : 'password123',
-	database : 'db_przepisy'
-});
-
-db.connect((error) => {
-	if(error) throw error;
-	console.log("connected");
-})
+const ReciF = require('./routes/recipes');
+const CommF = require('./routes/comments');
+const ProfF = require('./routes/profile');
+const AccF = require('./routes/accounts');
+const ScrF = require('./routes/score');
 
 const app = express();
 
@@ -38,11 +26,6 @@ app.use(function(request, response, next){
     // Pass to next layer of middleware
     next();
 });
-
-app.get('/', function(request, response) {
-	response.sendFile(path.join(__dirname + '/login.html'));
-});
-
 /*
 	Logowanie:
 	błędy :
@@ -50,188 +33,54 @@ app.get('/', function(request, response) {
 		1 - błędny login/hasło
 		2 - błąd serwera
 */
+app.post('/auth', AccF.login );
+app.post('/authByJWT', [AuthF.verifyToken], AccF.loginByJWT);
+app.post('/register', AccF.register );
 
-app.post('/auth', function(request, response) {
-	var username = request.body.username;
-	var password = request.body.password;
-	if (username && password) {
-		db.query(
-			'SELECT * FROM ACCOUNTS WHERE LOGIN = ? AND PASSWORD = ?', 
-			[username, password], 
-			function(error, results, fields) {
-				if(error){
-					console.log(error);
-					response.sendStatus(500);
-					response.end();
-					return;
-				}
-				if (results.length == 1) {
-					var data = JSON.parse(JSON.stringify(results[0]));
-					
-					//komentarz
-					console.log("User: " + data.nick + " logged in.");
-
-					var token = jwt.sign({id: data.id, lvl: data.type }, config.jwtKey);
-					
-					//TODO (do późniejszej zmiany tylko liczbe przesyłam)
-					var accType = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
-
-					response.send({
-						token: token,
-						nick: data.nick,
-						type: data.type, 
-
-						lvl: accType,
-						error: 0
-					});
-				} else {
-					console.log("Błędne logowanie user: " + username  + " " + password);
-					response.send({
-						error: 1
-					});
-				}		 	
-				response.end();
-				return;
-			}
-		);
-	} else {
-		console.log("Nie podano danych logowania");
-		response.send({
-			error: 2
-		});
-		response.end();
-	}
-});
-
-app.post('/register', function(request, response) {
-	var username = request.body.username;
-	var password = request.body.password;
-	var nick = request.body.nick;
-	var email = request.body.email;
-	/**
-	 * username : _username,
-              password : _password,
-              nick: _nick,
-              email: _email
-	 */
-	if (username && password && nick && email) {
-		db.query(
-			'INSERT INTO accounts (login, password, nick, email, type) VALUES ( ?, ?, ?, ?, 4);', 
-			[username, password, nick, email], 
-			function(error, results, fields) {
-				if(error){
-					console.log(error);
-					response.sendStatus(500);
-					response.end();
-					return;
-				}
-				db.query(
-					'SELECT * FROM ACCOUNTS WHERE LOGIN = ? AND PASSWORD = ?', 
-					[username, password], 
-					function(error, results, fields) {
-						if(error){
-							console.log(error);
-							response.sendStatus(500);
-							response.end();
-							return;
-						}
-						if (results.length == 1) {
-							var data = JSON.parse(JSON.stringify(results[0]));
-							
-							//komentarz
-							console.log("User: " + data.nick + " logged in.");
-		
-							var token = jwt.sign({id: data.id, lvl: data.type }, config.jwtKey);
-							
-							//TODO (do późniejszej zmiany tylko liczbe przesyłam)
-							var accType = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
-		
-							response.send({
-								token: token,
-								nick: data.nick,
-								type: data.type, 
-		
-								lvl: accType,
-								error: 0
-							});
-						} else {
-							console.log("Błędne logowanie user: " + username  + " " + password);
-							response.send({
-								error: 1
-							});
-						}		 	
-						response.end();
-						return;
-					}
-				);
-				return;
-			}
-		);
-	} else {
-		console.log("Nie podano danych logowania");
-		response.send({
-			error: 2
-		});
-		response.end();
-	}
-});
-
-app.post('/authByJWT', [AuthF.verifyToken], function(req, res) {
-	if(req.userLvL && req.userId){
-		db.query(
-			'SELECT * FROM ACCOUNTS WHERE ID = ? AND TYPE = ?', 
-			[req.userId, req.userLvL], 
-			function(error, results, fields) {
-				if(error){
-					console.log(error);
-					res.sendStatus(500);
-					res.end();
-					return;
-				}
-				if (results.length == 1) {
-					var data = JSON.parse(JSON.stringify(results[0]));					
-					console.log("User: " + data.nick + " is online again in.");
-
-					//TODO
-					var accType = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
-
-					res.send({
-						nick: data.nick,
-						type: accType
-					});
-					res.end();
-				} else {
-					res.status(403).send();
-				}		 	
-			}
-		);
-	}else{
-		res.status(403).send({
-			message: "Server not prepared for POST"
-		});
-		res.end();
-	}
-});
-
-app.post('/recipe', [AuthF.verifyToken], function(req, res) {});
 //sprawdzanie czy uprawniony użytkownik
-app.post('/profile', [AuthF.verifyToken], function(req, res) {});
 //id przepisu i ewentualnie id komentarza do którego pisana jest odpowiedź
-app.post('/recipe/comment', [AuthF.verifyToken], function(req, res) {});
-
-
 //Moderatorzy i użytkownicy do których należy post
-app.delete('/recipe/comment', [AuthF.verifyToken], function(req, res) {});
-app.delete('/recipe', [AuthF.verifyToken], function(req, res) {});
-app.delete('/profile', [AuthF.verifyToken], function(req, res) {});
 
-app.put('/profile', [AuthF.verifyToken], function(req, res) {});
-app.put('/recipe', [AuthF.verifyToken], function(req, res) {});
-app.put('/recipe/comment', [AuthF.verifyToken], function(req, res) {});
+app.post('/profile', [AuthF.verifyToken], ProfF.createAccount);
+app.put('/profile', [AuthF.verifyToken], ProfF.updateAccount);
+app.delete('/profile', [AuthF.verifyToken], ProfF.deleteAccount);
 
-app.get('/recipes', [AuthF.verifyToken], function(req, res) {});
-app.get('/recipe', [AuthF.verifyToken], function(req, res) {});
+/*	prametry:
+		-id przepisu
+*/
+app.get('/comments', CommF.getComments);
+//		-id user
+//		-id komentarza (dodatkowy jak odpowiada się na inny komentarz)
+app.post('/comment', [AuthF.verifyToken], CommF.createComment);
+app.put('/comment', [AuthF.verifyToken], CommF.updateComment);
+app.delete('/comment', [AuthF.verifyToken], CommF.deleteComment);
 
+/*	prametry:
+		-id user
+		-id przepisu
+*/
+app.get('/score', ScrF.getRecipeScore);
+//		-ocena
+app.post('/score', [AuthF.verifyToken], function (res, req) {
+	//jak ocena 0 to usuń
+	//jak ocena inna to sprawdź czy już jest a jak nie ma to wstaw
+});
+
+
+/*	prametry:
+		-id
+*/
+app.get('/recipe', ReciF.getRecipe);
+//		-id user
+app.post('/recipe', [AuthF.verifyToken], ReciF.postRecipe);
+app.put('/recipe', [AuthF.verifyToken], ReciF.updateRecipe);
+app.delete('/recipe', [AuthF.verifyToken], ReciF.deleteRecipe);
+
+/*	prametry:
+		-typy sortowania
+		-nr strony
+*/
+app.get('/recipes', ReciF.getRecipes);
 
 
 app.listen(port, () => { console.log(`Server is working on port ${port}`)});
