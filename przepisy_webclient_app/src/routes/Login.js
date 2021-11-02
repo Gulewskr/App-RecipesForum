@@ -43,19 +43,21 @@ const Login = () => {
     .then((data) => {
       if(data.token && data.nick && data.lvl)
       {
-        setUser({
+        /*setUser({
           nick: data.nick,
           type: data.type,
           token: data.token
-        });
+        });*/
         setToken(data.token);
+        return true;
       }
       if(data.error !== undefined){
         setLoginError(data.error);
       };
+      return false;
     })
     .then(
-      () => window.location.replace('/home')
+      (bool) => bool ? window.location.replace('/home') : console.log("Błąd logowania")
     )
     .catch(err => {
       console.log(err);

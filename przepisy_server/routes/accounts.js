@@ -1,6 +1,6 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
-const db = require('../DATABASE QUERIES/dbQueries');
+const db = require('../DATABASE QUERIES/DB');
 
 login = (request, response) => {
 	var username = request.body.username;
@@ -55,10 +55,10 @@ login = (request, response) => {
 };
 
 loginByJWT = (req, res) => {
-	if(req.userLvL && req.userId){
+	if(req.userTYPE && req.userID){
 		db.query(
 			'SELECT * FROM ACCOUNTS WHERE ID = ? AND TYPE = ?', 
-			[req.userId, req.userLvL], 
+			[req.userID, req.userTYPE], 
 			function(error, results, fields) {
 				if(error){
 					console.log(error);
@@ -79,6 +79,7 @@ loginByJWT = (req, res) => {
 					});
 					res.end();
 				} else {
+					console.log("Znaleziono wiele użytkowników");
 					res.status(403).send();
 				}		 	
 			}

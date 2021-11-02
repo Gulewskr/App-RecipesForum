@@ -1,6 +1,6 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
-const db = require('../DATABASE QUERIES/dbQueries');
+const db = require('../DATABASE QUERIES/DB');
 
 createAccount  = (req, res) => { res.status(403); };
 deleteAccount  = (req, res) => { res.status(403); };

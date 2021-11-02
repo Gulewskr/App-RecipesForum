@@ -54,20 +54,22 @@ const Register = () => {
           .then((data) => {
             if(data.token && data.nick && data.lvl)
             {
-              setUser({
-                nick: data.nick,
-                type: data.type,
-                token: data.token
-              });
               setToken(data.token);
+              return true;
             }
             if(data.error !== undefined){
               setLoginError(data.error);
             };
           })
-          .then(
-            () => window.location.replace('/home')
-          )
+          .then((bool) => {
+            if(bool)
+            {
+              console.log("Token " + USER.token);
+              window.location.replace('/home');
+            }else{
+              console.log("Błąd rejestracji");
+            }
+          })
           .catch(err => {
             console.log(err);
           });

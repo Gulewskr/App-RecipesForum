@@ -16,38 +16,47 @@ const RecipeNew = () => {
   const { USER } = useContext(UserContext);
 
   const Form = () => {
-    const [_username, setUsername] = useState(0);
-    const [_password, setPassword] = useState(0);
     const [_loginError, setError] = useState(0);
+    const [_name, setName] = useState("");
+    const [_tag, setTags] = useState("");
+    const [_text, setText] = useState("");
+    const [_type, setType] = useState(0);
 
 
     const tryCreateNewRecipe = () => {
     fetch(`${API_ADDRESS}/recipe`, {
       method: 'post',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type' : 'application/json',
+                'access-token'  : USER.token },
       body: JSON.stringify({
-        //TODO
-        token : USER.token
+        name: _name,
+        text: _text,
+        tags: _tag,
+        type: 1
       }),
     })
     .then( res => {
       try{
         console.log(res);
-        
-        return res.json();
+        if(res.status == 200)
+          return res.json();
+        return res.status;
       }catch (err){
         console.log(err);
       };
     })
     .then((data) => {
+      if(typeof data == Number)
+      {
+        console.log("Błąd dodania " + data);
+        return;
+      } 
         //data = id nowego przepisu
       if(data.id)
       {
         window.location.replace("/recipe?id=" + data.id);
+        return;
       }
-      if(data.error !== undefined){
-        setError(data.error);
-      };
     })
     .catch(err => {
       console.log(err);
@@ -75,8 +84,18 @@ const RecipeNew = () => {
   return(
     <div className="login-form">
       <form onSubmit={handleSubmit}>
-        <input type="text" onChange={v => setUsername(v.target.value)} name="username" placeholder="login" autoComplete="off" required/>
-        <input type="password" onChange={v => setPassword(v.target.value)} name="password" placeholder="hasło" autoComplete="off"  required />
+        <input type="text" onChange={v => setName(v.target.value)} name="username" placeholder="nazwa przepisu" autoComplete="off" required/>
+        <input type="text" onChange={v => setTags(v.target.value)} name="username" placeholder="tagi" autoComplete="off" required/>
+        <select value={_type} onChange={v => setType(v.target.value)}>            
+            <option value={0}>Danie główne</option>
+            <option value={1}>Przekąska</option>
+            <option value={2}>Sałatka</option>
+            <option value={3}>Zupa</option>
+            <option value={4}>Deser</option>
+            <option value={5}>Ciasto</option>
+          </select>
+        <input type="image" />
+        <input type="text" onChange={v => setText(v.target.value)} name="password" placeholder="treść" autoComplete="off"  required />
         <input type="submit"/>
       </form>
       <ErrorText />

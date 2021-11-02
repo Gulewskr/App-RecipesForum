@@ -1,6 +1,6 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
-const db = require('../DATABASE QUERIES/dbQueries');
+const db = require('../DATABASE QUERIES/DB');
 
 createScore  = (req, res) => { res.status(403); };
 deleteScore  = (req, res) => { res.status(403); };

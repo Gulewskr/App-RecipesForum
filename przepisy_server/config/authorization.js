@@ -22,9 +22,10 @@ verifyToken = (req, res, next) => {
     let token = req.headers["access-token"];
   
     if (!token) {
-      return res.status(403).send({
-        message: "No token provided!"
-      });
+        console.log("No token provided!"); 
+        return res.status(403).send({
+            message: "No token provided!"
+        });
     }
   
     console.log(`otrzymany token ${token}`);
@@ -34,14 +35,14 @@ verifyToken = (req, res, next) => {
           message: "Unauthorized!"
         });
       }
-      req.userId = decoded.id;
-      req.userLvL = decoded.lvl;
+      req.userID = decoded.id;
+      req.userTYPE = decoded.lvl;
       next();
     });
 };
 
 isAdmin = (req, res, next) => {
-    if(req.userLvL != 1){
+    if(req.userTYPE != 1){
         res.status(403).send({
             message: "Require Admin Role!"
         });
@@ -51,7 +52,7 @@ isAdmin = (req, res, next) => {
 };
 
 isMod = (req, res, next) => {
-    if(req.userLvL > 2){
+    if(req.userTYPE > 2){
         res.status(403).send({
             message: "Require Mod Role!"
         });
@@ -61,7 +62,7 @@ isMod = (req, res, next) => {
 };
 
 isPremium = (req, res, next) => {
-    if(req.userLvL != 3){
+    if(req.userTYPE != 3){
         res.status(403).send({
             message: "Require Premium Role!"
         });

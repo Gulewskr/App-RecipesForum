@@ -46,11 +46,11 @@ const App = () => {
           <Route path="/profile">
             <Profile />
           </Route>
-          <Route path="/recipe">
+          <Route exact path="/recipe">
             <Recipe />
           </Route>
           {/* TODO - naprawić żeby dobrze przekierowywało bo przekierowywuje źle sadge :( */}
-          <Route path="/recipe/new" >
+          <Route exact path="/recipe/new" >
             <RecipeNew />
           </Route>
           <Route path="/recipes">

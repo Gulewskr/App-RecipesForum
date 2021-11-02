@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 );
 
 CREATE TABLE IF NOT EXISTS recipe (
-  id_recipe int(11)  NOT NULL PRIMARY KEY,
+  id INTEGER NOT NULL PRIMARY KEY auto_increment,
   id_user int(11) NOT NULL,
   name varchar(100) NOT NULL,
   text TEXT,
@@ -27,41 +27,39 @@ CREATE TABLE IF NOT EXISTS recipe (
 );
 
 CREATE TABLE IF NOT EXISTS images (
-  id_image int(11) NOT NULL,
+  id INTEGER NOT NULL PRIMARY KEY auto_increment,
   id_recipe int(11) NOT NULL,
   img_src varchar(200) NOT NULL,
-  PRIMARY KEY (id_image),
-  FOREIGN KEY (id_recipe) REFERENCES recipe(id_recipe)
+  FOREIGN KEY (id_recipe) REFERENCES recipe(id)
 );
 
 CREATE TABLE IF NOT EXISTS tags (
-  id_tag int(11) NOT NULL,
-  text varchar(200) NOT NULL,
-  PRIMARY KEY (id_tag)
+  id INTEGER NOT NULL PRIMARY KEY auto_increment,
+  text varchar(200) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS tags_connection (
-  id_tagconnection int(11) NOT NULL,
+  id INTEGER NOT NULL PRIMARY KEY auto_increment,
   id_tag int(11) NOT NULL,
   id_recipe int(11) NOT NULL,
-  FOREIGN KEY (id_tag) REFERENCES tags(id_tag),
-  FOREIGN KEY (id_recipe) REFERENCES recipe(id_recipe)
+  FOREIGN KEY (id_tag) REFERENCES tags(id),
+  FOREIGN KEY (id_recipe) REFERENCES recipe(id)
 );
 
 CREATE TABLE IF NOT EXISTS comments (
-  id_comment int(11) NOT NULL,
+  id INTEGER NOT NULL PRIMARY KEY auto_increment,
   id_recipe int(11) NOT NULL,
   id_user int(11) NOT NULL,
   text varchar(200) NOT NULL,
   FOREIGN KEY (id_user) REFERENCES accounts(id),
-  FOREIGN KEY (id_recipe) REFERENCES recipe(id_recipe)
+  FOREIGN KEY (id_recipe) REFERENCES recipe(id)
 );
 
 CREATE TABLE IF NOT EXISTS score (
-  id_score int(11) NOT NULL,
+  id INTEGER NOT NULL PRIMARY KEY auto_increment,
   id_recipe int(11) NOT NULL,
   id_user int(11) NOT NULL,
   score int(1)  NOT NULL,
   FOREIGN KEY (id_user) REFERENCES accounts(id),
-  FOREIGN KEY (id_recipe) REFERENCES recipe(id_recipe)
+  FOREIGN KEY (id_recipe) REFERENCES recipe(id)
 );
