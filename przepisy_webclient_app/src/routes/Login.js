@@ -41,19 +41,16 @@ const Login = () => {
       };
     })
     .then((data) => {
-      if(data.token && data.nick && data.lvl)
+      if(data.error == 0)
       {
-        /*setUser({
-          nick: data.nick,
-          type: data.type,
-          token: data.token
-        });*/
-        setToken(data.token);
-        return true;
+        if(data.token)
+        {
+          setToken(data.token);
+          return true;
+        }
+        console.log("błędny format danych z serwera");
       }
-      if(data.error !== undefined){
-        setLoginError(data.error);
-      };
+      if(data.error) setLoginError(data.error);
       return false;
     })
     .then(

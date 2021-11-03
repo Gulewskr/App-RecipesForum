@@ -5,6 +5,7 @@ const UserContext = createContext();
 
 const UserContextProvider = ({ children }) => {
     const [ USER , setUser ] = useState({
+        id : undefined,
         nick : undefined,
         type :  undefined,
         token : undefined
@@ -22,6 +23,7 @@ const UserContextProvider = ({ children }) => {
       localStorage.setItem("token", undefined);
       console.log(`wylogowano`);
       setUser({
+          id : undefined,
           nick: undefined,
           type: undefined,
           token: undefined
@@ -52,14 +54,18 @@ const UserContextProvider = ({ children }) => {
             };
           })
           .then((data) => {
-              console.log(data);
-            if(data.nick && data.type){
+            console.log(data);
+            if(data.error == 0)
+            {
+              if(data.id && data.nick && data.type){
                 setUser({
-                    nick: data.nick,
-                    type: data.type,
-                    token: token
+                    id    : data.id,
+                    nick  : data.nick,
+                    type  : data.type,
+                    token : token
                 });
-            };
+              };
+            }
           })
           .catch(err => {
             console.log(err);

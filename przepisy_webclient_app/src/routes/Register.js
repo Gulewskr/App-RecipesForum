@@ -52,12 +52,14 @@ const Register = () => {
             };
           })
           .then((data) => {
-            if(data.token && data.nick && data.lvl)
+            if(data.error == 0)
             {
-              setToken(data.token);
-              return true;
-            }
-            if(data.error !== undefined){
+              if(data.token)
+              {
+                setToken(data.token);
+                return true;
+              }
+            }else{
               setLoginError(data.error);
             };
           })

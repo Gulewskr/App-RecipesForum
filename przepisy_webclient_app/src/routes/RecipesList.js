@@ -5,6 +5,20 @@ import { API_ADDRESS } from "../data/API_VARIABLES";
 
 const RecipeList = () => {
 
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  //Do filtrowania
+  const type = urlParams.get('type')
+  const tags = urlParams.get('tags')
+
+  const [_type, setType ] = useState(type);
+  const [_TAGS, setTags ] = useState(tags);
+
+  const applyFilters = () => {
+    window.location.replace('/recipes?type=' + _type + '&tags=' + _TAGS);  
+  }
+
+
   const { USER } = useContext(UserContext);
   const [recipes, setRecipes] = useState("Brak przepisów");
 

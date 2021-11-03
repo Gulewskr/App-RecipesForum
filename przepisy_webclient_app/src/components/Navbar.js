@@ -11,7 +11,7 @@ const Navbar = () => {
             <Link to="/">Home</Link>
           </li>
           {
-            USER.nick ? 
+            USER.id ? 
             <li onClick={LogOut} >Wyloguj</li>
               :
             <>
@@ -24,11 +24,13 @@ const Navbar = () => {
             </>
           }
           <li>
-            <Link to="/profile">Profil użytkownika</Link>
+            <Link to={"/profile?id=" + USER.id}>Profil użytkownika</Link>
           </li>
-          <li>
-            <Link to="/recipe">Przepis</Link>
-          </li>
+          {/*
+            <li>
+              <Link to="/recipe">Przepis</Link>
+            </li>
+          */}
           <li>
             <Link to="/recipes">Lista przepisów</Link>
           </li>

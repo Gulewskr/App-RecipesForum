@@ -29,10 +29,6 @@ login = (request, response) => {
 
 					response.send({
 						token: token,
-						nick: data.nick,
-						type: data.type, 
-
-						lvl: accType,
 						error: 0
 					});
 				} else {
@@ -74,8 +70,10 @@ loginByJWT = (req, res) => {
 					var accType = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
 
 					res.send({
+						id:	req.userID,
 						nick: data.nick,
-						type: accType
+						type: accType,
+						error: 0
 					});
 					res.end();
 				} else {
@@ -137,10 +135,6 @@ register = (request, response) => {
 		
 							response.send({
 								token: token,
-								nick: data.nick,
-								type: data.type, 
-		
-								lvl: accType,
 								error: 0
 							});
 						} else {

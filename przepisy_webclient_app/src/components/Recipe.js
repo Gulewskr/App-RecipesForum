@@ -1,6 +1,6 @@
 const Recipe = (id, user, name, text, type) => {
     return(
-        <div className="container" key={id}>
+        <div className="container" onClick={ () => window.location.replace('/recipe?id=' + id)} key={id}>
             Przepis nr: {id}<br/>
             Nazwa: {name}<br/>
             {text}<br/>
