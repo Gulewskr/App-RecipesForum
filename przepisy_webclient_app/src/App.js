@@ -16,8 +16,12 @@ import './styles/App.scss';
 
 const App = () => {
 
+  const { USER, token } = useContext(UserContext);
+
+  console.log(USER);
+  console.log(token);
+
   const Hdr = () => {
-    const { USER } = useContext(UserContext);
     return (
       <>
         <h1>nick: {USER.nick}</h1>
@@ -29,7 +33,6 @@ const App = () => {
 
   return (
     <Router>
-    <UserContextProvider>
       {/*<div className="login-form">
         div>/ <h1>⚡ Elektryzujące ⚡ <br> 🍳 Przepisy 🍳</h1> 
         <h1>👹 Boxdelowe ⛄ <br/> 🍨 LOUUUUDY 🍨</h1>
@@ -44,7 +47,7 @@ const App = () => {
             <Register />
           </Route>
           <Route path="/profile">
-            <Profile />
+            {Profile({USER: USER, token: token})}
           </Route>
           <Route exact path="/recipe">
             <Recipe />
@@ -60,7 +63,6 @@ const App = () => {
             <Home />
           </Route>
         </Switch>
-    </UserContextProvider>
     </Router>
     );
 }

@@ -31,8 +31,11 @@ getRecipes = (req, res) => {
 
 getRecipe = (req, res) => {
     //TODO pobranie id z adresu do którego się odnosi
-    var recipeID = 1; //
-
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const id = urlParams.get('id');
+    console.log(id);
+    /*
     db.query(
         'SELECT * FROM RECIPE WHERE ID_RECIPE = ?', [recipeID], 
         function(error, results, fields) {
@@ -57,7 +60,10 @@ getRecipe = (req, res) => {
             res.end();
             return;
         }
-    );
+    );*/
+    res.sendStatus(500);
+    res.end();
+    return;
 };
 
 postRecipe = (req, res) => {

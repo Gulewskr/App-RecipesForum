@@ -41,6 +41,7 @@ app.post('/register', AccF.register );
 //id przepisu i ewentualnie id komentarza do którego pisana jest odpowiedź
 //Moderatorzy i użytkownicy do których należy post
 
+app.get('/profile', [AuthF.verifyToken], ProfF.getAccountProfile);
 app.post('/profile', [AuthF.verifyToken], ProfF.createAccount);
 app.put('/profile', [AuthF.verifyToken], ProfF.updateAccount);
 app.delete('/profile', [AuthF.verifyToken], ProfF.deleteAccount);

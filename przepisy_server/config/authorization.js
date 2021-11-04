@@ -31,12 +31,24 @@ verifyToken = (req, res, next) => {
     console.log(`otrzymany token ${token}`);
     jwt.verify(token, config.jwtKey, (err, decoded) => {
       if (err) {
+        console.log("XD?");
         return res.status(401).send({
           message: "Unauthorized!"
         });
       }
       req.userID = decoded.id;
       req.userTYPE = decoded.lvl;
+      req.userADM = false;
+      req.userMOD = false;
+      req.userPRM = false;
+      switch(decoded.lvl)
+      {
+          case 1 : req.userADM = true; break;
+          case 2 : req.userMOD = true; break;
+          case 3 : req.userPRM = true; break;
+          default : break;
+      }
+      
       next();
     });
 };

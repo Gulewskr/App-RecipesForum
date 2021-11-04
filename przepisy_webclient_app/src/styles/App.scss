@@ -37,3 +37,21 @@ li{
   padding: 5px;
   padding-left: 50px;
 }
+.przycisk{
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 100px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: 1px solid black;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+.przycisk:hover{
+  height: 50px;
+  width: 100px;
+  background-color: #4d4d4d;
+  color: white;
+}

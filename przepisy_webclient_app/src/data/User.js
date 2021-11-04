@@ -28,6 +28,7 @@ const UserContextProvider = ({ children }) => {
           type: undefined,
           token: undefined
       });
+      window.location.reload();
     }
     
     useEffect(() => {
@@ -73,8 +74,8 @@ const UserContextProvider = ({ children }) => {
     }, [token]);
 
     const v = useMemo(
-        () => ({ USER, setToken, setUser, LogOut }),
-        [ USER, setToken, setUser, LogOut ],
+        () => ({ USER, token, setToken, setUser, LogOut }),
+        [ USER, token, setToken, setUser, LogOut ],
     );
 
     return (
