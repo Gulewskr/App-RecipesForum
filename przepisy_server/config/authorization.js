@@ -18,6 +18,41 @@ acessAdmin = (req, res) => {
     res.status(200).send("Admin Content.");
 };
 
+decodeExtraToken = (req, res, next) => {
+    let token = req.headers["access-token"];
+    
+    req.userID = undefined;
+    req.userTYPE = undefined;
+    req.userADM = false;
+    req.userMOD = false;
+    req.userPRM = false;
+
+    if (!token) {
+        console.log("No extra token provided!"); 
+        next();
+        return;
+    }
+  
+    console.log(`Extra token ${token}`);
+    jwt.verify(token, config.jwtKey, (err, decoded) => {
+      if (err) {
+        console.log("Bad format extra token provided!"); 
+        next();
+        return;
+      }
+      req.userID = decoded.id;
+      req.userTYPE = decoded.lvl;
+      switch(decoded.lvl)
+      {
+          case 1 : req.userADM = true; break;
+          case 2 : req.userMOD = true; break;
+          case 3 : req.userPRM = true; break;
+          default : break;
+      }
+      next();
+    });
+};
+
 verifyToken = (req, res, next) => {
     let token = req.headers["access-token"];
   
@@ -89,6 +124,7 @@ const AuthF = {
     acessMod : acessMod,
     acessAdmin : acessAdmin,
     verifyToken : verifyToken,
+    decodeExtraToken : decodeExtraToken,
     isAdmin : isAdmin,
     isMod : isMod,
     isPremium : isPremium

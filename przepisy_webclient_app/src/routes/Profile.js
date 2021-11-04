@@ -77,16 +77,60 @@ const Profile = (usrData) => {
     {
       setEditting(false);
       //przesłanie na serwer
-
-      //jak git to zamień jak nie to błąd wyświetl
-      //setUserData(editUserData);
+      fetch(`${API_ADDRESS}/profile?id=${id}`, {
+        method: 'put',
+        headers: { 
+          'Access-token': token,
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({
+          nick: newNick,
+          email: newEmail
+        })
+      })
+      .then( res => {
+        try{
+          //jak git to zamień jak nie to błąd wyświetl
+          if(res.status == 200){
+            console.log("powodzenie zmiany danych");
+            setData({
+              own : owner,
+              name : newNick,
+              email : newEmail,
+              type : type,
+              error : 0,
+              errorMSG : ""
+            });
+            return {error: 0}
+          }else{
+            console.log(res);
+          }
+          return res.json();
+        }catch (err){
+          console.log(err);
+        };
+      })
+      .then((data) => {
+        if(data.error == 1)
+          console.log(data.errorMSG);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     };
 
     return (
       <div>
         <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
           <h3>Edycja danych</h3>
-        <a className="przycisk" onClick={() => saveChange()}> Zapisz </a>
+          <div className="login-form">
+            <form onSubmit={saveChange}>
+              <input type="text" onChange={v => setNewNick(v.target.value)} name="username" value={newNick} placeholder="nazwa użytkownika" required/>
+              <input type="text" onChange={v => setNewEmail(v.target.value)} name="password" value={newEmail} placeholder="email"  required />
+              <input type="submit"/>
+            </form>
+          </div>
+        {/*<a className="przycisk" onClick={() => saveChange()}> Zapisz </a>*/}
       </div>
     );
   };
@@ -105,16 +149,56 @@ const Profile = (usrData) => {
     const saveChange = () =>
     {
       setEPassword(false);
+      if(newPasswd == newPasswdR)
+      {
       //przesłanie na serwer
-
-      //jak git to zamień jak nie to błąd wyświetl
-      //setUserData(editUserData);
+      fetch(`${API_ADDRESS}/profile/pass?id=${id}`, {
+        method: 'put',
+        headers: { 
+          'Access-token': token,
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({
+          passwdOld: oldPasswd,
+          passwdNew: newPasswd
+        })
+      })
+      .then( res => {
+        try{
+          //jak git to zamień jak nie to błąd wyświetl
+          if(res.status == 200){
+            console.log("powodzenie zmiany hasła");
+            return {error: 0}
+          }else{
+            console.log(res);
+          }
+          return res.json();
+        }catch (err){
+          console.log(err);
+        };
+      })
+      .then((data) => {
+        if(data.error == 1)
+          console.log(data.errorMSG);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     };
+  }
 
     return (
       <div>
         <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
-          <h3>Edycja danych</h3>
+          <h3>Edycja hasła</h3>
+          <div className="login-form">
+            <form onSubmit={saveChange}>
+              <input type="password" onChange={v => setOldPasswd(v.target.value)} name="username" placeholder="stare hasło" required/>
+              <input type="password" onChange={v => setNewPasswd(v.target.value)} name="password" placeholder="nowe hasło"  required />
+              <input type="password" onChange={v => setNewPasswdR(v.target.value)} name="password" placeholder="powtórz nowe hasło"  required />
+              <input type="submit"/>
+            </form>
+          </div>
         <a className="przycisk" onClick={() => saveChange()}> Zapisz </a>
       </div>
     );
@@ -124,7 +208,7 @@ const Profile = (usrData) => {
     <div>
       <h2>Profile</h2>
       <h1>AVATAR??</h1>
-      <h1>{USER.nick}</h1>
+      <h1>{nick}</h1>
       <h1>email {email}</h1>
       {
         owner ? 

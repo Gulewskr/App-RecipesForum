@@ -9,17 +9,19 @@ const Navbar = () => {
     return (
       <ul>
         <li onClick={() => window.location.assign("/")}> Home </li>
+        <li onClick={() => window.location.assign("/recipes")}> Lista przepisów </li>
         {
           USER.id ? 
+          <>
+          <li onClick={() => window.location.assign("/profile?id=" + USER.id)}>Profil użytkownika</li>
           <li onClick={LogOut} >Wyloguj</li>
+          </>
             :
           <>
             <li onClick={() => window.location.assign("/login")}> Logowanie </li>
             <li onClick={() => window.location.assign("/register")}> Rejestracja </li>
           </>
         }
-        <li onClick={() => window.location.assign("/profile?id=" + USER.id)}>Profil użytkownika</li>
-        <li onClick={() => window.location.assign("/recipes")}> Lista przepisów </li>
       </ul>
     );
    

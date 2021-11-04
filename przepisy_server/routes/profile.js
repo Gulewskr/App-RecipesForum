@@ -4,7 +4,106 @@ const db = require('../DATABASE QUERIES/DB');
 
 createAccount  = (req, res) => { res.status(403); };
 deleteAccount  = (req, res) => { res.status(403); };
-updateAccount  = (req, res) => { res.status(403); };
+updateAccountPasswd  = (req, res) => { 
+    var id = req.query.id;
+    if(req.query.id && req.userID && id == req.userID)
+    {
+        var passwdOld = req.body.passwdOld;
+        var passwdNew = req.body.passwdNew;
+        if(passwdOld && passwdNew){
+            db.query(
+                'UPDATE ACCOUNTS SET password = ?  WHERE ID = ? AND password = ?', [passwdNew, id, passwdOld], 
+                function(error, results, fields) {
+                    if(error){
+                        console.log(error);
+                        res.status(500).send({
+                            error : 1,
+                            errorMSG : "wystąpił błąd bazy danych"
+                        });
+                        res.end();
+                        return;
+                    }
+                    if(results.affectedRows == 1)
+                    {
+                        res.sendStatus(200);
+                        res.end();    
+                    }else{
+                        if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
+                        res.status(500).send({
+                            error : 1,
+                            errorMSG : "wystąpił błąd bazy danych"
+                        });
+                        res.end();
+                    }
+                    return;
+                }
+            );
+        }else{
+            res.status(400).send({
+                error : 1,
+                errorMSG : "Błędne żądanie"
+            });
+            res.end();
+        }
+    }else{
+        res.status(403).send({
+            error : 1,
+            errorMSG : "Nie posiadasz uprawnień do przeprowadzenia tej operacji"
+        });
+        res.end();
+    }
+    return;
+};
+updateAccount  = (req, res) => { 
+    var id = req.query.id;
+    if(req.query.id && req.userID && (id == req.userID || req.userMOD || req.userADM))
+    {
+        var nick = req.body.nick;
+	    var email = req.body.email;
+        if(nick && email){
+            db.query(
+                'UPDATE ACCOUNTS SET nick = ?,  email = ?  WHERE ID = ?', [nick, email, id], 
+                function(error, results, fields) {
+                    if(error){
+                        console.log(error);
+                        res.status(500).send({
+                            error : 1,
+                            errorMSG : "wystąpił błąd bazy danych"
+                        });
+                        res.end();
+                        return;
+                    }
+                    if(results.affectedRows == 1)
+                    {
+                        res.sendStatus(200);
+                        res.end();    
+                    }else{
+                        if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
+                        res.status(500).send({
+                            error : 1,
+                            errorMSG : "wystąpił błąd bazy danych"
+                        });
+                        res.end();
+                    }
+                    return;
+                }
+            );
+        }else{
+            res.status(400).send({
+                error : 1,
+                errorMSG : "Błędne żądanie"
+            });
+            res.end();
+        }
+    }else{
+        res.status(403).send({
+            error : 1,
+            errorMSG : "Nie posiadasz uprawnień do przeprowadzenia tej operacji"
+        });
+        res.end();
+    }
+    return;
+};
 getAccountProfile = (req,res) => 
 {
     if(req.query.id)
@@ -72,6 +171,7 @@ const Profile = {
     createAccount : createAccount,
     deleteAccount : deleteAccount, 
     updateAccount : updateAccount,
+    updateAccountPasswd : updateAccountPasswd,
     getAccountProfile : getAccountProfile
 }
 

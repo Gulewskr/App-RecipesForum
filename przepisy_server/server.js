@@ -41,15 +41,16 @@ app.post('/register', AccF.register );
 //id przepisu i ewentualnie id komentarza do którego pisana jest odpowiedź
 //Moderatorzy i użytkownicy do których należy post
 
-app.get('/profile', [AuthF.verifyToken], ProfF.getAccountProfile);
+app.get('/profile', [AuthF.decodeExtraToken], ProfF.getAccountProfile);
 app.post('/profile', [AuthF.verifyToken], ProfF.createAccount);
 app.put('/profile', [AuthF.verifyToken], ProfF.updateAccount);
+app.put('/profile/pass', [AuthF.verifyToken], ProfF.updateAccountPasswd);
 app.delete('/profile', [AuthF.verifyToken], ProfF.deleteAccount);
 
 /*	prametry:
 		-id przepisu
 */
-app.get('/comments', CommF.getComments);
+app.get('/comments', [AuthF.decodeExtraToken], CommF.getComments);
 //		-id user
 //		-id komentarza (dodatkowy jak odpowiada się na inny komentarz)
 app.post('/comment', [AuthF.verifyToken], CommF.createComment);
@@ -60,7 +61,7 @@ app.delete('/comment', [AuthF.verifyToken], CommF.deleteComment);
 		-id user
 		-id przepisu
 */
-app.get('/score', ScrF.getRecipeScore);
+app.get('/score', [AuthF.decodeExtraToken], ScrF.getRecipeScore);
 //		-ocena
 app.post('/score', [AuthF.verifyToken], function (res, req) {
 	//jak ocena 0 to usuń
@@ -71,7 +72,7 @@ app.post('/score', [AuthF.verifyToken], function (res, req) {
 /*	prametry:
 		-id
 */
-app.get('/recipe', ReciF.getRecipe);
+app.get('/recipe', [AuthF.decodeExtraToken], ReciF.getRecipe);
 //		-id user
 app.post('/recipe', [AuthF.verifyToken], ReciF.postRecipe);
 app.put('/recipe', [AuthF.verifyToken], ReciF.updateRecipe);
@@ -81,7 +82,7 @@ app.delete('/recipe', [AuthF.verifyToken], ReciF.deleteRecipe);
 		-typy sortowania
 		-nr strony
 */
-app.get('/recipes', ReciF.getRecipes);
+app.get('/recipes', [AuthF.decodeExtraToken], ReciF.getRecipes);
 
 
 app.listen(port, () => { console.log(`Server is working on port ${port}`)});
