@@ -12,7 +12,7 @@ const Recipe = (props) => {
 
   const [edit, setEditting] = useState(false);
   const [data, setData] = useState("");  
-  const [comments, setComments] = useState("");  
+  const [comments, setComments] = useState(<div></div>);  
   
   const {owner, mod, name, text, type, tags} = useMemo(
     () => {console.log(data); return({
@@ -24,7 +24,18 @@ const Recipe = (props) => {
       tags : data !== "" ? data.tags ? data.tags : "null" : "null"
     })}, [data]);
 
-  useEffect(() => {
+  const displayComments = (d) => {
+    if(d.error == "")
+    {
+      var res = [];
+      d.data.forEach(e => res.push(<SingleComment id={e.id} id_recipe={e.id_recipe} id_user={e.id_user} text={e.text} token={token} callback={refreshData}/>));
+      setComments(res);
+    }else{
+      setComments(<div>{d.error}</div>);
+    }
+  }
+
+  const refreshData = () => {
     if(id){
       fetch(`${API_ADDRESS}/recipe?id=${id}`, {
         method: 'get',
@@ -47,9 +58,35 @@ const Recipe = (props) => {
       .catch(err => {
         console.log(err);
       });
+
+      fetch(`${API_ADDRESS}/comments?id=${id}`, {
+        method: 'get',
+        headers: { 
+          'Access-token': token,
+          'Content-Type': 'application/json' 
+        },
+      })
+      .then( res => {
+        try{
+          console.log(res); 
+          return res.json();
+        }catch (err){
+          console.log(err);
+        };
+      })
+      .then((data) => {
+        displayComments(data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     }else{
       console.log("brak id przepisu");
     }
+  }
+
+  useEffect(() => {
+    refreshData();
   }, [id, token]);
 
 
@@ -88,14 +125,15 @@ const Recipe = (props) => {
           //jak git to zamień jak nie to błąd wyświetl
           if(res.status == 200){
             console.log("powodzenie zmiany danych");
-            setData({
+            /*setData({
               own : owner,
               mod : mod,
               name : newName,
               text : newText,
               type : newType,
               tags : tags
-            });
+            });*/
+            refreshData();
             return {error: 0}
           }else{
             console.log(res);
@@ -143,10 +181,11 @@ const Recipe = (props) => {
     const changeV = () => sV(!v) 
     return(
       <div>
-        <p>Sekcja komentarzy - komentarzy brak</p>
+        <p>Sekcja komentarzy</p>
+        {comments}
         {v ?
           <div> 
-            <NewCommentForm id_recipe={id} id_user={user ? user.id : -1} id_comment={-1} token={token} />
+            <NewCommentForm id_recipe={id} id_user={user ? user.id : -1} id_comment={-1} token={token} callback={refreshData}/>
             <a onClick={() => changeV()}>Anuluj komentarz</a>
           </div>
         :

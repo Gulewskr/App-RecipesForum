@@ -38,7 +38,41 @@ createComment  = (req, res) => {
 deleteComment  = (req, res) => { rF.ReqError(res); };
 updateComment  = (req, res) => { rF.ReqError(res); };
 
-getComments = (req, res) => { rF.ReqError(res); };
+getComments = (req, res) => { 
+    if(req.query.id)
+    {
+        var id = req.query.id;
+        db.query(
+            'SELECT * FROM comments WHERE id_recipe = ?', [id], 
+            function(error, results, fields) {
+                if(error){
+                    console.log(error);
+                    rF.DBError(res);
+                    return;
+                }
+                if (results.length > 0) {
+                    var data = JSON.parse(JSON.stringify(results));
+                    rF.CorrectWData(res, 
+                        {
+                            data : data,
+                            error : ""
+                        });
+                    return;
+                } else {
+                    console.log(`Brak komenatarzy do przepisu o id ${id} w bazie danych`);
+                    rF.CorrectWData(res,
+                    {
+                        data : "",
+                        error : "Brak komentarzy"
+                    });
+                }		 	
+                return;
+            }
+        );
+    }else{
+        rF.ReqError(res); 
+    }
+};
 
 const Profile = {
     createComment : createComment,

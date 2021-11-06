@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {API_ADDRESS} from '../data/API_VARIABLES';
 
 const NewCommentForm = (props) => {
-    const {id_recipe, id_user, id_comment, token} = props;
+    const {id_recipe, id_user, id_comment, token, callback} = props;
     const [text, setText] = useState("");
 
     const tryAddComment = () => {
@@ -20,7 +20,7 @@ const NewCommentForm = (props) => {
         })
         .then( res => {
           try{
-            console.log(res);
+            if(res.status == 200) callback();
           }catch (err){
             console.log(err);
           };
@@ -51,19 +51,20 @@ const NewCommentForm = (props) => {
     );
 }
 
-const SingleComment = (id, id_recipe, id_user, text, token) => {
+const SingleComment = (props) => {
+    const {id, id_recipe, id_user, text, token, callback} = props;
     const [newCommentV, setV] = useState(false);
 
     const changeV = () => setV(!newCommentV);
 
     return (
-        <div tabIndex={id}>
+        <div>
             <p>Id komentarzu: {id}</p>
             <p>Przepis ID: {id_recipe}</p>
             <p>Użytkownik ID: {id_user}</p>
             <p>Treść: {text}</p>
             <a onClick={() => changeV()}> { newCommentV ? "Anuluj" : "Odpowiedz" }</a>
-            { newCommentV && <NewCommentForm id_recipe={id_recipe} id_user={id_user} id_comment={id} token={token} /> }
+            { newCommentV && <NewCommentForm id_recipe={id_recipe} id_user={id_user} id_comment={id} token={token} callback={callback}/> }
         </div>
     );
 }
