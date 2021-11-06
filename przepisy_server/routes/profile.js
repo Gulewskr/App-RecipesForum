@@ -1,5 +1,6 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
+const rF = require('../config/responses');
 const db = require('../DATABASE QUERIES/DB');
 
 createAccount  = (req, res) => { res.status(403); };
@@ -16,41 +17,24 @@ updateAccountPasswd  = (req, res) => {
                 function(error, results, fields) {
                     if(error){
                         console.log(error);
-                        res.status(500).send({
-                            error : 1,
-                            errorMSG : "wystąpił błąd bazy danych"
-                        });
-                        res.end();
+                        rF.DBError(res);
                         return;
                     }
                     if(results.affectedRows == 1)
                     {
-                        res.sendStatus(200);
-                        res.end();    
+                        rF.Correct(res);  
                     }else{
                         if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
-                        res.status(500).send({
-                            error : 1,
-                            errorMSG : "wystąpił błąd bazy danych"
-                        });
-                        res.end();
+                        rF.DBError(res);
                     }
                     return;
                 }
             );
         }else{
-            res.status(400).send({
-                error : 1,
-                errorMSG : "Błędne żądanie"
-            });
-            res.end();
+            rF.ReqError(res);
         }
     }else{
-        res.status(403).send({
-            error : 1,
-            errorMSG : "Nie posiadasz uprawnień do przeprowadzenia tej operacji"
-        });
-        res.end();
+        rF.NoAuth(res);
     }
     return;
 };
@@ -66,41 +50,24 @@ updateAccount  = (req, res) => {
                 function(error, results, fields) {
                     if(error){
                         console.log(error);
-                        res.status(500).send({
-                            error : 1,
-                            errorMSG : "wystąpił błąd bazy danych"
-                        });
-                        res.end();
+                        rF.DBError(res);
                         return;
                     }
                     if(results.affectedRows == 1)
                     {
-                        res.sendStatus(200);
-                        res.end();    
+                        rF.Correct(res);   
                     }else{
                         if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
-                        res.status(500).send({
-                            error : 1,
-                            errorMSG : "wystąpił błąd bazy danych"
-                        });
-                        res.end();
+                        rF.DBError(res);
                     }
                     return;
                 }
             );
         }else{
-            res.status(400).send({
-                error : 1,
-                errorMSG : "Błędne żądanie"
-            });
-            res.end();
+            rF.ReqError(res);
         }
     }else{
-        res.status(403).send({
-            error : 1,
-            errorMSG : "Nie posiadasz uprawnień do przeprowadzenia tej operacji"
-        });
-        res.end();
+        rF.NoAuth(res);
     }
     return;
 };
@@ -114,11 +81,7 @@ getAccountProfile = (req,res) =>
             function(error, results, fields) {
                 if(error){
                     console.log(error);
-                    res.status(500).send({
-                        error : 1,
-                        errorMSG : "wystąpił błąd bazy danych"
-                    });
-                    res.end();
+                    rF.DBError(res);
                     return;
                 }
                 if (results.length == 1) {
@@ -135,7 +98,8 @@ getAccountProfile = (req,res) =>
                     var owner = req.userID == id;
                     var mod = req.userMOD || req.userADM;
                     var type = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
-                    res.status(200).send({
+                    rF.CorrectWData(res,
+                    {
                         own : owner,
                         mod : mod,
                         name : data.nick,
@@ -148,21 +112,14 @@ getAccountProfile = (req,res) =>
                     return;
                 } else {
                     console.log(`Błąd wyszukiwania użytkownika o id ${id} w bazie danych`);
-                    res.status(500).send({
-                        error : 1,
-                        errorMSG : "wystąpił błąd bazy danych"
-                    });
-                    res.end();
+                    if(results.length > 1)  console.log(`DUŻO UŻOTKOWNIKÓW O ID ${id} W BAZIE DANYCH!`);
+                    rF.DBError(res);
                 }		 	
                 return;
             }
         );
     }else{
-        res.status(500).send({
-            error : 1,
-            errorMSG : "nie podano parametru id użytkownika"
-        });
-        res.end();
+        rF.Err(res, 500, "nie podano parametru id użytkownika")
     }
     return;
 };

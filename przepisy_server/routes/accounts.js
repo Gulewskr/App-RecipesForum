@@ -1,5 +1,6 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
+const rF = require('../config/responses');
 const db = require('../DATABASE QUERIES/DB');
 
 login = (request, response) => {
@@ -12,8 +13,7 @@ login = (request, response) => {
 			function(error, results, fields) {
 				if(error){
 					console.log(error);
-					response.sendStatus(500);
-					response.end();
+					rF.DBError(res);
 					return;
 				}
 				if (results.length == 1) {
@@ -27,26 +27,19 @@ login = (request, response) => {
 					//TODO (do późniejszej zmiany tylko liczbe przesyłam)
 					var accType = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
 
-					response.send({
+					rF.CorrectWData(response,
+					{
 						token: token,
 						error: 0
 					});
 				} else {
-					console.log("Błędne logowanie user: " + username  + " " + password);
-					response.send({
-						error: 1
-					});
+					rF.Err(response, 400, "Błędne logowanie user: " + username  + " " + password);
 				}		 	
-				response.end();
 				return;
 			}
 		);
 	} else {
-		console.log("Nie podano danych logowania");
-		response.send({
-			error: 2
-		});
-		response.end();
+		rF.Err(response, 400, "Nie podano danych logowania");
 	}
 };
 
@@ -58,8 +51,7 @@ loginByJWT = (req, res) => {
 			function(error, results, fields) {
 				if(error){
 					console.log(error);
-					res.sendStatus(500);
-					res.end();
+					rF.DBError(res);
 					return;
 				}
 				if (results.length == 1) {
@@ -69,24 +61,21 @@ loginByJWT = (req, res) => {
 					//TODO
 					var accType = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
 
-					res.send({
+					rF.CorrectWData(res,
+					{
 						id:	req.userID,
 						nick: data.nick,
 						type: accType,
 						error: 0
 					});
-					res.end();
 				} else {
 					console.log("Znaleziono wiele użytkowników");
-					res.status(403).send();
+					rF.DBError(res);
 				}		 	
 			}
 		);
 	}else{
-		res.status(403).send({
-			message: "Server not prepared for POST"
-		});
-		res.end();
+		rF.ReqError(res);
 	}
 };
 
@@ -108,8 +97,7 @@ register = (request, response) => {
 			function(error, results, fields) {
 				if(error){
 					console.log(error);
-					response.sendStatus(500);
-					response.end();
+					rF.DBError(response);
 					return;
 				}
 				db.query(
@@ -118,8 +106,7 @@ register = (request, response) => {
 					function(error, results, fields) {
 						if(error){
 							console.log(error);
-							response.sendStatus(500);
-							response.end();
+							rF.DBError(response);
 							return;
 						}
 						if (results.length == 1) {
@@ -133,17 +120,14 @@ register = (request, response) => {
 							//TODO (do późniejszej zmiany tylko liczbe przesyłam)
 							var accType = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
 		
-							response.send({
+							rF.CorrectWData(response,
+							{
 								token: token,
 								error: 0
 							});
 						} else {
-							console.log("Błędne logowanie user: " + username  + " " + password);
-							response.send({
-								error: 1
-							});
+							rF.Err(response, 400, "Błędne logowanie user: " + username  + " " + password);
 						}		 	
-						response.end();
 						return;
 					}
 				);
@@ -151,11 +135,7 @@ register = (request, response) => {
 			}
 		);
 	} else {
-		console.log("Nie podano danych logowania");
-		response.send({
-			error: 2
-		});
-		response.end();
+		rF.Err(response, 500, "Nie podano danych logowania");
 	}
 };
 

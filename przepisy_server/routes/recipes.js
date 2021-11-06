@@ -1,5 +1,6 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
+const rF = require('../config/responses');
 const db = require('../DATABASE QUERIES/DB');
 
 getRecipes = (req, res) => {
@@ -8,22 +9,21 @@ getRecipes = (req, res) => {
         function(error, results, fields) {
             if(error){
                 console.log(error);
-                res.sendStatus(500);
-                res.end();
+                rF.DBError(res);
                 return;
             }
             if (results.length > 0) {
                 var data = JSON.parse(JSON.stringify(results));
-                res.send({
+                rF.CorrectWData(res,
+                {
                     data: data
                 });
             } else {
-                console.log("Brak przepisów w bazie danych");
-                res.send({
+                rF.CorrectWData(res,
+                {
                     data: "Brak przepisów w bazie danych"
                 });
             }		 	
-            res.end();
             return;
         }
     );
@@ -38,18 +38,15 @@ getRecipe = (req, res) => {
             function(error, results, fields) {
                 if(error){
                     console.log(error);
-                    res.status(500).send({
-                        error : 1,
-                        errorMSG : "wystąpił błąd bazy danych"
-                    });
-                    res.end();
+                    rF.DBError(res);
                     return;
                 }
                 if (results.length == 1) {
                     var data = JSON.parse(JSON.stringify(results[0]));
                     var owner = data.id_user == req.userID;
                     var mod = req.userMOD || req.userADM;
-                    res.status(200).send({
+                    rF.CorrectWData(res,
+                    {
                         own : owner, 
                         mod : mod, 
                         name : data.name, 
@@ -57,25 +54,17 @@ getRecipe = (req, res) => {
                         type : data.type, 
                         tags : "nie zaimplementowano przesyłania tagów"
                     });
-                    res.end();
                     return;
                 } else {
                     console.log(`Błąd wyszukiwania przepisu o id ${id} w bazie danych`);
-                    res.status(500).send({
-                        error : 1,
-                        errorMSG : "wystąpił błąd bazy danych"
-                    });
-                    res.end();
+                    if(results.length > 0)  console.log(`DUŻO PRZEPISÓW O ID ${id} W BAZIE DANYCH!`);
+                    rF.DBError(res);
                 }		 	
                 return;
             }
         );
     }else{
-        res.status(500).send({
-            error : 1,
-            errorMSG : "nie podano parametru id przepisu"
-        });
-        res.end();
+        rF.Err(res, 500, "nie podano parametru id przepisu")
     }
     return;
 };
@@ -94,25 +83,17 @@ postRecipe = (req, res) => {
 			function(error, results, fields) {
 				if(error){
 					console.log(error);
-					res.sendStatus(500);
-					res.end();
+					rF.DBError(res);
 					return;
 				}
                 console.log(`dodano nowy przepis "${_name}" do bazy danych`);
                 //TODO zwracanie id przepisu wstawionego
-                res.status(200).send({
-                    data: 1
-                });
-				res.end();
+                rF.Correct(res);
 				return;
 			}
 		);
 	} else {
-		console.log("Nie podano danych nowego przepisu");
-		res.send({
-			error: 2
-		});
-		res.end();
+		rF.ReqError(res);
 	}
 };
 
@@ -136,24 +117,15 @@ updateRecipe = (req, res) => {
                     function(error, results, fields) {
                         if(error){
                             console.log(error);
-                            res.status(500).send({
-                                error : 1,
-                                errorMSG : "wystąpił błąd bazy danych"
-                            });
-                            res.end();
+                            rF.DBError(res);
                             return;
                         }
                         if(results.affectedRows == 1)
                         {
-                            res.sendStatus(200);
-                            res.end();    
+                            rF.Correct(res);   
                         }else{
                             if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
-                            res.status(500).send({
-                                error : 1,
-                                errorMSG : "wystąpił błąd bazy danych"
-                            });
-                            res.end();
+                            rF.DBError(res);
                         }
                         return;
                     }
@@ -164,50 +136,30 @@ updateRecipe = (req, res) => {
                     function(error, results, fields) {
                         if(error){
                             console.log(error);
-                            res.status(500).send({
-                                error : 1,
-                                errorMSG : "wystąpił błąd bazy danych"
-                            });
-                            res.end();
+                            rF.DBError(res);
                             return;
                         }
                         if(results.affectedRows == 1)
                         {
-                            res.sendStatus(200);
-                            res.end();    
+                            rF.Correct(res);      
                         }else{
                             if(results.affectedRows > 1)
                             {
                                 console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
-                                res.status(500).send({
-                                    error : 1,
-                                    errorMSG : "wystąpił błąd bazy danych"
-                                });
+                                rF.DBError(res);
                             }else{
-                                res.status(400).send({
-                                    error : 1,
-                                    errorMSG : "Nie posiadasz uprawnień do tej operacji"
-                                });
+                                rF.NoAuth(res);
                             }
-                            res.end();
                         }
                         return;
                     }
                 );
             }
         }else{
-            res.status(403).send({
-                error : 1,
-                errorMSG : "Błędne żądanie"
-            });
-            res.end();
+            rF.ReqError(res);
         }
     }else{
-        res.status(403).send({
-            error : 1,
-            errorMSG : "Nie posiadasz uprawnień do przeprowadzenia tej operacji"
-        });
-        res.end();
+        rF.NoAuth(res);
     }
     return;
 };
