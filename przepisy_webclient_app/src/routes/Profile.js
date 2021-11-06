@@ -19,9 +19,10 @@ const Profile = (usrData) => {
   //const { USER, token } = useContext(UserContext);
   const [data, setData] = useState("");
 
-  const {owner, nick, email, type, recipeNum, commentNum, avgScore} = useMemo(
+  const {owner, mod, nick, email, type, recipeNum, commentNum, avgScore} = useMemo(
     () => {console.log(data); return({
       owner : data !== "" ? data.own === true : false, 
+      mod : data !== "" ? data.mod === true : false, 
       nick : data !== "" ? data.name : "null", 
       email : data !== "" ? data.email : "null", 
       type : data !== "" ? data.type : "null", 
@@ -95,6 +96,7 @@ const Profile = (usrData) => {
             console.log("powodzenie zmiany danych");
             setData({
               own : owner,
+              mod : mod,
               name : newNick,
               email : newEmail,
               type : type,
@@ -211,7 +213,7 @@ const Profile = (usrData) => {
       <h1>{nick}</h1>
       <h1>email {email}</h1>
       {
-        owner ? 
+        owner || mod ? 
           <>
             {edit ? 
             <EditUserData />
