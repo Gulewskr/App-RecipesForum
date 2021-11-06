@@ -1,12 +1,14 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
+const rF = require('../config/responses');
 const db = require('../DATABASE QUERIES/DB');
 
-createComment  = (req, res) => { res.status(403); };
-deleteComment  = (req, res) => { res.status(403); };
-updateComment  = (req, res) => { res.status(403); };
+createComment  = (req, res) => { rF.ReqError(res); };
+deleteComment  = (req, res) => { rF.ReqError(res); };
+updateComment  = (req, res) => { rF.ReqError(res); };
 
-getComments = (req, res) => { res.status(403); };
+getComments = (req, res) => { rF.ReqError(res); };
+
 const Profile = {
     createComment : createComment,
     deleteComment : deleteComment, 

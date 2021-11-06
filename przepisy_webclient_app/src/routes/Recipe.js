@@ -1,11 +1,10 @@
 import { useContext, useEffect, useMemo, useState } from "react";
-import { Buttons } from "../components";
-import {UserContext} from '../data/User';
+import { Buttons, NewCommentForm, SingleComment } from "../components";
 import { API_ADDRESS } from "../data/API_VARIABLES";
 
-const Recipe = () => {
+const Recipe = (props) => {
 
-  const { USER, token } = useContext(UserContext);
+  const { user, token } = props;
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -13,6 +12,7 @@ const Recipe = () => {
 
   const [edit, setEditting] = useState(false);
   const [data, setData] = useState("");  
+  const [comments, setComments] = useState("");  
   
   const {owner, mod, name, text, type, tags} = useMemo(
     () => {console.log(data); return({
@@ -62,7 +62,7 @@ const Recipe = () => {
     const resetEdit = () =>
     {
       setEditting(false);
-      //setEUserData(userData);
+      //setEuserData(userData);
     };
 
     const saveChange = () =>
@@ -138,6 +138,24 @@ const Recipe = () => {
     );
   };
 
+  const CommentsSection = () => {
+    const [v, sV] = useState(false);
+    const changeV = () => sV(!v) 
+    return(
+      <div>
+        <p>Sekcja komentarzy - komentarzy brak</p>
+        {v ?
+          <div> 
+            <NewCommentForm id_recipe={id} id_user={user ? user.id : -1} id_comment={-1} token={token} />
+            <a onClick={() => changeV()}>Anuluj komentarz</a>
+          </div>
+        :
+          <a onClick={() => changeV()}>Dodaj komentarz</a>
+        }
+      </div>
+    )
+  }
+
   return (
     <div>
       <h2>Recipe {name}</h2>
@@ -166,6 +184,10 @@ const Recipe = () => {
         Tagi:<br/>
         {tags}
       </p>
+      <div>
+        Komentarze:<br/>
+        <CommentsSection />
+      </div>
     </div>
   );
 }

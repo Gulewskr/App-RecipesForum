@@ -3,14 +3,14 @@ import { Buttons, Recipe } from "../components";
 import {UserContext} from '../data/User';
 import { API_ADDRESS } from "../data/API_VARIABLES";
 
-const Profile = (usrData) => {
+const Profile = (props) => {
   //TODO: 
   // -przycisk dezaktywowanie konta
   // -formularze edycji konta
   // -formularz edycji hasła
   // -przesłanie żądań na serwer
 
-  const {USER, token} = usrData;
+  const {user, token} = props;
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);

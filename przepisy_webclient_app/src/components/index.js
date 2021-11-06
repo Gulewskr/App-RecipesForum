@@ -9,4 +9,5 @@ export { Home, Login, Profile, Register, Recipe, RecipesList };*/
 import Navbar from "./Navbar";
 import Buttons from "./NavButtons";
 import Recipe from "./Recipe";
-export { Navbar, Buttons, Recipe};
+import {NewCommentForm, SingleComment} from './Comment';
+export { Navbar, Buttons, Recipe, NewCommentForm, SingleComment};

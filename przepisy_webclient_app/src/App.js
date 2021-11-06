@@ -47,17 +47,17 @@ const App = () => {
             <Register />
           </Route>
           <Route path="/profile">
-            {Profile({USER: USER, token: token})}
+            <Profile user={USER} token={token} />
           </Route>
           <Route exact path="/recipe">
-            <Recipe />
+            <Recipe user={USER} token={token} />
           </Route>
           {/* TODO - naprawić żeby dobrze przekierowywało bo przekierowywuje źle sadge :( */}
           <Route exact path="/recipe/new" >
-            <RecipeNew />
+            <RecipeNew user={USER} token={token} />
           </Route>
           <Route path="/recipes">
-            <RecipesList />
+            <RecipesList user={USER} token={token} />
           </Route>
           <Route path="/">
             <Home />
