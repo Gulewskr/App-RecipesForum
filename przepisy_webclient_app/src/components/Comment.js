@@ -15,7 +15,6 @@ const NewCommentForm = (props) => {
           body: JSON.stringify({
             recipeID : id_recipe,
             commentID : id_comment,
-            userID : id_user,
             commentTEXT : text
           }),
         })

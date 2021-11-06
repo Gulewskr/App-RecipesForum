@@ -1,5 +1,6 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
+const rF = require('../config/responses');
 const db = require('../DATABASE QUERIES/DB');
 
 createScore  = (req, res) => { res.status(403); };
