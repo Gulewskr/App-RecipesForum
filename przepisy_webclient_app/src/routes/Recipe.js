@@ -183,6 +183,30 @@ const Recipe = (props) => {
     const setNewScore = (v) => {
       setYourScr(v);
       //TODO prześlij na serwer
+      fetch(`${API_ADDRESS}/score`, {
+        method: 'put',
+        headers: { 'Content-Type' : 'application/json',
+                  'access-token'  : token },
+        body: JSON.stringify({
+          recipe: id,
+          score: v
+        }),
+      })
+      .then( res => {
+        try{
+          if(res.status == 200)
+            return undefined;
+          return res.json();
+        }catch (err){
+          console.log(err);
+        };
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     }
 
     return(

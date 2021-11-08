@@ -5,11 +5,11 @@ const db = require('../DATABASE QUERIES/DB');
 const e = require('express');
 
 updateScore  = (req, res) => { 
-    var _user = req.userID;
-    var _recipe = req.body.name;
-    var _score = req.body.text;
+    var userID = req.userID;
+    var recipeID = req.body.recipe;
+    var _score = req.body.score;
 
-	if (_user && _recipe) {
+	if (userID && recipeID) {
 		db.query(
             'SELECT * FROM score WHERE ID_recipe = ? AND id_user = ?;', 
             [recipeID, userID], 
@@ -20,14 +20,17 @@ updateScore  = (req, res) => {
                     return;
                 }
     
-                if (results.affectedRows == 1) {
+                if (results.length == 1) {
                     if(_score){
-                        updateteScoreDB(res, _recipe, _user, _score);
+                        updateteScoreDB(res, recipeID, userID, _score);
                     }else{
-                        deleteScoreDB(res, _recipe, _user, _score);
+                        deleteScoreDB(res, recipeID, userID, _score);
                     }
                 }else{
-                    createScoreDB(res, _recipe, _user, _score);
+                    if(_score)
+                        createScoreDB(res, recipeID, userID, _score);
+                    else
+		                rF.ReqError(res);
                 }
                 return;
             }
