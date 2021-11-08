@@ -12,6 +12,7 @@ const Recipe = (props) => {
 
   const [edit, setEditting] = useState(false);
   const [data, setData] = useState("");  
+  const [score, setScore] = useState(0);
   const [comments, setComments] = useState(<div></div>);  
   
   const {owner, mod, name, text, type, tags} = useMemo(
@@ -176,6 +177,34 @@ const Recipe = (props) => {
     );
   };
 
+  const ScoreField = () => {
+    const [yourScr, setYourScr] = useState(0);
+
+    const setNewScore = (v) => {
+      setYourScr(v);
+      //TODO prześlij na serwer
+    }
+
+    return(
+      <div>
+        <div>
+          <p>Ocena przepisu: {score}</p>
+          <p>Twoja ocena przepisu: {yourScr ? yourScr : "brak oceny"}</p>
+        </div>
+        <div>
+          <p>Oceń przepis</p>
+          <a onClick={() => setNewScore(1)}> 1 </a>
+          <a onClick={() => setNewScore(2)}> 2 </a>
+          <a onClick={() => setNewScore(3)}> 3 </a>
+          <a onClick={() => setNewScore(4)}> 4 </a>
+          <a onClick={() => setNewScore(5)}> 5 </a>
+          <a onClick={() => setNewScore(6)}> 6 </a>
+          <a onClick={() => setNewScore(0)}> x </a>
+        </div>
+      </div>
+    );
+  }
+
   const CommentsSection = () => {
     const [v, sV] = useState(false);
     const changeV = () => sV(!v) 
@@ -223,6 +252,10 @@ const Recipe = (props) => {
         Tagi:<br/>
         {tags}
       </p>
+      <div>
+        Oceny: <br />
+        <ScoreField />
+      </div>
       <div>
         Komentarze:<br/>
         <CommentsSection />

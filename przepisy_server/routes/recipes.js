@@ -86,9 +86,16 @@ postRecipe = (req, res) => {
 					rF.DBError(res);
 					return;
 				}
-                console.log(`dodano nowy przepis "${_name}" do bazy danych`);
-                //TODO zwracanie id przepisu wstawionego
-                rF.Correct(res);
+
+                if (results.affectedRows == 1) {
+                    console.log(`dodano nowy przepis "${_name}" do bazy danych`);
+                    rF.Correct(res);
+                }else{
+                    console.log("SPRAWDZ BAZE DANYCH DODANO ZA DUZO PRZEPISÓW");
+                    rF.DBError(res);
+                }
+
+                //TODO zwracanie id przepisu wstawionego i przejście do niego
 				return;
 			}
 		);

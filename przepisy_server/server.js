@@ -63,10 +63,7 @@ app.delete('/comment', [AuthF.verifyToken], CommF.deleteComment);
 */
 app.get('/score', [AuthF.decodeExtraToken], ScrF.getRecipeScore);
 //		-ocena
-app.post('/score', [AuthF.verifyToken], function (res, req) {
-	//jak ocena 0 to usuń
-	//jak ocena inna to sprawdź czy już jest a jak nie ma to wstaw
-});
+app.put('/score', [AuthF.verifyToken], ScrF.updateScore);
 
 
 /*	prametry:
