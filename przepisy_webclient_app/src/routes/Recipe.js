@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from "react";
-import { Buttons, NewCommentForm, SingleComment } from "../components";
+import { Buttons, NewCommentForm, RecipeForm, SingleComment } from "../components";
 import { API_ADDRESS } from "../data/API_VARIABLES";
 
 const Recipe = (props) => {
@@ -15,13 +15,15 @@ const Recipe = (props) => {
   const [score, setScore] = useState(0);
   const [comments, setComments] = useState(<div></div>);  
   
-  const {owner, mod, name, text, type, tags} = useMemo(
+  const {owner, mod, name, text, type, speed, lvl, tags} = useMemo(
     () => {console.log(data); return({
       owner : data !== "" ? data.own ? data.own === true : false : false, 
       mod : data !== "" ? data.mod ? data.mod === true : false : false, 
       name : data !== "" ? data.name ? data.name : "null" : "null", 
       text : data !== "" ? data.text ? data.text : "null" : "null", 
-      type : data !== "" ? data.type != undefined ? data.type : -1 : -1, 
+      type : data !== "" ? data.type != undefined ? data.type : 1 : 1, 
+      speed : data !== "" ? data.speed != undefined ? data.speed : 1 : 1, 
+      lvl : data !== "" ? data.lvl != undefined ? data.lvl : 1 : 1, 
       tags : data !== "" ? data.tags ? data.tags : "null" : "null"
     })}, [data]);
 
@@ -96,55 +98,28 @@ const Recipe = (props) => {
       return () => clearInterval(interval);
   }, [id, token]);
 
+  const resetEdit = () =>
+  {
+    setEditting(false);
+    //setEuserData(userData);
+  };
 
-  const EditData = () => {
-    const [newName, setNewName] = useState(name);
-    const [newText, setNewText] = useState(text);
-    const [newType, setNewType] = useState(type);
-    const [newSpeed, setNewSpeed] = useState(1);
-    const [newLvl, setNewLvl] = useState(1);
+  const Delete = () => {
+    const [v, setV] = useState(false);
 
-
-    const resetEdit = () =>
-    {
-      setEditting(false);
-      //setEuserData(userData);
-    };
-
-    const saveChange = () =>
-    {
-      setEditting(false);
-      //przesłanie na serwer
-      console.log("nowy przepis:");
-      console.log(`nazwa: ${newName} \n Treść:\n  ${newText} \n Typ:  ${newType}`);
+    const deleteData = () => {
       fetch(`${API_ADDRESS}/recipe?id=${id}`, {
-        method: 'put',
+        method: 'delete',
         headers: { 
           'Access-token': token,
           'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify({
-          name: newName,
-          text: newText,
-          type: newType,
-          speed: newSpeed,
-          lvl: newLvl
-        })
+        }
       })
       .then( res => {
         try{
           //jak git to zamień jak nie to błąd wyświetl
           if(res.status == 200){
-            console.log("powodzenie zmiany danych");
-            /*setData({
-              own : owner,
-              mod : mod,
-              name : newName,
-              text : newText,
-              type : newType,
-              tags : tags
-            });*/
-            refreshData();
+            console.log("usunięto");
             return {error: 0}
           }else{
             console.log(res);
@@ -157,87 +132,28 @@ const Recipe = (props) => {
       .then((data) => {
         if(data.error == 1)
           console.log(data.errorMSG);
+        else
+          refreshData();
       })
       .catch(err => {
         console.log(err);
       });
     };
 
-    const Delete = () => {
-      const [v, setV] = useState(false);
-  
-      const deleteData = () => {
-        fetch(`${API_ADDRESS}/recipe?id=${id}`, {
-          method: 'delete',
-          headers: { 
-            'Access-token': token,
-            'Content-Type': 'application/json' 
-          }
-        })
-        .then( res => {
-          try{
-            //jak git to zamień jak nie to błąd wyświetl
-            if(res.status == 200){
-              console.log("usunięto");
-              return {error: 0}
-            }else{
-              console.log(res);
-            }
-            return res.json();
-          }catch (err){
-            console.log(err);
-          };
-        })
-        .then((data) => {
-          if(data.error == 1)
-            console.log(data.errorMSG);
-          else
-            refreshData();
-        })
-        .catch(err => {
-          console.log(err);
-        });
-      };
-  
-      return (
-        <div>
-          {v ? 
-            <div>
-              <p>Czy na pewno chcesz usunąć przepis (tej operacji nie da się cofnąć, usunięte zostaną również wszelkie związane komentarze)</p>
-              <a onClick={() => setV(false)}>Nie</a>
-              <a onClick={() => deleteData()}>Tak usuń konto</a>
-            </div>
-            :
-            <div onClick={() => setV(true)}>USUŃ KONTO</div>
-          }
-        </div>
-      );
-    }
-
     return (
       <div>
-        <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
-          <h3>Edycja danych</h3>
-          <div className="login-form">
-            <form onSubmit={saveChange}>
-              <input type="text" onChange={v => setNewName(v.target.value)} name="username" value={newName} placeholder="nazwa przepisu" required/>
-              <input type="text" onChange={v => setNewText(v.target.value)} name="username" value={newText} placeholder="opis" required/>
-              <select value={newType} onChange={v => setNewType(v.target.value)}>            
-                <option value={1}>Danie główne</option>
-                <option value={2}>Przekąska</option>
-                <option value={3}>Sałatka</option>
-                <option value={4}>Zupa</option>
-                <option value={5}>Deser</option>
-                <option value={6}>Ciasto</option>
-              </select>
-              <input type="submit"/>
-            </form>
-            <Delete />
+        {v ? 
+          <div>
+            <p>Czy na pewno chcesz usunąć przepis (tej operacji nie da się cofnąć, usunięte zostaną również wszelkie związane komentarze)</p>
+            <a onClick={() => setV(false)}>Nie</a>
+            <a onClick={() => deleteData()}>Tak usuń konto</a>
           </div>
-        {/*<a className="przycisk" onClick={() => saveChange()}> Zapisz </a>*/}
+          :
+          <div onClick={() => setV(true)}>USUŃ KONTO</div>
+        }
       </div>
     );
-  };
+  }
 
   const ScoreField = () => {
     const [yourScr, setYourScr] = useState(0);
@@ -310,6 +226,51 @@ const Recipe = (props) => {
     )
   }
 
+  const saveChange = (name, text, tag, type, speed, lvl) =>
+  {
+    setEditting(false);
+    //przesłanie na serwer
+    console.log("nowy przepis:");
+    console.log(`nazwa: ${name} \n Treść:\n  ${text} \n Typ:  ${type}`);
+    fetch(`${API_ADDRESS}/recipe?id=${id}`, {
+      method: 'put',
+      headers: { 
+        'Access-token': token,
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({
+        name: name,
+        text: text,
+        tags: tag,
+        type: type,
+        speed: speed,
+        lvl: lvl
+      })
+    })
+    .then( res => {
+      try{
+        //jak git to zamień jak nie to błąd wyświetl
+        if(res.status == 200){
+          console.log("powodzenie zmiany danych");
+          refreshData();
+          return {error: 0}
+        }else{
+          console.log(res);
+        }
+        return res.json();
+      }catch (err){
+        console.log(err);
+      };
+    })
+    .then((data) => {
+      if(data.error == 1)
+        console.log(data.errorMSG);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  };
+
   return (
     <div>
       <h2>Recipe {name}</h2>
@@ -318,7 +279,11 @@ const Recipe = (props) => {
         <>
           {
           edit ? 
-          <EditData />
+          <>
+            <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
+            <RecipeForm name={name} text={text}  type={type} speed={speed} lvl={lvl} tags={tags} callback={saveChange} />
+            <Delete />
+          </>
             :
           <a className="przycisk" onClick={() => setEditting(true)}> Edytuj dane </a>
           }
@@ -333,6 +298,14 @@ const Recipe = (props) => {
       <p>
         Typ:<br/>
         {type}
+      </p>
+      <p>
+        Szybkość:<br/>
+        {speed}
+      </p>
+      <p>
+        Poziom:<br/>
+        {lvl}
       </p>
       <p>
         Tagi:<br/>

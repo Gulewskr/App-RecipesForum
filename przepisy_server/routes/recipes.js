@@ -56,6 +56,8 @@ getRecipe = (req, res) => {
                         name : data.name, 
                         text : data.text, 
                         type : data.type, 
+                        speed : data.speed,
+                        lvl : data.lvl,
                         tags : "nie zaimplementowano przesyłania tagów"
                     });
                     return;
@@ -214,7 +216,7 @@ updateRecipe = (req, res) => {
                 );
             }else{
                 db.query(
-                    'UPDATE RECIPE SET name = ?,  text = ?, type = ?  WHERE ID = ? AND ID_USER = ?', [name, text, type, id, req.userID], 
+                    'UPDATE RECIPE SET name = ?,  text = ?, type = ?, speed = ?, lvl = ?   WHERE ID = ? AND ID_USER = ?', [name, text, type, _speed, _lvl, id, req.userID], 
                     function(error, results, fields) {
                         if(error){
                             console.log(error);

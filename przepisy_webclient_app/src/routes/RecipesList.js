@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Buttons, Recipe } from "../components";
+import { Buttons, RecipeComp } from "../components";
 import {UserContext} from '../data/User';
 import { API_ADDRESS } from "../data/API_VARIABLES";
 
@@ -128,7 +128,7 @@ const RecipeList = () => {
     for(let i = 0, l = data.length; i < l; i++)
     {
       const {id, id_user, name, text, type} = data[i];
-      res.push( <Recipe key={id} id={id} user={id_user} name={name} text={text} type={type} /> );
+      res.push( <RecipeComp key={id} id={id} user={id_user} name={name} text={text} type={type} /> );
     }
     setRecipes( res );
   }
