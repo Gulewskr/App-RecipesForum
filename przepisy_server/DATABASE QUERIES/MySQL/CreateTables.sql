@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS recipe (
   name varchar(100) NOT NULL,
   text TEXT,
   type INT(1) NOT NULL,
+  speed INT(1) NOT NULL,
+  lvl INT(1) NOT NULL,
   FOREIGN KEY (id_user) REFERENCES accounts(id)
 );
 

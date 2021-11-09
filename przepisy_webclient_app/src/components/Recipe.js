@@ -1,4 +1,5 @@
-const Recipe = (id, user, name, text, type) => {
+const Recipe = (props) => {
+    const {id, user, name, text, type} = props;
     return(
         <div className="container" onClick={ () => window.location.replace('/recipe?id=' + id)} key={id}>
             Przepis nr: {id}<br/>

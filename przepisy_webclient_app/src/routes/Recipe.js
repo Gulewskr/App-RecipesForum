@@ -87,7 +87,13 @@ const Recipe = (props) => {
   }
 
   useEffect(() => {
-    refreshData();
+      refreshData();
+      const interval = setInterval(() => {
+        //TODO będzie trzeba ale wpierw oddzielić dane od re-renderowania elementów żeby się nie resetowały formularze
+        //refreshData();
+        console.log("data refreshed");
+      }, 10000);
+      return () => clearInterval(interval);
   }, [id, token]);
 
 
@@ -95,6 +101,8 @@ const Recipe = (props) => {
     const [newName, setNewName] = useState(name);
     const [newText, setNewText] = useState(text);
     const [newType, setNewType] = useState(type);
+    const [newSpeed, setNewSpeed] = useState(1);
+    const [newLvl, setNewLvl] = useState(1);
 
 
     const resetEdit = () =>
@@ -118,7 +126,9 @@ const Recipe = (props) => {
         body: JSON.stringify({
           name: newName,
           text: newText,
-          type: newType
+          type: newType,
+          speed: newSpeed,
+          lvl: newLvl
         })
       })
       .then( res => {
@@ -182,7 +192,7 @@ const Recipe = (props) => {
           if(data.error == 1)
             console.log(data.errorMSG);
           else
-            window.location.assign("/recipes");
+            refreshData();
         })
         .catch(err => {
           console.log(err);
@@ -213,12 +223,12 @@ const Recipe = (props) => {
               <input type="text" onChange={v => setNewName(v.target.value)} name="username" value={newName} placeholder="nazwa przepisu" required/>
               <input type="text" onChange={v => setNewText(v.target.value)} name="username" value={newText} placeholder="opis" required/>
               <select value={newType} onChange={v => setNewType(v.target.value)}>            
-                <option value={0}>Danie główne</option>
-                <option value={1}>Przekąska</option>
-                <option value={2}>Sałatka</option>
-                <option value={3}>Zupa</option>
-                <option value={4}>Deser</option>
-                <option value={5}>Ciasto</option>
+                <option value={1}>Danie główne</option>
+                <option value={2}>Przekąska</option>
+                <option value={3}>Sałatka</option>
+                <option value={4}>Zupa</option>
+                <option value={5}>Deser</option>
+                <option value={6}>Ciasto</option>
               </select>
               <input type="submit"/>
             </form>

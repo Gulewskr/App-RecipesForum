@@ -16,12 +16,16 @@ getRecipes = (req, res) => {
                 var data = JSON.parse(JSON.stringify(results));
                 rF.CorrectWData(res,
                 {
-                    data: data
+                    data: data,
+                    error: 0,
+                    errorMSG: ""
                 });
             } else {
                 rF.CorrectWData(res,
                 {
-                    data: "Brak przepisów w bazie danych"
+                    data: "",
+                    error: 1,
+                    errorMSG: "Brak przepisów w bazie danych"
                 });
             }		 	
             return;
@@ -75,11 +79,13 @@ postRecipe = (req, res) => {
     var _text = req.body.text;
     var _type = req.body.type;
     var _tags = req.body.tags;
+    var _speed = req.body.speed;
+    var _lvl = req.body.lvl;
 
-	if (_user && _name && _text && _type) {
+	if (_user && _name && _text && _type && _speed && _lvl) {
 		db.query(
-			'INSERT INTO RECIPE (ID_USER, NAME, TEXT, TYPE) VALUES ( ?, ?, ?, ?);', 
-			[_user, _name, _text, _type], 
+			'INSERT INTO RECIPE (ID_USER, NAME, TEXT, TYPE, SPEED, LVL) VALUES ( ?, ?, ?, ?, ?, ?);', 
+			[_user, _name, _text, _type, _speed, _lvl], 
 			function(error, results, fields) {
 				if(error){
 					console.log(error);
@@ -181,12 +187,15 @@ updateRecipe = (req, res) => {
         var name = req.body.name;
 	    var text = req.body.text;
 	    var type = req.body.type;
-        if(name && text && type)
+        var _speed = req.body.speed;
+        var _lvl = req.body.lvl;
+
+        if(name && text && type && _speed && _lvl)
         {
             if(req.userMOD || req.userADM)
             {
                 db.query(
-                    'UPDATE RECIPE SET name = ?,  text = ?, type = ?  WHERE ID = ?', [name, text, type, id], 
+                    'UPDATE RECIPE SET name = ?,  text = ?, type = ?, speed = ?, lvl = ?  WHERE ID = ?', [name, text, type, _speed, _lvl, id], 
                     function(error, results, fields) {
                         if(error){
                             console.log(error);

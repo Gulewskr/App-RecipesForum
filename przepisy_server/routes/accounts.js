@@ -69,7 +69,8 @@ loginByJWT = (req, res) => {
 						error: 0
 					});
 				} else {
-					console.log("Znaleziono wiele użytkowników");
+					if(results.length > 1) console.log("Znaleziono wiele użytkowników");
+					else console.log("nie znaleziono użytkownika");
 					rF.DBError(res);
 				}		 	
 			}

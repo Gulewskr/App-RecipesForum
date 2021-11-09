@@ -20,7 +20,7 @@ const NewCommentForm = (props) => {
         })
         .then( res => {
           try{
-            if(res.status == 200) callback();
+            if(res.status == 200 && callback) callback();
           }catch (err){
             console.log(err);
           };
@@ -86,7 +86,7 @@ const SingleComment = (props) => {
           if(data.error == 1)
             console.log(data.errorMSG);
           else
-            window.location.reload();
+            if(callback) callback();
         })
         .catch(err => {
           console.log(err);
