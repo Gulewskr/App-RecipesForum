@@ -1,7 +1,7 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
 const rF = require('../config/responses');
-const { db, dbF } = require('../DATABASE QUERIES/DB');
+const { db, checkIfRecipeExists, deleteRecipeDataScore, deleteRecipeDataComments } = require('../DATABASE QUERIES/DB');
 
 getRecipes = (req, res) => {
     db.query(
@@ -105,7 +105,73 @@ postRecipe = (req, res) => {
 };
 
 deleteRecipe = (req, res) => {
-    res.status(403);
+    var id = req.query.id;
+    if(id && req.userID && !req.userMOD && !req.userADM)
+    {
+        checkIfRecipeExists(id, req.userID)
+        .then(
+            () => deleteRecipeDataComments(id)
+        ).then(
+            () =>  deleteRecipeDataScore(id)
+        ).then(
+            () =>
+            db.query(
+                'DELETE FROM recipe WHERE ID = ?', [id], 
+                function(error, results, fields) {
+                    if(error){
+                        console.log(error);
+                        rF.DBError(res);
+                        return;
+                    }
+                    if(results.affectedRows == 1)
+                    {
+                        rF.Correct(res);  
+                    }else{
+                        if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH USUNIĘTO ZA DUŻO KONT");
+                        rF.DBError(res);
+                    }
+                    return;
+                }
+            )
+        ).catch(err => {
+            console.log(err);
+            rF.ReqError(res);
+          });
+    }else{
+        if(id && req.userMOD || req.userADM)
+        {
+            deleteRecipeDataComments(id)
+            .then(
+                () =>  deleteRecipeDataScore(id)
+            ).then(
+                () =>
+                db.query(
+                    'DELETE FROM recipe WHERE ID = ?', [id], 
+                    function(error, results, fields) {
+                        if(error){
+                            console.log(error);
+                            rF.DBError(res);
+                            return;
+                        }
+                        if(results.affectedRows == 1)
+                        {
+                            rF.Correct(res);  
+                        }else{
+                            if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH USUNIĘTO ZA DUŻO KONT");
+                            rF.DBError(res);
+                        }
+                        return;
+                    }
+                )
+            ).catch(err => {
+                console.log(err);
+                rF.ReqError(res);
+            });
+        }else{
+            rF.NoAuth(res);
+        }
+    }
+    return;
 };
 
 updateRecipe = (req, res) => {

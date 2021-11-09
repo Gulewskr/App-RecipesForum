@@ -29,7 +29,7 @@ const Recipe = (props) => {
     if(d.error == "")
     {
       var res = [];
-      d.data.forEach(e => res.push(<SingleComment id={e.id} id_recipe={e.id_recipe} id_user={e.id_user} text={e.text} token={token} callback={refreshData}/>));
+      d.data.forEach(e => res.push(<SingleComment id={e.id} id_recipe={e.id_recipe} id_user={e.id_user} text={e.text} owner={e.owner} mod={e.mod} token={token} callback={refreshData}/>));
       setComments(res);
     }else{
       setComments(<div>{d.error}</div>);
@@ -153,6 +153,57 @@ const Recipe = (props) => {
       });
     };
 
+    const Delete = () => {
+      const [v, setV] = useState(false);
+  
+      const deleteData = () => {
+        fetch(`${API_ADDRESS}/recipe?id=${id}`, {
+          method: 'delete',
+          headers: { 
+            'Access-token': token,
+            'Content-Type': 'application/json' 
+          }
+        })
+        .then( res => {
+          try{
+            //jak git to zamień jak nie to błąd wyświetl
+            if(res.status == 200){
+              console.log("usunięto");
+              return {error: 0}
+            }else{
+              console.log(res);
+            }
+            return res.json();
+          }catch (err){
+            console.log(err);
+          };
+        })
+        .then((data) => {
+          if(data.error == 1)
+            console.log(data.errorMSG);
+          else
+            window.location.assign("/recipes");
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      };
+  
+      return (
+        <div>
+          {v ? 
+            <div>
+              <p>Czy na pewno chcesz usunąć przepis (tej operacji nie da się cofnąć, usunięte zostaną również wszelkie związane komentarze)</p>
+              <a onClick={() => setV(false)}>Nie</a>
+              <a onClick={() => deleteData()}>Tak usuń konto</a>
+            </div>
+            :
+            <div onClick={() => setV(true)}>USUŃ KONTO</div>
+          }
+        </div>
+      );
+    }
+
     return (
       <div>
         <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
@@ -171,6 +222,7 @@ const Recipe = (props) => {
               </select>
               <input type="submit"/>
             </form>
+            <Delete />
           </div>
         {/*<a className="przycisk" onClick={() => saveChange()}> Zapisz </a>*/}
       </div>

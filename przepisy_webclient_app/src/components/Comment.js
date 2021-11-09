@@ -52,19 +52,71 @@ const NewCommentForm = (props) => {
 }
 
 const SingleComment = (props) => {
-    const {id, id_recipe, id_user, text, token, callback} = props;
+    const {id, id_recipe, id_user, text, owner, mod, token, callback} = props;
     const [newCommentV, setV] = useState(false);
 
     const changeV = () => setV(!newCommentV);
 
-    return (
+    const Delete = () => {
+      const [v, setV] = useState(false);
+  
+      const deleteData = () => {
+        fetch(`${API_ADDRESS}/comment?id=${id}`, {
+          method: 'delete',
+          headers: { 
+            'Access-token': token,
+            'Content-Type': 'application/json' 
+          }
+        })
+        .then( res => {
+          try{
+            //jak git to zamień jak nie to błąd wyświetl
+            if(res.status == 200){
+              console.log("usunięto");
+              return {error: 0}
+            }else{
+              console.log(res);
+            }
+            return res.json();
+          }catch (err){
+            console.log(err);
+          };
+        })
+        .then((data) => {
+          if(data.error == 1)
+            console.log(data.errorMSG);
+          else
+            window.location.reload();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      };
+  
+      return (
         <div>
+          {v ? 
+            <div>
+              <p>Czy na pewno chcesz usunąć komentarz (tej operacji nie da się cofnąć)</p>
+              <a onClick={() => setV(false)}>Nie</a>
+              <a onClick={() => deleteData()}>Tak usuń komentarz</a>
+            </div>
+            :
+            <div onClick={() => setV(true)}>USUŃ KOMENTARZ</div>
+          }
+        </div>
+      );
+    }
+
+    return (
+        <div className="comment">
             <p>Id komentarzu: {id}</p>
             <p>Przepis ID: {id_recipe}</p>
             <p>Użytkownik ID: {id_user}</p>
             <p>Treść: {text}</p>
             <a onClick={() => changeV()}> { newCommentV ? "Anuluj" : "Odpowiedz" }</a>
             { newCommentV && <NewCommentForm id_recipe={id_recipe} id_user={id_user} id_comment={id} token={token} callback={callback}/> }
+            {owner || mod ? <Delete /> : <div>brak uprawnień do usunięcia</div>}
         </div>
     );
 }
