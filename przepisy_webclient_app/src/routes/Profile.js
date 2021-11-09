@@ -137,6 +137,55 @@ const Profile = (props) => {
     );
   };
 
+  const DeleteAccount = () => {
+    const [v, setV] = useState(false);
+
+    const deleteAcc = () => {
+      fetch(`${API_ADDRESS}/profile?id=${id}`, {
+        method: 'delete',
+        headers: { 
+          'Access-token': token,
+          'Content-Type': 'application/json' 
+        }
+      })
+      .then( res => {
+        try{
+          //jak git to zamień jak nie to błąd wyświetl
+          if(res.status == 200){
+            console.log("usunięto");
+            return {error: 0}
+          }else{
+            console.log(res);
+          }
+          return res.json();
+        }catch (err){
+          console.log(err);
+        };
+      })
+      .then((data) => {
+        if(data.error == 1)
+          console.log(data.errorMSG);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    };
+
+    return (
+      <div>
+        {v ? 
+          <div>
+            <p>Czy na pewno chcesz usunąć konto (tej operacji nie da się cofnąć, usunięte zostaną również wszelkie przepisy i komentarze)</p>
+            <a onClick={() => setV(false)}>Nie</a>
+            <a onClick={() => deleteAcc()}>Tak usuń konto</a>
+          </div>
+          :
+          <div onClick={() => setV(true)}>USUŃ KONTO</div>
+        }
+      </div>
+    );
+  }
+
   const EditPasswdData = () => {
     const [oldPasswd, setOldPasswd] = useState("");
     const [newPasswd, setNewPasswd] = useState("");
@@ -216,7 +265,10 @@ const Profile = (props) => {
         owner || mod ? 
           <>
             {edit ? 
-            <EditUserData />
+            <>
+              <EditUserData />
+              <DeleteAccount />
+            </>
               :
             <a className="przycisk" onClick={() => setEditting(true)}> Edytuj dane </a>}
             {editPassword ? 

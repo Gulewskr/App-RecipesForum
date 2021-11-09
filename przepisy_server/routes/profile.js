@@ -1,10 +1,50 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
 const rF = require('../config/responses');
-const db = require('../DATABASE QUERIES/DB');
+const { db, deleteUserDataScore, deleteUserDataScoreForRecipe, deleteUserDataRecipes, deleteUserDataComments, deleteUserDataCommentsForRecipe  } = require('../DATABASE QUERIES/DB');
 
 createAccount  = (req, res) => { res.status(403); };
-deleteAccount  = (req, res) => { res.status(403); };
+deleteAccount  = (req, res) => {
+    var id = req.query.id;
+    if(id && req.userID && (id == req.userID || req.userMOD || req.userADM))
+    {
+        deleteUserDataScoreForRecipe(id)
+        .then(
+            () =>  deleteUserDataCommentsForRecipe(id)
+        ).then(
+            () => deleteUserDataRecipes(id)
+        ).then(
+            () => deleteUserDataComments(id)
+        ).then(
+            () => deleteUserDataScore(id)
+        ).then(
+            () =>
+            db.query(
+                'DELETE FROM ACCOUNTS WHERE ID = ?', [id], 
+                function(error, results, fields) {
+                    if(error){
+                        console.log(error);
+                        rF.DBError(res);
+                        return;
+                    }
+                    if(results.affectedRows == 1)
+                    {
+                        rF.Correct(res);  
+                    }else{
+                        if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH USUNIĘTO ZA DUŻO KONT");
+                        rF.DBError(res);
+                    }
+                    return;
+                }
+            )
+        ).catch(err => {
+            console.log(err);
+          });
+    }else{
+        rF.NoAuth(res);
+    }
+    return;
+};
 updateAccountPasswd  = (req, res) => { 
     var id = req.query.id;
     if(req.query.id && req.userID && id == req.userID)
