@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 
 const RecipeComp = (props) => {
     const {id, user, name, text, type} = props;
@@ -16,7 +16,23 @@ const RecipeForm = (props) => {
     const {name, text,  type, speed, lvl, tags, callback } = props;
     const [error, setError] = useState(0);
     const [_name, setName] = useState(name ? name : "");
+    
     const [_tag, setTags] = useState(tags ? tags : "");
+    //const [tagsTable, setTT] = useState([]);
+    const [tagList, setTL] = useState("");
+    
+    const {tagsTable} = useMemo(
+        () => { return({
+          tagsTable : []
+        })}, []);
+    /*
+    useEffect(() => {
+        if(tagsTable.length > 1)
+        {
+            setTags(tagsTable[tagsTable.length - 1]);
+        }
+    },[tagsTable.length])
+    */
     const [_text, setText] = useState(text ? text : "");
     const [_type, setType] = useState(type ? type : 1);
     const [_speed, setSpeed] = useState(speed ? speed : 1);
@@ -25,6 +41,40 @@ const RecipeForm = (props) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         callback(_name, _text, _tag, _type, _speed, _lvl);
+    }
+
+    const changedTags = (v, i, b) => {
+        var tmp = v.split(' #');
+        if(tmp.length == 2){
+            tagsTable.push(tmp[0]);
+            i.target.value = '#' + tmp[1];
+        }else if(b && tmp[0] != ""){
+            tagsTable.push(tmp[0]);
+            i.target.value = "";
+        }else if(tmp[0] == ""){
+            getLastItem(i);
+        }
+        setTL(drawTags());
+    }
+
+    const getLastItem = (i) => {
+        console.log(tagsTable);
+        if(tagsTable.length > 0)
+        {
+            i.target.value = tagsTable.pop();
+            setTL(drawTags());
+        }
+    }
+
+    const drawTags = (v) => 
+    {
+        var res = [];
+        var l = tagsTable.length;
+        for(let i = 0; i < l; i++)
+        {
+            res.push(<a key={i} style={{color: "blue", paddingLeft: "5px"}}>{tagsTable[i].replaceAll(' ', '_')}</a>);
+        }
+        return res;
     }
 
     const ErrorText = () => {
@@ -44,7 +94,10 @@ const RecipeForm = (props) => {
         <div className="login-form">
             <form onSubmit={handleSubmit}>
             <input type="text" onChange={v => setName(v.target.value)} name="username" defaultValue={_name} placeholder="nazwa przepisu" autoComplete="off" required/>
-            <input type="text" onChange={v => setTags(v.target.value)} name="username" defaultValue={_tag} placeholder="tagi" autoComplete="off" required/>
+            <div className="taginput">
+                {tagList}
+                <input type="text" onChange={v => changedTags(v.target.value, v)} onFocus={v => getLastItem(v)} onBlur={v => changedTags(v.target.value, v, true)} name="username" defaultValue={_tag} autoComplete="off" required/>
+            </div>
             <p>Rodzaj dania</p>
             <select value={_type} onChange={v => setType(v.target.value)}>            
                 <option value={1}>Danie główne</option>

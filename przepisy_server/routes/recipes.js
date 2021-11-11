@@ -4,6 +4,50 @@ const rF = require('../config/responses');
 const { db, checkIfRecipeExists, deleteRecipeDataScore, deleteRecipeDataComments } = require('../DATABASE QUERIES/DB');
 
 getRecipes = (req, res) => {
+    var type = req.query.type != undefined ? " type IN (" + req.query.type.split(",") + ")" : " TRUE = TRUE ";
+    var spd = req.query.speed != undefined ? " speed IN (" + req.query.speed.split(",") + ")" : " TRUE = TRUE ";
+    var lvl = req.query.lvl != undefined ? " lvl IN (" + req.query.lvl.split(",") + ")" : " TRUE = TRUE ";
+    //var tag = req.query.tags != undefined ? " t IN (" + req.query.tags.split(",") + ")": "";
+    
+    console.log(`utworzone polecenia: \n typy: ${type} \n czas: ${spd} \n poziom: ${lvl} \n`)// tagi: ${tag}`)
+    var q = `SELECT * FROM RECIPE WHERE ${type} AND ${spd} AND ${lvl}`;
+    db.query(
+        q, [], 
+        function(error, results, fields) {
+            if(error){
+                console.log(error);
+                rF.DBError(res);
+                return;
+            }
+            console.log(results);
+            if (results.length > 0) {
+                var data = JSON.parse(JSON.stringify(results));
+                rF.CorrectWData(res,
+                {
+                    data: data,
+                    error: 0,
+                    errorMSG: ""
+                });
+            } else {
+                rF.CorrectWData(res,
+                {
+                    data: "",
+                    error: 1,
+                    errorMSG: "Brak przepisów w bazie danych"
+                });
+            }		 	
+            return;
+        }
+    );
+};
+/*
+getRecipes = (req, res) => {
+    var type = req.query.type != undefined ? req.query.type.split(",") : "";
+    var spd = req.query.speed != undefined ? req.query.speed.split(",") : "";
+    var lvl = req.query.lvl != undefined ? req.query.lvl.split(",") : "";
+    var tag = req.query.tags != undefined ? req.query.tags.split(",") : "";
+    console.log(type.length);
+    console.log(`otrzymano \n typy: ${type} \n czas: ${spd} \n poziom: ${lvl} \n tagi: ${tag}`)
     db.query(
         'SELECT * FROM RECIPE', [], 
         function(error, results, fields) {
@@ -32,7 +76,7 @@ getRecipes = (req, res) => {
         }
     );
 };
-
+*/
 getRecipe = (req, res) => {
     if(req.query.id)
     {

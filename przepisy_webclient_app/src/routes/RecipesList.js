@@ -60,6 +60,23 @@ const RecipeList = () => {
     }
 
     const applyFilters = () => {
+      
+      /*console.log("Wygenerowany link do pobrania danych : \n" + 
+        `${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(",") + "&": ""}`);
+      
+      fetch(`${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(","): ""}`,
+      {
+        method : 'get',
+        headers: { 
+          'Access-token': USER.token,
+          'Content-Type': 'application/json' 
+        }
+      } 
+      ).then( () => console.log("przesłano")
+      ).catch (err => {
+        console.log(err);
+      });
+      
       fetch(`${API_ADDRESS}/recipes?type=${_type}&speed=${_speed}&lvl=${_lvl}&tags=${_TAGS}`, {
         method: 'get',
         headers: { 
@@ -86,6 +103,7 @@ const RecipeList = () => {
       .catch(err => {
         console.log(err);
       });
+      */
     }
 
     /**
@@ -114,6 +132,7 @@ const RecipeList = () => {
         <SingleFilter name={"łatwe"} v={1} l={_lvl}/>
         <SingleFilter name={"średnie"} v={2} l={_lvl}/>
         <SingleFilter name={"trudne"} v={3} l={_lvl}/>
+        <div onClick={() => getRecipes()}>Zastosuj</div>
       </div>
     )
   }
@@ -133,7 +152,7 @@ const RecipeList = () => {
     setRecipes( res );
   }
 
-  const getRecipes = () => fetch(`${API_ADDRESS}/recipes`, {
+  const getRecipes = () => fetch(/*`${API_ADDRESS}/recipes`*/ `${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(","): ""}`, {
       method: 'get',
       headers: { 
           'Access-token': USER.token,
