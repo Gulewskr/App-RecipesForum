@@ -17,13 +17,13 @@ const RecipeForm = (props) => {
     const [error, setError] = useState(0);
     const [_name, setName] = useState(name ? name : "");
     
-    const [_tag, setTags] = useState(tags ? tags : "");
+    //const [_tag, setTags] = useState(tags ? tags : "");
     //const [tagsTable, setTT] = useState([]);
     const [tagList, setTL] = useState("");
     
     const {tagsTable} = useMemo(
         () => { return({
-          tagsTable : []
+          tagsTable : tags ? tags : []
         })}, []);
     /*
     useEffect(() => {
@@ -40,7 +40,7 @@ const RecipeForm = (props) => {
     
     const handleSubmit = (e) => {
         e.preventDefault();
-        callback(_name, _text, _tag, _type, _speed, _lvl);
+        callback(_name, _text, tagsTable, _type, _speed, _lvl);
     }
 
     const changedTags = (v, i, b) => {
@@ -66,13 +66,21 @@ const RecipeForm = (props) => {
         }
     }
 
+    const deleteTagByIndex = (i) => {
+        if(i >= 0 && i < tagsTable.length)
+        {
+            tagsTable.splice(i, 1);
+            setTL(drawTags());
+        }
+    }
+
     const drawTags = (v) => 
     {
         var res = [];
         var l = tagsTable.length;
         for(let i = 0; i < l; i++)
         {
-            res.push(<a key={i} style={{color: "blue", paddingLeft: "5px"}}>{tagsTable[i].replaceAll(' ', '_')}</a>);
+            res.push(<a key={i} onClick={() => deleteTagByIndex(i)} style={{color: "blue", paddingLeft: "5px"}}>{tagsTable[i].replaceAll(' ', '_')}</a>);
         }
         return res;
     }
@@ -96,7 +104,7 @@ const RecipeForm = (props) => {
             <input type="text" onChange={v => setName(v.target.value)} name="username" defaultValue={_name} placeholder="nazwa przepisu" autoComplete="off" required/>
             <div className="taginput">
                 {tagList}
-                <input type="text" onChange={v => changedTags(v.target.value, v)} onFocus={v => getLastItem(v)} onBlur={v => changedTags(v.target.value, v, true)} name="username" defaultValue={_tag} autoComplete="off" required/>
+                <input type="text" onChange={v => changedTags(v.target.value, v)} onFocus={v => getLastItem(v)} onBlur={v => changedTags(v.target.value, v, true)} name="username" autoComplete="off"/>
             </div>
             <p>Rodzaj dania</p>
             <select value={_type} onChange={v => setType(v.target.value)}>            

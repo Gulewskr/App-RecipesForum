@@ -12,10 +12,11 @@ const Recipe = (props) => {
 
   const [edit, setEditting] = useState(false);
   const [data, setData] = useState("");  
+  const [dataTags, setDataTags] = useState([]);  
   const [score, setScore] = useState(0);
   const [comments, setComments] = useState(<div></div>);  
   
-  const {owner, mod, name, text, type, speed, lvl, tags} = useMemo(
+  const {owner, mod, name, text, type, speed, lvl} = useMemo(
     () => {console.log(data); return({
       owner : data !== "" ? data.own ? data.own === true : false : false, 
       mod : data !== "" ? data.mod ? data.mod === true : false : false, 
@@ -23,9 +24,10 @@ const Recipe = (props) => {
       text : data !== "" ? data.text ? data.text : "null" : "null", 
       type : data !== "" ? data.type != undefined ? data.type : 1 : 1, 
       speed : data !== "" ? data.speed != undefined ? data.speed : 1 : 1, 
-      lvl : data !== "" ? data.lvl != undefined ? data.lvl : 1 : 1, 
-      tags : data !== "" ? data.tags ? data.tags : "null" : "null"
+      lvl : data !== "" ? data.lvl != undefined ? data.lvl : 1 : 1
     })}, [data]);
+
+  const tags = useMemo(() => dataTags ? dataTags : []);
 
   const displayComments = (d) => {
     if(d.error == "")
@@ -57,6 +59,28 @@ const Recipe = (props) => {
       })
       .then((data) => {
         setData(data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+      fetch(`${API_ADDRESS}/recipeTag?id=${id}`, {
+        method: 'get',
+        headers: { 
+          'Access-token': token,
+          'Content-Type': 'application/json' 
+        },
+      })
+      .then( res => {
+        try{
+          console.log(res); 
+          return res.json();
+        }catch (err){
+          console.log(err);
+        };
+      })
+      .then((data) => {
+          setDataTags(data.data);
       })
       .catch(err => {
         console.log(err);
@@ -309,7 +333,7 @@ const Recipe = (props) => {
       </p>
       <p>
         Tagi:<br/>
-        {tags}
+        {JSON.stringify(tags)}
       </p>
       <div>
         Oceny: <br />

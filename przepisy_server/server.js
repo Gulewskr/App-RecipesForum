@@ -70,6 +70,7 @@ app.put('/score', [AuthF.verifyToken], ScrF.updateScore);
 		-id
 */
 app.get('/recipe', [AuthF.decodeExtraToken], ReciF.getRecipe);
+app.get('/recipeTag', [AuthF.decodeExtraToken], ReciF.getTagsForRecipe);
 //		-id user
 app.post('/recipe', [AuthF.verifyToken], ReciF.postRecipe);
 app.put('/recipe', [AuthF.verifyToken], ReciF.updateRecipe);

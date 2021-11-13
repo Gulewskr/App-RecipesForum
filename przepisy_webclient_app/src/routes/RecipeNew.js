@@ -17,7 +17,7 @@ const RecipeNew = () => {
   const { USER } = useContext(UserContext);
 
 
-  const tryCreateNewRecipe = (name, text, tag, type, speed, lvl) => {
+  const tryCreateNewRecipe = (name, text, tags, type, speed, lvl) => {
     fetch(`${API_ADDRESS}/recipe`, {
       method: 'post',
       headers: { 'Content-Type' : 'application/json',
@@ -25,7 +25,7 @@ const RecipeNew = () => {
       body: JSON.stringify({
         name: name,
         text: text,
-        tags: tag,
+        tags: tags,
         type: type,
         speed: speed,
         lvl: lvl
