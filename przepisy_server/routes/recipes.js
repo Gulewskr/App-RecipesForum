@@ -4,7 +4,6 @@ const rF = require('../config/responses');
 const { db, checkIfRecipeExists, deleteRecipeDataScore, deleteRecipeDataComments } = require('../DATABASE QUERIES/DB');
 
 getTagsForRecipe = (req, res) => {
-    //SELECT TAGS.text FROM Tags, Tags_connection WHERE Tags.id = tags_connection.id_tag AND tags_connection.id_recipe = 1 
     if(req.query.id)
     {
         var id = req.query.id;
@@ -292,6 +291,7 @@ updateRecipe = (req, res) => {
         var name = req.body.name;
 	    var text = req.body.text;
 	    var type = req.body.type;
+        var _tags = req.body.tags;
         var _speed = req.body.speed;
         var _lvl = req.body.lvl;
 
@@ -307,9 +307,44 @@ updateRecipe = (req, res) => {
                             rF.DBError(res);
                             return;
                         }
-                        if(results.affectedRows == 1)
-                        {
-                            rF.Correct(res);   
+                        if (results.affectedRows == 1) {
+                            console.log(`zaktualizowano przepis "${_name}" w bazie danych`);
+                            db.query(
+                                'DELETE FROM tags_connection WHERE id_recipe = ?;', 
+                                [id], 
+                                function(error, results, fields) {
+                                    console.log(`dodawanie tagów: ${_tags}`);
+                                    for(i in _tags)
+                                    {
+                                        var tag = _tags[i];
+                                        console.log(`tag: ${tag}`);
+                                        db.query(
+                                            'INSERT INTO tags (TEXT) VALUES ( ?);', 
+                                            [tag], 
+                                            function(error, results, fields) {
+                                                if(error){
+                                                    console.log(error);
+                                                    return;
+                                                }
+                                                var tagID = results.insertId;
+                                                db.query(
+                                                    'INSERT INTO tags_connection (id_tag, id_recipe) VALUES (?, ?);', 
+                                                    [tagID, id], 
+                                                    function(error, results, fields) { 
+                                                        if(error){
+                                                            console.log(error);
+                                                            return;
+                                                        }
+                                                        console.log(`dodano tag ${tagID} do przepisu ${id}`)  
+                                                        return;        
+                                                    }
+                                                );
+                                            }
+                                        );
+                                    }
+                                }
+                            );
+                            rF.Correct(res);
                         }else{
                             if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
                             rF.DBError(res);
@@ -326,17 +361,47 @@ updateRecipe = (req, res) => {
                             rF.DBError(res);
                             return;
                         }
-                        if(results.affectedRows == 1)
-                        {
-                            rF.Correct(res);      
+                        if (results.affectedRows == 1) {
+                            console.log(`zaktualizowano przepis "${name}" w bazie danych`);
+                            db.query(
+                                'DELETE FROM tags_connection WHERE id_recipe = ?;', 
+                                [id], 
+                                function(error, results, fields) {
+                                    console.log(`dodawanie tagów: ${_tags}`);
+                                    for(i in _tags)
+                                    {
+                                        var tag = _tags[i];
+                                        console.log(`tag: ${tag}`);
+                                        db.query(
+                                            'INSERT INTO tags (TEXT) VALUES ( ?);', 
+                                            [tag], 
+                                            function(error, results, fields) {
+                                                if(error){
+                                                    console.log(error);
+                                                    return;
+                                                }
+                                                var tagID = results.insertId;
+                                                db.query(
+                                                    'INSERT INTO tags_connection (id_tag, id_recipe) VALUES (?, ?);', 
+                                                    [tagID, id], 
+                                                    function(error, results, fields) { 
+                                                        if(error){
+                                                            console.log(error);
+                                                            return;
+                                                        }
+                                                        console.log(`dodano tag ${tagID} do przepisu ${id}`)  
+                                                        return;        
+                                                    }
+                                                );
+                                            }
+                                        );
+                                    }
+                                }
+                            );
+                            rF.Correct(res);
                         }else{
-                            if(results.affectedRows > 1)
-                            {
-                                console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
-                                rF.DBError(res);
-                            }else{
-                                rF.NoAuth(res);
-                            }
+                            if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
+                            rF.DBError(res);
                         }
                         return;
                     }

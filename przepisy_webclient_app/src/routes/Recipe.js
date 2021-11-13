@@ -27,7 +27,16 @@ const Recipe = (props) => {
       lvl : data !== "" ? data.lvl != undefined ? data.lvl : 1 : 1
     })}, [data]);
 
-  const tags = useMemo(() => dataTags ? dataTags : []);
+  const tags = useMemo(() => 
+    {
+      if(dataTags){
+        let res = [];
+        dataTags.forEach((v,i) => res.push(<p key={i}>{v}</p>));
+        return res;
+      }else{
+        return <p>brak</p>;
+      }
+    });
 
   const displayComments = (d) => {
     if(d.error == "")
@@ -80,7 +89,12 @@ const Recipe = (props) => {
         };
       })
       .then((data) => {
-          setDataTags(data.data);
+          let res = [];
+          for(let i in data.data)
+          {
+            res.push(data.data[i].text);
+          }
+          setDataTags(res);
       })
       .catch(err => {
         console.log(err);
@@ -125,7 +139,6 @@ const Recipe = (props) => {
   const resetEdit = () =>
   {
     setEditting(false);
-    //setEuserData(userData);
   };
 
   const Delete = () => {
@@ -305,7 +318,7 @@ const Recipe = (props) => {
           edit ? 
           <>
             <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
-            <RecipeForm name={name} text={text}  type={type} speed={speed} lvl={lvl} tags={tags} callback={saveChange} />
+            <RecipeForm name={name} text={text}  type={type} speed={speed} lvl={lvl} tags={dataTags} callback={saveChange} />
             <Delete />
           </>
             :
@@ -315,26 +328,26 @@ const Recipe = (props) => {
       : 
       <div />
       }
-      <p>
+      <div>
         Sposób przygotowania:<br/>
         {text}
-      </p>
-      <p>
+      </div>
+      <div>
         Typ:<br/>
         {type}
-      </p>
-      <p>
+      </div>
+      <div>
         Szybkość:<br/>
         {speed}
-      </p>
-      <p>
+      </div>
+      <div>
         Poziom:<br/>
         {lvl}
-      </p>
-      <p>
+      </div>
+      <div>
         Tagi:<br/>
-        {JSON.stringify(tags)}
-      </p>
+        {tags}
+      </div>
       <div>
         Oceny: <br />
         <ScoreField />

@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 const RecipeComp = (props) => {
     const {id, user, name, text, type} = props;
@@ -17,22 +17,16 @@ const RecipeForm = (props) => {
     const [error, setError] = useState(0);
     const [_name, setName] = useState(name ? name : "");
     
-    //const [_tag, setTags] = useState(tags ? tags : "");
-    //const [tagsTable, setTT] = useState([]);
     const [tagList, setTL] = useState("");
-    
     const {tagsTable} = useMemo(
         () => { return({
           tagsTable : tags ? tags : []
         })}, []);
-    /*
+
     useEffect(() => {
-        if(tagsTable.length > 1)
-        {
-            setTags(tagsTable[tagsTable.length - 1]);
-        }
-    },[tagsTable.length])
-    */
+        drawTags();
+    },[]);
+
     const [_text, setText] = useState(text ? text : "");
     const [_type, setType] = useState(type ? type : 1);
     const [_speed, setSpeed] = useState(speed ? speed : 1);
@@ -54,7 +48,7 @@ const RecipeForm = (props) => {
         }else if(tmp[0] == ""){
             getLastItem(i);
         }
-        setTL(drawTags());
+        drawTags();
     }
 
     const getLastItem = (i) => {
@@ -62,7 +56,7 @@ const RecipeForm = (props) => {
         if(tagsTable.length > 0)
         {
             i.target.value = tagsTable.pop();
-            setTL(drawTags());
+            drawTags();
         }
     }
 
@@ -70,7 +64,7 @@ const RecipeForm = (props) => {
         if(i >= 0 && i < tagsTable.length)
         {
             tagsTable.splice(i, 1);
-            setTL(drawTags());
+            drawTags();
         }
     }
 
@@ -82,7 +76,7 @@ const RecipeForm = (props) => {
         {
             res.push(<a key={i} onClick={() => deleteTagByIndex(i)} style={{color: "blue", paddingLeft: "5px"}}>{tagsTable[i].replaceAll(' ', '_')}</a>);
         }
-        return res;
+        setTL(res);
     }
 
     const ErrorText = () => {
