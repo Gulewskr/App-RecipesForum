@@ -18,6 +18,7 @@ const RecipeNew = () => {
 
 
   const tryCreateNewRecipe = (name, text, tags, type, speed, lvl) => {
+    console.log(`tagi: ${tags}`)
     fetch(`${API_ADDRESS}/recipe`, {
       method: 'post',
       headers: { 'Content-Type' : 'application/json',

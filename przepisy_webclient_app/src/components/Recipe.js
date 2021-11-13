@@ -40,10 +40,10 @@ const RecipeForm = (props) => {
     const changedTags = (v, i, b) => {
         var tmp = v.split(' #');
         if(tmp.length == 2){
-            tagsTable.push(tmp[0]);
+            tagsTable.push(tmp[0].replaceAll('#',''));
             i.target.value = '#' + tmp[1];
         }else if(b && tmp[0] != ""){
-            tagsTable.push(tmp[0]);
+            tagsTable.push(tmp[0].replaceAll('#',''));
             i.target.value = "";
         }else if(tmp[0] == ""){
             getLastItem(i);
@@ -55,7 +55,7 @@ const RecipeForm = (props) => {
         console.log(tagsTable);
         if(tagsTable.length > 0)
         {
-            i.target.value = tagsTable.pop();
+            i.target.value = '#' + tagsTable.pop();
             drawTags();
         }
     }
@@ -74,7 +74,7 @@ const RecipeForm = (props) => {
         var l = tagsTable.length;
         for(let i = 0; i < l; i++)
         {
-            res.push(<a key={i} onClick={() => deleteTagByIndex(i)} style={{color: "blue", paddingLeft: "5px"}}>{tagsTable[i].replaceAll(' ', '_')}</a>);
+            res.push(<a key={i} onClick={() => deleteTagByIndex(i)} style={{color: "blue", paddingLeft: "5px"}}>#{tagsTable[i].replaceAll(' ', '_').replaceAll('#','')}</a>);
         }
         setTL(res);
     }

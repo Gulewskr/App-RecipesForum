@@ -30,13 +30,15 @@ getTagsForRecipe = (req, res) => {
 };
 
 getRecipes = (req, res) => {
-    var type = req.query.type != undefined ? " type IN (" + req.query.type.split(",") + ")" : " TRUE = TRUE ";
-    var spd = req.query.speed != undefined ? " speed IN (" + req.query.speed.split(",") + ")" : " TRUE = TRUE ";
-    var lvl = req.query.lvl != undefined ? " lvl IN (" + req.query.lvl.split(",") + ")" : " TRUE = TRUE ";
-    //var tag = req.query.tags != undefined ? " t IN (" + req.query.tags.split(",") + ")": "";
-    
-    //console.log(`utworzone polecenia: \n typy: ${type} \n czas: ${spd} \n poziom: ${lvl} \n`)// tagi: ${tag}`)
-    var q = `SELECT * FROM RECIPE WHERE ${type} AND ${spd} AND ${lvl}`;
+    var type = req.query.type != undefined ? " type IN (" + req.query.type.split(",") + ")" : " TRUE ";
+    var spd = req.query.speed != undefined ? " speed IN (" + req.query.speed.split(",") + ")" : " TRUE ";
+    var lvl = req.query.lvl != undefined ? " lvl IN (" + req.query.lvl.split(",") + ")" : " TRUE ";
+    var tag = req.query.tags != undefined ? "id in (SELECT tags_connection.id_recipe FROM tags, tags_connection WHERE tags.TEXT in (\"" + req.query.tags.split(",").join("\", \"") + "\") AND tags.id = tags_connection.id_tag )": "true";
+    //id in (SELECT tags_connection.id_recipe FROM tags, tags_connection WHERE tags.TEXT in ${tag} AND tags.id = tags_connection.id_tag )
+    console.log(req.query.tags);
+    console.log(`utworzone polecenia: \n typy: ${type} \n czas: ${spd} \n poziom: ${lvl} \n tagi: ${tag}`)
+    //var q = `SELECT * FROM RECIPE WHERE ${type} AND ${spd} AND ${lvl}`;
+    var q = `SELECT * FROM RECIPE WHERE ${type} AND ${spd} AND ${lvl} AND ${tag}`
     db.query(
         q, [], 
         function(error, results, fields) {
