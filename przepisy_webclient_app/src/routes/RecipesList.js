@@ -77,11 +77,13 @@ const RecipeList = () => {
     const addToFilterList = (list, v) => {
       var i = list.indexOf(v);
       if(i == -1) list.push(v);
+      console.log(list);
     };
 
     const removeFromFilterList = (list, v) => {
       var i = list.indexOf(v);
       if(i != -1) list.splice(i, 1);
+      console.log(list);
     };
 
     const TagsFilter = () => {
@@ -90,7 +92,7 @@ const RecipeList = () => {
       {
         let tagID = allTags[i].id;
         let tagText = allTags[i].text;
-        res.push(<p key={tagID}>{tagText}</p>);
+        res.push(<SingleFilter key={tagID} name={tagText} v={tagText} l={_TAGS}/>);
       }
       return res;
     };

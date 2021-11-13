@@ -42,9 +42,9 @@ const RecipeNew = () => {
       };
     })
     .then((data) => {
-      if(typeof data == Number)
+      if(data.error != 0)
       {
-        console.log("Błąd dodania " + data);
+        console.log("Błąd dodania " + data.errorMSG);
         return;
       } 
         //data = id nowego przepisu

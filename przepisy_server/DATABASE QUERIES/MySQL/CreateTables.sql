@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS images (
 
 CREATE TABLE IF NOT EXISTS tags (
   id INTEGER NOT NULL PRIMARY KEY auto_increment,
-  text varchar(200) NOT NULL
+  text varchar(200) NOT NULL unique
 );
 
 CREATE TABLE IF NOT EXISTS tags_connection (

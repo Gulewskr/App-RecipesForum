@@ -35,7 +35,7 @@ getRecipes = (req, res) => {
     var lvl = req.query.lvl != undefined ? " lvl IN (" + req.query.lvl.split(",") + ")" : " TRUE = TRUE ";
     //var tag = req.query.tags != undefined ? " t IN (" + req.query.tags.split(",") + ")": "";
     
-    console.log(`utworzone polecenia: \n typy: ${type} \n czas: ${spd} \n poziom: ${lvl} \n`)// tagi: ${tag}`)
+    //console.log(`utworzone polecenia: \n typy: ${type} \n czas: ${spd} \n poziom: ${lvl} \n`)// tagi: ${tag}`)
     var q = `SELECT * FROM RECIPE WHERE ${type} AND ${spd} AND ${lvl}`;
     db.query(
         q, [], 
@@ -45,7 +45,7 @@ getRecipes = (req, res) => {
                 rF.DBError(res);
                 return;
             }
-            console.log(results);
+            //console.log(results);
             if (results.length > 0) {
                 var data = JSON.parse(JSON.stringify(results));
                 rF.CorrectWData(res,
@@ -169,32 +169,64 @@ postRecipe = (req, res) => {
                         var tag = _tags[i];
                         console.log(`tag: ${tag}`);
                         db.query(
-                            'INSERT INTO tags (TEXT) VALUES ( ?);', 
-                            [tag], 
+                            'INSERT INTO tags (TEXT) VALUES ( ? ) ON DUPLICATE KEY UPDATE TEXT = ?;', 
+                            [tag, tag], 
                             function(error, results, fields) {
                                 if(error){
                                     console.log(error);
                                     return;
                                 }
                                 var tagID = results.insertId;
-                                db.query(
-                                    'INSERT INTO tags_connection (id_tag, id_recipe) VALUES (?, ?);', 
-                                    [tagID, recipeID], 
-                                    function(error, results, fields) { 
-                                        if(error){
-                                            console.log(error);
-                                            return;
+                                if(tagID != 0){
+                                    db.query(
+                                        'INSERT INTO tags_connection (id_tag, id_recipe) VALUES (?, ?);', 
+                                        [tagID, recipeID], 
+                                        function(error, results, fields) { 
+                                            if(error){
+                                                console.log(error);
+                                                return;
+                                            }
+                                            console.log(`dodano tag ${tagID} do przepisu ${recipeID}`)  
+                                            return;        
                                         }
-                                        console.log(`dodano tag ${tagID} do przepisu ${recipeID}`)  
-                                        return;        
-                                    }
-                                );
+                                    );
+                                }else{
+                                    db.query(
+                                        'SELECT * FROM tags WHERE TEXT = ?;', 
+                                        [tag, tag],
+                                        function(error, results, fields) {
+                                            if(error){
+                                                console.log(error);
+                                                return;
+                                            }
+                                            var tagID = JSON.parse(JSON.stringify(results[0])).id;
+                                            if(tagID)
+                                            {
+                                                console.log(tagID);
+                                                db.query(
+                                                    'INSERT INTO tags_connection (id_tag, id_recipe) VALUES (?, ?);', 
+                                                    [tagID, recipeID], 
+                                                    function(error, results, fields) { 
+                                                        if(error){
+                                                            console.log(error);
+                                                            return;
+                                                        }
+                                                        console.log(`dodano tag ${tagID} do przepisu ${recipeID}`)  
+                                                        return;        
+                                                    }
+                                                );
+                                            }
+                                        }
+                                    );
+                                }
                             }
                         );
                     }
-                    deleteNotUsingTags();
-                    rF.Correct(res);
-                    
+                    rF.CorrectWData(res, {
+                        id: recipeID, 
+                        error: 0,
+                        errorMSG: ""
+                    });
                 }else{
                     console.log("SPRAWDZ BAZE DANYCH DODANO ZA DUZO PRZEPISÓW");
                     rF.DBError(res);
