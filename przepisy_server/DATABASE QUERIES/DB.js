@@ -13,6 +13,18 @@ db.connect((error) => {
 	console.log("connected");
 });
 
+deleteNotUsingTags = () => {
+	db.query(
+		'DELETE FROM tags  WHERE NOT EXISTS (SELECT * FROM tags_connection WHERE id_tag = tags.id)', [],
+		function(error, results, fields){
+			if (error) {
+				console.log(error);
+			} else {
+				console.log("zaktualizowano dane");
+			}
+		});
+}
+
 deleteUserDataComments = async (id) => {
 	return new Promise(
 		(resolve, reject) => {
@@ -174,4 +186,4 @@ checkIfRecipeExists = async (id_recipe, id_user) => {
 };
 
 
-module.exports = {db, checkIfRecipeExists, deleteUserDataRecipes, deleteUserDataScoreForRecipe, deleteUserDataScore, deleteUserDataComments, deleteUserDataCommentsForRecipe, deleteRecipeDataScore, deleteRecipeDataComments};
+module.exports = {db, checkIfRecipeExists, deleteUserDataRecipes, deleteNotUsingTags, deleteUserDataScoreForRecipe, deleteUserDataScore, deleteUserDataComments, deleteUserDataCommentsForRecipe, deleteRecipeDataScore, deleteRecipeDataComments};

@@ -1,7 +1,7 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
 const rF = require('../config/responses');
-const { db, checkIfRecipeExists, deleteRecipeDataScore, deleteRecipeDataComments } = require('../DATABASE QUERIES/DB');
+const { db, checkIfRecipeExists, deleteRecipeDataScore, deleteRecipeDataComments, deleteNotUsingTags } = require('../DATABASE QUERIES/DB');
 
 getTagsForRecipe = (req, res) => {
     if(req.query.id)
@@ -66,43 +66,7 @@ getRecipes = (req, res) => {
         }
     );
 };
-/*
-getRecipes = (req, res) => {
-    var type = req.query.type != undefined ? req.query.type.split(",") : "";
-    var spd = req.query.speed != undefined ? req.query.speed.split(",") : "";
-    var lvl = req.query.lvl != undefined ? req.query.lvl.split(",") : "";
-    var tag = req.query.tags != undefined ? req.query.tags.split(",") : "";
-    console.log(type.length);
-    console.log(`otrzymano \n typy: ${type} \n czas: ${spd} \n poziom: ${lvl} \n tagi: ${tag}`)
-    db.query(
-        'SELECT * FROM RECIPE', [], 
-        function(error, results, fields) {
-            if(error){
-                console.log(error);
-                rF.DBError(res);
-                return;
-            }
-            if (results.length > 0) {
-                var data = JSON.parse(JSON.stringify(results));
-                rF.CorrectWData(res,
-                {
-                    data: data,
-                    error: 0,
-                    errorMSG: ""
-                });
-            } else {
-                rF.CorrectWData(res,
-                {
-                    data: "",
-                    error: 1,
-                    errorMSG: "Brak przepisów w bazie danych"
-                });
-            }		 	
-            return;
-        }
-    );
-};
-*/
+
 getRecipe = (req, res) => {
     if(req.query.id)
     {
@@ -198,6 +162,7 @@ postRecipe = (req, res) => {
                             }
                         );
                     }
+                    deleteNotUsingTags();
                     rF.Correct(res);
                     
                 }else{
@@ -281,6 +246,7 @@ deleteRecipe = (req, res) => {
             rF.NoAuth(res);
         }
     }
+    deleteNotUsingTags();
     return;
 };
 
@@ -344,6 +310,7 @@ updateRecipe = (req, res) => {
                                     }
                                 }
                             );
+                            deleteNotUsingTags();
                             rF.Correct(res);
                         }else{
                             if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
@@ -398,6 +365,7 @@ updateRecipe = (req, res) => {
                                     }
                                 }
                             );
+                            deleteNotUsingTags();
                             rF.Correct(res);
                         }else{
                             if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
