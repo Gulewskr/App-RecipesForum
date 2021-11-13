@@ -67,6 +67,36 @@ getRecipes = (req, res) => {
     );
 };
 
+getTags = (req, res) => {
+    db.query(
+        'SELECT * FROM TAGS', [], 
+        function(error, results, fields) {
+            if(error){
+                console.log(error);
+                rF.DBError(res);
+                return;
+            }
+            if (results.length > 0) {
+                var data = JSON.parse(JSON.stringify(results));
+                rF.CorrectWData(res,
+                {
+                    data: data,
+                    error: 0,
+                    errorMSG: ""
+                });
+            } else {
+                rF.CorrectWData(res,
+                {
+                    data: "",
+                    error: 1,
+                    errorMSG: "Brak tagów w bazie danych"
+                });
+            }		 	
+            return;
+        }
+    );
+};
+
 getRecipe = (req, res) => {
     if(req.query.id)
     {
@@ -388,6 +418,7 @@ const Recipes = {
     getRecipes : getRecipes,
     getRecipe : getRecipe,
     getTagsForRecipe : getTagsForRecipe,
+    getTags : getTags,
     postRecipe : postRecipe,
     deleteRecipe : deleteRecipe,
     updateRecipe : updateRecipe

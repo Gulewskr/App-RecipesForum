@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Buttons, RecipeComp } from "../components";
 import {UserContext} from '../data/User';
 import { API_ADDRESS } from "../data/API_VARIABLES";
@@ -15,12 +15,39 @@ const RecipeList = () => {
   var _lvl = [];
   var _speed = [];
   var _TAGS = [];
+  const [ allTags, setAllTags ] = useState([]);
+
   //const [_type, setRecipeType ] = useState([]);
   //const [_lvl, setRecipeLVL ] = useState([]);
   //const [_speed, setRecipeSpeed ] = useState([]);
   //const [_TAGS, setRecipeTags ] = useState([]);
+  const refreshTags = () => {
+    fetch(`${API_ADDRESS}/tags`, {
+      method: 'get',
+      headers: { 
+          'Access-token': USER.token,
+          'Content-Type': 'application/json' 
+      }
+    })
+    .then( res => {
+      try{
+        return res.json();
+      }catch (err){
+        console.log(err);
+      };
+    })
+    .then((d) => {
+        console.log(d);
+        if(d.error == 0) setAllTags( d.data );
+        else return setAllTags( [] );
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  };
 
   const Filter = () => {
+
     const SingleFilter = (props) => {
       const {name, v, l} = props;
       const [choosen, setChoosen] = useState(false);
@@ -50,62 +77,23 @@ const RecipeList = () => {
     const addToFilterList = (list, v) => {
       var i = list.indexOf(v);
       if(i == -1) list.push(v);
-      console.log(list);
-    }
+    };
 
     const removeFromFilterList = (list, v) => {
       var i = list.indexOf(v);
       if(i != -1) list.splice(i, 1);
-      console.log(list);
-    }
+    };
 
-    const applyFilters = () => {
-      
-      /*console.log("Wygenerowany link do pobrania danych : \n" + 
-        `${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(",") + "&": ""}`);
-      
-      fetch(`${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(","): ""}`,
+    const TagsFilter = () => {
+      let res = [];
+      for(let i in allTags)
       {
-        method : 'get',
-        headers: { 
-          'Access-token': USER.token,
-          'Content-Type': 'application/json' 
-        }
-      } 
-      ).then( () => console.log("przesłano")
-      ).catch (err => {
-        console.log(err);
-      });
-      
-      fetch(`${API_ADDRESS}/recipes?type=${_type}&speed=${_speed}&lvl=${_lvl}&tags=${_TAGS}`, {
-        method: 'get',
-        headers: { 
-            'Access-token': USER.token,
-            'Content-Type': 'application/json' 
-        }
-      })
-      .then( res => {
-        try{
-          console.log(res);
-          return res.json();
-        }catch (err){
-          console.log(err);
-        };
-      })
-      .then((d) => {
-          //console.log(d.data[0]);
-          //console.log(JSON.stringify(d.data, null, '  '));
-          console.log(d.data.length);
-          console.log(d.data);
-          //setRecipes(d.data);
-          //createRecipeList(d.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-      */
-    }
-
+        let tagID = allTags[i].id;
+        let tagText = allTags[i].text;
+        res.push(<p key={tagID}>{tagText}</p>);
+      }
+      return res;
+    };
     /**
      * 'Danie główne' : 0,
       'Przekąska' : 1,
@@ -132,6 +120,8 @@ const RecipeList = () => {
         <SingleFilter name={"łatwe"} v={1} l={_lvl}/>
         <SingleFilter name={"średnie"} v={2} l={_lvl}/>
         <SingleFilter name={"trudne"} v={3} l={_lvl}/>
+        <p>Tagi</p>
+        <TagsFilter />
         <div onClick={() => getRecipes()}>Zastosuj</div>
       </div>
     )
@@ -161,7 +151,6 @@ const RecipeList = () => {
     })
     .then( res => {
       try{
-        console.log(res);
         return res.json();
       }catch (err){
         console.log(err);
@@ -183,6 +172,7 @@ const RecipeList = () => {
 
     useEffect(() => {
       getRecipes();
+      refreshTags();
     },[]);
 
 

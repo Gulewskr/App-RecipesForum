@@ -81,6 +81,7 @@ app.delete('/recipe', [AuthF.verifyToken], ReciF.deleteRecipe);
 		-nr strony
 */
 app.get('/recipes', [AuthF.decodeExtraToken], ReciF.getRecipes);
+app.get('/tags', [AuthF.decodeExtraToken], ReciF.getTags);
 
 
 app.listen(port, () => { console.log(`Server is working on port ${port}`)});
