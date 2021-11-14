@@ -95,36 +95,36 @@ const RecipeForm = (props) => {
     return(
         <div className="login-form">
             <form onSubmit={handleSubmit}>
-            <input type="text" onChange={v => setName(v.target.value)} name="username" defaultValue={_name} placeholder="nazwa przepisu" autoComplete="off" required/>
-            <div className="taginput">
-                {tagList}
-                <input type="text" onChange={v => changedTags(v.target.value, v)} onFocus={v => getLastItem(v)} onBlur={v => changedTags(v.target.value, v, true)} name="username" autoComplete="off"/>
-            </div>
-            <p>Rodzaj dania</p>
-            <select value={_type} onChange={v => setType(v.target.value)}>            
-                <option value={1}>Danie główne</option>
-                <option value={2}>Przekąska</option>
-                <option value={3}>Sałatka</option>
-                <option value={4}>Zupa</option>
-                <option value={5}>Deser</option>
-                <option value={6}>Ciasto</option>
-            </select>
-            <p>Czas przygotowania</p>
-            <select value={_speed} onChange={v => setSpeed(v.target.value)}>            
-                <option value={1}>krótki</option>
-                <option value={2}>średni</option>
-                <option value={3}>długi</option>
-            </select>
-            <p>Stopień zaawansowania dania</p>
-            <select value={_lvl} onChange={v => setLVL(v.target.value)}>            
-                <option value={1}>łatwe</option>
-                <option value={2}>średnie</option>
-                <option value={3}>trudne</option>
-            </select>
-            <p>Dodaj zdjęcia do przepisu</p>
-            <input type="image" />
-            <input type="text" onChange={v => setText(v.target.value)} name="password"  defaultValue={_text} placeholder="treść" autoComplete="off"  required />
-            <input type="submit"/>
+                <input type="text" onChange={v => setName(v.target.value)} name="username" defaultValue={_name} placeholder="nazwa przepisu" autoComplete="off" required/>
+                <div className="taginput">
+                    {tagList}
+                    <input type="text" onChange={v => changedTags(v.target.value, v)} onFocus={v => getLastItem(v)} onBlur={v => changedTags(v.target.value, v, true)} name="username" autoComplete="off"/>
+                </div>
+                <p>Rodzaj dania</p>
+                <select value={_type} onChange={v => setType(v.target.value)}>            
+                    <option value={1}>Danie główne</option>
+                    <option value={2}>Przekąska</option>
+                    <option value={3}>Sałatka</option>
+                    <option value={4}>Zupa</option>
+                    <option value={5}>Deser</option>
+                    <option value={6}>Ciasto</option>
+                </select>
+                <p>Czas przygotowania</p>
+                <select value={_speed} onChange={v => setSpeed(v.target.value)}>            
+                    <option value={1}>krótki</option>
+                    <option value={2}>średni</option>
+                    <option value={3}>długi</option>
+                </select>
+                <p>Stopień zaawansowania dania</p>
+                <select value={_lvl} onChange={v => setLVL(v.target.value)}>            
+                    <option value={1}>łatwe</option>
+                    <option value={2}>średnie</option>
+                    <option value={3}>trudne</option>
+                </select>
+                <p>Dodaj zdjęcia do przepisu</p>
+                <input type="file" name="uploaded_image" multiple/>
+                <input type="text" onChange={v => setText(v.target.value)} name="password"  defaultValue={_text} placeholder="treść" autoComplete="off"  required />
+                <input type="submit"/>
             </form>
             <ErrorText />
         </div>

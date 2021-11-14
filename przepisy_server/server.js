@@ -1,4 +1,6 @@
+const fs = require('fs');
 const express = require('express');
+const multer = require('multer');
 const bodyParser = require('body-parser');
 const port = 3001
 
@@ -8,11 +10,15 @@ const CommF = require('./routes/comments');
 const ProfF = require('./routes/profile');
 const AccF = require('./routes/accounts');
 const ScrF = require('./routes/score');
+const ImgF = require('./routes/images');
 
 const app = express();
 
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
+
+//Upublicznienie folderu images
+app.use('/images', express.static('images'));
 
 app.use(function(request, response, next){
 	// Website allowed to connect
@@ -83,5 +89,38 @@ app.delete('/recipe', [AuthF.verifyToken], ReciF.deleteRecipe);
 app.get('/recipes', [AuthF.decodeExtraToken], ReciF.getRecipes);
 app.get('/tags', [AuthF.decodeExtraToken], ReciF.getTags);
 
+var storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+	  cb(null, 'images/profile')
+	},
+	filename: function (req, file, cb) {
+	  cb(null, Date.now() + '.png') //Appending .jpg
+	}
+  })
+  
+const uploadImageProfile = multer({ storage: storage});
+const uploadImageRecipe = multer({ dest: "images/recipies" });
+app.post('/images', uploadImageProfile.single("uploaded_image"), 
+function (req, res) {
+	ImgF.insertImageToDB(`/${req.file.path}`)
+	.then((v) => {
+		console.log(`dodano noowy obraz id: ${v}`)
+		if(v != 0) res.status(200).send({url : `/${req.file.path}`, id : v});
+		else res.sendStatus(500);
+	})
+});
+
+app.get('/images', function (req, res) {
+	res.status(200).send({imageURL: "http://localhost:3001/images/static/1.png"});
+	/*fs.readFile('images/static/1.png', function (err, data) {
+		if(err){
+			console.log(err);
+			return;
+		}
+		res.set({'Content-Type': 'image/png'})
+		res.send( data );
+		return res.end();
+	})*/
+});
 
 app.listen(port, () => { console.log(`Server is working on port ${port}`)});
