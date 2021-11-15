@@ -2,6 +2,15 @@ const config = require('../config/config');
 const rF = require('../config/responses');
 const { db } = require('../DATABASE QUERIES/DB');
 
+addImage = (req, res) => {
+	insertImageToDB(`/${req.file.path}`)
+	.then((v) => {
+		console.log(`dodano noowy obraz id: ${v}`)
+		if(v != 0) res.status(200).send({url : `/${req.file.path}`, id : v});
+		else res.sendStatus(500);
+	})
+}
+
 insertImageToDB = async (imageURL) => {
 	return new Promise(
 		(resolve, reject) => {
@@ -75,6 +84,7 @@ deleteImageFromDB = async (imageID) => {
 };
 
 const ImagesFunctions = {
+	addImage : addImage,
     insertImageToDB : insertImageToDB,
     addConnectionToImage : addConnectionToImage, 
     deleteImageFromDB : deleteImageFromDB

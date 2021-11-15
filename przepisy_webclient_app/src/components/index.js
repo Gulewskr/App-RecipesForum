@@ -10,4 +10,5 @@ import Navbar from "./Navbar";
 import Buttons from "./NavButtons";
 import {RecipeComp , RecipeForm} from "./Recipe";
 import {NewCommentForm, SingleComment} from './Comment';
-export { Navbar, Buttons, RecipeComp , RecipeForm, NewCommentForm, SingleComment};
+import {ImageInput, ProfileImagesForm, RecipeImagesForm } from './ImageInput';
+export { Navbar, Buttons, RecipeComp , RecipeForm, NewCommentForm, SingleComment, ImageInput, ProfileImagesForm, RecipeImagesForm };

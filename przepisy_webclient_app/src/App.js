@@ -60,7 +60,7 @@ const App = () => {
             <RecipesList user={USER} token={token} />
           </Route>
           <Route path="/">
-            <Home />
+            <Home token={token} />
           </Route>
         </Switch>
     </Router>
