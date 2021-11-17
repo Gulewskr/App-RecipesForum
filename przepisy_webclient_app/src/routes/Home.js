@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from "react";
-import { Buttons, RecipeComp, RecipeImagesForm  } from "../components";
+import { Buttons, RecipeComp  } from "../components";
 import {UserContext} from '../data/User';
 import { API_ADDRESS } from "../data/API_VARIABLES";
 
@@ -19,8 +19,6 @@ const Home = (props) => {
     <div>
     <h2>Home</h2>
     <img src="http://localhost:3001/images/static/1.png" alt="Zdjęcie z serwera"/>
-    <h2>TEST</h2>
-    <RecipeImagesForm postAddress={'/imagesProfile'} token={token} />
     </div>
   );
 }

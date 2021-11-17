@@ -17,7 +17,7 @@ const RecipeNew = () => {
   const { USER } = useContext(UserContext);
 
 
-  const tryCreateNewRecipe = (name, text, tags, type, speed, lvl) => {
+  const tryCreateNewRecipe = (name, text, tags, type, speed, lvl, images) => {
     console.log(`tagi: ${tags}`)
     fetch(`${API_ADDRESS}/recipe`, {
       method: 'post',
@@ -29,7 +29,8 @@ const RecipeNew = () => {
         tags: tags,
         type: type,
         speed: speed,
-        lvl: lvl
+        lvl: lvl,
+        images: images
       }),
     })
     .then( res => {
@@ -63,7 +64,7 @@ const RecipeNew = () => {
     return (
       <div>
         <h2>Formularz nowego przepisu</h2>
-        <RecipeForm callback={tryCreateNewRecipe} />
+        <RecipeForm token={USER.token} callback={tryCreateNewRecipe} />
       </div>
     );
   }

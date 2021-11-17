@@ -38,7 +38,7 @@ insertImageToDB = async (imageURL) => {
 addConnectionToImage = async (imageID, recipeID) => {
 	return new Promise(
 		(resolve, reject) => {
-		if(imageURL)
+		if(imageID && recipeID)
 		{
 			db.query(
             'INSERT INTO images_connection (id_image, id_recipe) VALUES (?, ?)', [imageID, recipeID],
@@ -83,11 +83,35 @@ deleteImageFromDB = async (imageID) => {
 	);
 };
 
+setMainImageToRecipe = async (imgID, recID) => {
+	return new Promise( (resolve, reject) => { 
+		if(recID && imgID)
+		{
+			db.query(
+			'UPDATE RECIPE SET id_mainimage = ?  WHERE ID = ?', [imgID, recID], 
+			function(error, results, fields){
+				if (error) {
+					reject(error)
+				}
+				if(results.affectedRows == 1)
+				{
+					resolve(results);
+				}else{
+					reject("error");
+				}
+			});
+		}else{
+			reject("error");
+		}}
+	);
+};
+
 const ImagesFunctions = {
 	addImage : addImage,
     insertImageToDB : insertImageToDB,
     addConnectionToImage : addConnectionToImage, 
-    deleteImageFromDB : deleteImageFromDB
+    deleteImageFromDB : deleteImageFromDB,
+	setMainImageToRecipe : setMainImageToRecipe
 }
 
 module.exports = ImagesFunctions;

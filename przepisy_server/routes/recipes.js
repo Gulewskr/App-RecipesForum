@@ -1,6 +1,7 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
 const rF = require('../config/responses');
+const iF = require('../routes/images');
 const { db, checkIfRecipeExists, deleteRecipeDataScore, deleteRecipeDataComments, deleteNotUsingTags } = require('../DATABASE QUERIES/DB');
 
 getTagsForRecipe = (req, res) => {
@@ -149,7 +150,9 @@ postRecipe = (req, res) => {
     var _tags = req.body.tags;
     var _speed = req.body.speed;
     var _lvl = req.body.lvl;
+    var _images = req.body.images;
 
+    console.log(_images);
     console.log(_tags);
 
 	if (_user && _name && _text && _type && _speed && _lvl) {
@@ -224,6 +227,17 @@ postRecipe = (req, res) => {
                             }
                         );
                     }
+                    if(_images != undefined && _images.length > 0)
+                    {
+                        iF.setMainImageToRecipe(_images[0], recipeID)
+                        .then(() => {
+                            for(let i = 1; i < _images.length; i++)
+                            {
+                                iF.addConnectionToImage( _images[i], recipeID);
+                            }
+                        })
+                        .catch(err => console.log(err))
+                    }
                     rF.CorrectWData(res, {
                         id: recipeID, 
                         error: 0,
@@ -233,8 +247,6 @@ postRecipe = (req, res) => {
                     console.log("SPRAWDZ BAZE DANYCH DODANO ZA DUZO PRZEPISÓW");
                     rF.DBError(res);
                 }
-
-                //TODO zwracanie id przepisu wstawionego i przejście do niego
 				return;
 			}
 		);

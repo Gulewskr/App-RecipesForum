@@ -16,13 +16,14 @@ const Recipe = (props) => {
   const [score, setScore] = useState(0);
   const [comments, setComments] = useState(<div></div>);  
   
-  const {owner, mod, name, text, type, speed, lvl} = useMemo(
+  const {owner, mod, name, text, type, images, speed, lvl} = useMemo(
     () => {console.log(data); return({
       owner : data !== "" ? data.own ? data.own === true : false : false, 
       mod : data !== "" ? data.mod ? data.mod === true : false : false, 
       name : data !== "" ? data.name ? data.name : "null" : "null", 
       text : data !== "" ? data.text ? data.text : "null" : "null", 
       type : data !== "" ? data.type != undefined ? data.type : 1 : 1, 
+      images : data !== "" ? data.images != undefined ? data.images : {} : {}, 
       speed : data !== "" ? data.speed != undefined ? data.speed : 1 : 1, 
       lvl : data !== "" ? data.lvl != undefined ? data.lvl : 1 : 1
     })}, [data]);
@@ -318,7 +319,7 @@ const Recipe = (props) => {
           edit ? 
           <>
             <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
-            <RecipeForm name={name} text={text}  type={type} speed={speed} lvl={lvl} tags={dataTags} callback={saveChange} />
+            <RecipeForm name={name} text={text}  type={type} speed={speed} lvl={lvl} tags={dataTags} images={images} token={token} callback={saveChange} />
             <Delete />
           </>
             :

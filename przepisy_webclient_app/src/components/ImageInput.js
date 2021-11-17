@@ -5,14 +5,15 @@ import {API_ADDRESS} from '../data/API_VARIABLES';
 const RecipeImagesForm = (props) =>
 {
     //cb(value, true = add / false = remove)
-    const {postAddress, token} = props;
+    const {images, postAddress, token, callback} = props;
     const idTable = useMemo(() => [], []);
-    const [imagesTable, setImagesTable] = useState([]);
+    const [imagesTable, setImagesTable] = useState(images ? images : []);
     //TODO !!!!!!!:
     /*
     -zrobić kurwa żęby działąło za dużo usuwa nie wiadomom ocb sadge wrr
     */
     
+    useEffect(() => callback ? callback(idTable) : console.log("nie ustawiono funkcji zwrotnej"), [idTable]);
     function addID(v){
         if(idTable.indexOf(v) == -1)
         {
@@ -45,11 +46,25 @@ const RecipeImagesForm = (props) =>
         else console.log("Próbowano usunąć id, którego już nie ma w tabeli");
     }
 
+    function setMainImage(v){
+        let id = idTable.indexOf(v);
+        if( id != -1 )
+        { 
+            let firstID = idTable.splice( id, 1)[0];
+            idTable.unshift(firstID);
+            let tmp = [...imagesTable];
+            let first = tmp.splice(id, 1)[0];
+            tmp.unshift(first);
+            setImagesTable(tmp);
+        }
+        else console.log("Próbowano usunąć id, którego już nie ma w tabeli");
+    }
+
     const SingleImageFromArray = (props) => {
         const {id, url} = props;
         return (
             <div key={id}>
-                <img  src={url} alt={id} />
+                <img  src={url} alt={id} onClick={() => setMainImage(id)}/>
                 <button onClick={() => removeID(id)}>Cofnij</button>
             </div>
         )
@@ -57,7 +72,6 @@ const RecipeImagesForm = (props) =>
 
     function addImage(id, url){
         console.log(`Dodaję do tabel ${id}  ${url}`);
-        console.log(imagesTable.length);
         if(addID(id)) 
         {
             let element = {id : id, url: url}
@@ -67,12 +81,9 @@ const RecipeImagesForm = (props) =>
 
     return(
         <div>
-            
             <p>Formularz:</p>
             <ImageInput postAddress={postAddress} token={token} cb={addImage} />
-
             <p>Indeksy: {idTable.join(",")}</p>
-            <p>Dlugości: {imagesTable.length}</p>
             <p>Dodane:</p>
             { imagesTable.map(({id, url} ) => <SingleImageFromArray id={id} url={url} />) }
         </div>
@@ -110,42 +121,14 @@ const ImageInput = (props) => {
         })
         .catch(e => console.log(e));
 	};
-
-	const FileData = () => {
-    if (selectedFile) {    
-      return (
-        <div>
-          <h2>File Details:</h2>
-          <p>File Name: {selectedFile.name}</p>
-          <p>File Type: {selectedFile.type}</p>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <br />
-          <h4>Choose before Pressing the Upload button</h4>
-        </div>
-      );
-    }
-	};
 	
 	return (
-		<div>
-			<h1>
-			GeeksforGeeks
-			</h1>
-			<h3>
-			File Upload using React!
-			</h3>
-			<div>
-				<input type="file" onChange={v => onFileChange(v)} />
-				<button onClick={() => onFileUpload()}>
-				Upload!
-				</button>
-			</div>
-		  <FileData />
-		</div>
+        <div>
+            <input type="file" onChange={v => onFileChange(v)} />
+            <button onClick={() => onFileUpload()}>
+            Dodaj!
+            </button>
+        </div>
 	);
 }
 
