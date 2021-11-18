@@ -2,13 +2,17 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {RecipeImagesForm} from './index';
 
 const RecipeComp = (props) => {
-    const {id, user, name, text, type} = props;
+    const {id, image, name, speed, lvl, text, type, user} = props;
     return(
         <div className="container" onClick={ () => window.location.replace('/recipe?id=' + id)} key={id}>
             Przepis nr: {id}<br/>
             Nazwa: {name}<br/>
+            <img  src={image} alt={"obraz przepisu"}/><br/>
             {text}<br/>
             Przepis typu: {type}<br/>
+            Szybkość: {speed}<br/>
+            Poziom: {lvl}<br/>
+            Użytkownik: {JSON.stringify(user)}
         </div>
     );
 };
@@ -32,7 +36,8 @@ const RecipeForm = (props) => {
     const [_type, setType] = useState(type ? type : 1);
     const [_speed, setSpeed] = useState(speed ? speed : 1);
     const [_lvl, setLVL] = useState(lvl ? lvl : 1);
-    const [_imagesID, setImageIDs ] = useState(images ? images : []);
+    const [_imagesID, setImageIDs ] = useState([]);
+
     
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -126,7 +131,7 @@ const RecipeForm = (props) => {
                     <option value={3}>trudne</option>
                 </select>
                 <p>Dodaj zdjęcia do przepisu</p>
-                <RecipeImagesForm images={_imagesID} postAddress={'/imagesProfile'} token={token} callback={setNewImageIDS} />
+                <RecipeImagesForm images={images} postAddress={'/imagesProfile'} token={token} callback={setNewImageIDS} />
                 <input type="text" onChange={v => setText(v.target.value)} name="password"  defaultValue={_text} placeholder="treść" autoComplete="off"  required />
                 <input type="submit"/>
             </form>

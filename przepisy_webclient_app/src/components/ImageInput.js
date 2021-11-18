@@ -6,8 +6,12 @@ const RecipeImagesForm = (props) =>
 {
     //cb(value, true = add / false = remove)
     const {images, postAddress, token, callback} = props;
-    const idTable = useMemo(() => [], []);
+    
+    const idTable = useMemo(() => images ? images.map(({id_}) => id_) : [], []);
     const [imagesTable, setImagesTable] = useState(images ? images : []);
+    console.log(images);
+    console.log(imagesTable);
+    console.log(idTable);
     //TODO !!!!!!!:
     /*
     -zrobić kurwa żęby działąło za dużo usuwa nie wiadomom ocb sadge wrr
@@ -74,7 +78,7 @@ const RecipeImagesForm = (props) =>
         console.log(`Dodaję do tabel ${id}  ${url}`);
         if(addID(id)) 
         {
-            let element = {id : id, url: url}
+            let element = {id_ : id, imageURL: url}
             setImagesTable([...imagesTable, element]);
         }   
     }
@@ -85,7 +89,7 @@ const RecipeImagesForm = (props) =>
             <ImageInput postAddress={postAddress} token={token} cb={addImage} />
             <p>Indeksy: {idTable.join(",")}</p>
             <p>Dodane:</p>
-            { imagesTable.map(({id, url} ) => <SingleImageFromArray id={id} url={url} />) }
+            { imagesTable.map(({id_, imageURL} ) => <SingleImageFromArray id={id_} url={imageURL} />) }
         </div>
     )
 }

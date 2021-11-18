@@ -73,9 +73,12 @@ const UserContextProvider = ({ children }) => {
           });
     }, [token]);
 
+    const UserIsMod = () => USER.type == 1 || USER.type == 2
+    const UserHaveTheSameId = (v) => USER.id == v
+
     const v = useMemo(
-        () => ({ USER, token, setToken, setUser, LogOut }),
-        [ USER, token, setToken, setUser, LogOut ],
+        () => ({ USER, token, setToken, setUser, LogOut, UserIsMod, UserHaveTheSameId}),
+        [ USER, token, setToken, setUser, LogOut, UserIsMod, UserHaveTheSameId],
     );
 
     return (

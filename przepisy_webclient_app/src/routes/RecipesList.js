@@ -137,8 +137,8 @@ const RecipeList = () => {
     var res = []; //= <div>{JSON.stringify(data, null, '  ')}</div>;
     for(let i = 0, l = data.length; i < l; i++)
     {
-      const {id, id_user, name, text, type} = data[i];
-      res.push( <RecipeComp key={id} id={id} user={id_user} name={name} text={text} type={type} /> );
+      const {id, imageURL, lvl, name, speed, text, type, user} = data[i];
+      res.push( <RecipeComp key={id} id={id} image={imageURL} name={name} speed={speed} lvl={lvl} text={text} type={type} user={user} /> );
     }
     setRecipes( res );
   }

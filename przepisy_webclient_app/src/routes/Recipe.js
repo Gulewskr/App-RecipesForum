@@ -1,10 +1,12 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { Buttons, NewCommentForm, RecipeForm, SingleComment } from "../components";
 import { API_ADDRESS } from "../data/API_VARIABLES";
+import { UserContext } from "../data/User";
 
 const Recipe = (props) => {
 
   const { user, token } = props;
+  const { UserIsMod } = useContext(UserContext);
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -13,21 +15,25 @@ const Recipe = (props) => {
   const [edit, setEditting] = useState(false);
   const [data, setData] = useState("");  
   const [dataTags, setDataTags] = useState([]);  
+  const [dataImages, setDataImages] = useState([]);  
+
   const [score, setScore] = useState(0);
   const [comments, setComments] = useState(<div></div>);  
+  const [extraImages, setExtraImages] = useState([]);
   
-  const {owner, mod, name, text, type, images, speed, lvl} = useMemo(
-    () => {console.log(data); return({
-      owner : data !== "" ? data.own ? data.own === true : false : false, 
-      mod : data !== "" ? data.mod ? data.mod === true : false : false, 
+  const {mod, name, text, type, image, _user, speed, lvl} = useMemo(
+    () => {console.log(data); return({ 
+      mod : UserIsMod ? UserIsMod() : false, 
       name : data !== "" ? data.name ? data.name : "null" : "null", 
       text : data !== "" ? data.text ? data.text : "null" : "null", 
       type : data !== "" ? data.type != undefined ? data.type : 1 : 1, 
-      images : data !== "" ? data.images != undefined ? data.images : {} : {}, 
       speed : data !== "" ? data.speed != undefined ? data.speed : 1 : 1, 
-      lvl : data !== "" ? data.lvl != undefined ? data.lvl : 1 : 1
-    })}, [data]);
+      lvl : data !== "" ? data.lvl != undefined ? data.lvl : 1 : 1,
+      image : data !== "" ? data.image != undefined ? data.image : { imageURL : "image",  id_ : -1 } : { imageURL : "image",  id_ : -1 }, 
+      _user : data !== "" ? data.user != undefined ? data.user : {id_ : 0, name : "", type : 4, imageURL : "brak obrazu"} : {id_ : 0, name : "", type : 4, imageURL : "brak obrazu"}
+    })}, [data, UserIsMod ]);
 
+  const owner = useMemo(() => _user.id_ == user.id, [_user]);
   const tags = useMemo(() => 
     {
       if(dataTags){
@@ -40,13 +46,13 @@ const Recipe = (props) => {
     });
 
   const displayComments = (d) => {
-    if(d.error == "")
+    if(d.error == 0)
     {
       var res = [];
-      d.data.forEach(e => res.push(<SingleComment id={e.id} id_recipe={e.id_recipe} id_user={e.id_user} text={e.text} owner={e.owner} mod={e.mod} token={token} callback={refreshData}/>));
+      d.data.forEach(e => res.push(<SingleComment id={e.id} id_recipe={e.id_recipe} id_user={e.user.id_} text={e.text} owner={e.user.id = user.id} mod={user.type < 3} token={token} callback={refreshData}/>));
       setComments(res);
     }else{
-      setComments(<div>{d.error}</div>);
+      setComments(<div>{d.errorMSG}</div>);
     }
   }
 
@@ -110,6 +116,29 @@ const Recipe = (props) => {
       })
       .then( res => {
         try{
+          console.log(res);
+          return res.json();
+        }catch (err){
+          console.log(err);
+        };
+      })
+      .then((data) => {
+        console.log(data);
+        displayComments(data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+      fetch(`${API_ADDRESS}/recipeImage?id=${id}`, {
+        method: 'get',
+        headers: { 
+          'Access-token': token,
+          'Content-Type': 'application/json' 
+        },
+      })
+      .then( res => {
+        try{
           console.log(res); 
           return res.json();
         }catch (err){
@@ -117,7 +146,7 @@ const Recipe = (props) => {
         };
       })
       .then((data) => {
-        displayComments(data);
+          setExtraImages(data.data);
       })
       .catch(err => {
         console.log(err);
@@ -313,13 +342,13 @@ const Recipe = (props) => {
     <div>
       <h2>Recipe {name}</h2>
       { 
-        owner || mod ? 
+        owner || mod ?
         <>
           {
           edit ? 
           <>
             <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
-            <RecipeForm name={name} text={text}  type={type} speed={speed} lvl={lvl} tags={dataTags} images={images} token={token} callback={saveChange} />
+            <RecipeForm name={name} text={text}  type={type} speed={speed} lvl={lvl} tags={dataTags} images={image.id_ != -1 ? [image, ...extraImages] : undefined} token={token} callback={saveChange} />
             <Delete />
           </>
             :
@@ -329,6 +358,14 @@ const Recipe = (props) => {
       : 
       <div />
       }
+      <div>
+        Główne zdjęcie:<br/>
+        <img  src={image.imageURL} alt={`obraz id ${image.id_}`}/>
+      </div>
+      <div>
+        Dodatkowe zdjęcia:<br/>
+        {extraImages ? extraImages.map(({id, imageURL}) => <img key={id} src={imageURL} alt={imageURL}/>) : <div>BRAK</div>}
+      </div>
       <div>
         Sposób przygotowania:<br/>
         {text}

@@ -84,78 +84,63 @@ deleteComment  = (req, res) => {
     }
     return;
 };
+
 updateComment  = (req, res) => { rF.ReqError(res); };
 
 getComments = (req, res) => { 
     if(req.query.id)
     {
         var id = req.query.id;
-        if(req.userID)
-        {
-            var id_user = req.userID;
-            var mod = (req.userADM || req.userMOD);
-            db.query(
-                'SELECT comments.id, id_recipe, id_user, comments.text, id_user = ? as \'owner\', ? as \'mod\' FROM comments, accounts WHERE id_recipe = ? AND id_user = accounts.id', 
-                [id_user, mod, id], 
-                function(error, results, fields) {
-                    if(error){
-                        console.log(error);
-                        rF.DBError(res);
-                        return;
-                    }
-                    if (results.length > 0) {
-                        var data = JSON.parse(JSON.stringify(results));
-                        rF.CorrectWData(res, 
-                            {
-                                data : data,
-                                error : ""
-                            });
-                        return;
-                    } else {
-                        console.log(`Brak komenatarzy do przepisu o id ${id} w bazie danych`);
-                        rF.CorrectWData(res,
-                        {
-                            data : "",
-                            error : "Brak komentarzy"
-                        });
-                    }		 	
+        db.query(
+            'SELECT c.id AS id, c.text as text, c.id_user as user_id, u.nick as user_name, u.type as user_type, ia.img_src as user_imageUrl FROM comments c LEFT JOIN accounts u ON c.id_user = u.id LEFT JOIN images ia ON u.id_profile_image = ia.id WHERE c.id_recipe = ?', 
+            [id], 
+            function(error, results, fields) {
+                if(error){
+                    console.log(error);
+                    rF.DBError(res);
                     return;
                 }
-            );
-        }else{
-            db.query(
-                'SELECT comments.id, id_recipe, id_user, comments.text, false as \'owner\', false as \'mod\' FROM comments, accounts WHERE id_recipe = ? AND id_user = accounts.id', 
-                [id], 
-                function(error, results, fields) {
-                    if(error){
-                        console.log(error);
-                        rF.DBError(res);
-                        return;
-                    }
-                    if (results.length > 0) {
-                        var data = JSON.parse(JSON.stringify(results));
-                        rF.CorrectWData(res, 
+                if (results.length > 0) {
+                    let data = [];
+                    for(let i = 0; i < results.length; i++)
+                    {
+                        data.push(
                             {
-                                data : data,
-                                error : ""
-                            });
-                        return;
-                    } else {
-                        console.log(`Brak komenatarzy do przepisu o id ${id} w bazie danych`);
-                        rF.CorrectWData(res,
+                                id: results[i].id,
+                                text: results[i].text,
+                                id_recipe: id,
+                                user:
+                                {
+                                    id_: results[i].user_id,
+                                    name: results[i].user_name,
+                                    type: results[i].user_type,
+                                    imageURL: results[i].user_imageUrl
+                                }
+                            }
+                        );
+                    }
+                    rF.CorrectWData(res, 
                         {
-                            data : "",
-                            error : "Brak komentarzy"
+                            data :  data,
+                            error : 0,
+                            errorMSG: ""
                         });
-                    }		 	
-                    return;
-                }
-            );
-        }
+                } else {
+                    console.log(`Brak komenatarzy do przepisu o id ${id} w bazie danych`);
+                    rF.CorrectWData(res,
+                    {
+                        data : "",
+                        error : "Brak komentarzy"
+                    });
+                }		 	
+                return;
+            }
+        );
     }else{
-        rF.ReqError(res); 
+        rF.ReqError(res);
     }
-};
+    return;
+}
 
 const Profile = {
     createComment : createComment,
