@@ -6,7 +6,7 @@ import { UserContext } from "../data/User";
 const Recipe = (props) => {
 
   const { user, token } = props;
-  const { UserIsMod } = useContext(UserContext);
+  const { UserCanEdit } = useContext(UserContext);
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -23,7 +23,6 @@ const Recipe = (props) => {
   
   const {mod, name, text, type, image, _user, speed, lvl} = useMemo(
     () => {console.log(data); return({ 
-      mod : UserIsMod ? UserIsMod() : false, 
       name : data !== "" ? data.name ? data.name : "null" : "null", 
       text : data !== "" ? data.text ? data.text : "null" : "null", 
       type : data !== "" ? data.type != undefined ? data.type : 1 : 1, 
@@ -31,9 +30,8 @@ const Recipe = (props) => {
       lvl : data !== "" ? data.lvl != undefined ? data.lvl : 1 : 1,
       image : data !== "" ? data.image != undefined ? data.image : { imageURL : "image",  id_ : -1 } : { imageURL : "image",  id_ : -1 }, 
       _user : data !== "" ? data.user != undefined ? data.user : {id_ : 0, name : "", type : 4, imageURL : "brak obrazu"} : {id_ : 0, name : "", type : 4, imageURL : "brak obrazu"}
-    })}, [data, UserIsMod ]);
+  })}, [data]);
 
-  const owner = useMemo(() => _user.id_ == user.id, [_user]);
   const tags = useMemo(() => 
     {
       if(dataTags){
@@ -49,7 +47,7 @@ const Recipe = (props) => {
     if(d.error == 0)
     {
       var res = [];
-      d.data.forEach(e => res.push(<SingleComment id={e.id} id_recipe={e.id_recipe} id_user={e.user.id_} text={e.text} owner={e.user.id = user.id} mod={user.type < 3} token={token} callback={refreshData}/>));
+      d.data.forEach(e => res.push(<SingleComment id={e.id} id_recipe={e.id_recipe} id_user={e.user.id_} text={e.text} editable={UserCanEdit(e.user.id_)} token={token} callback={refreshData}/>));
       setComments(res);
     }else{
       setComments(<div>{d.errorMSG}</div>);
@@ -216,7 +214,7 @@ const Recipe = (props) => {
             <a onClick={() => deleteData()}>Tak usuń konto</a>
           </div>
           :
-          <div onClick={() => setV(true)}>USUŃ KONTO</div>
+          <div onClick={() => setV(true)}>USUŃ Przepis</div>
         }
       </div>
     );
@@ -342,7 +340,7 @@ const Recipe = (props) => {
     <div>
       <h2>Recipe {name}</h2>
       { 
-        owner || mod ?
+        UserCanEdit(_user.id_) ?
         <>
           {
           edit ? 

@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { Buttons, RecipeComp } from "../components";
 import {UserContext} from '../data/User';
 import { API_ADDRESS } from "../data/API_VARIABLES";
+import UF from "../data/UserTypes";
 
 const RecipeList = () => {
 
@@ -18,6 +19,7 @@ const RecipeList = () => {
     _TAGS: []
   }), []);
   const [ allTags, setAllTags ] = useState([]);
+  const [_premium, setPremium] = useState(false);
 
   const refreshTags = () => {
     fetch(`${API_ADDRESS}/tags`, {
@@ -122,7 +124,11 @@ const RecipeList = () => {
         <SingleFilter name={"trudne"} v={3} l={_lvl} choosed={_lvl.indexOf(3) != -1}/>
         <p>Tagi</p>
         <TagsFilter />
-        <div onClick={() => { console.log(`${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(","): ""}`);
+        <p>Tylko Premium</p>
+        <div onClick={() => setPremium(!_premium)}>
+          {_premium ? <a  style={{"color" : "green"}}>Wybrano</a> : <a  style={{"color" : "orange"}}>Nie wybrano</a>}
+        </div>
+        <div onClick={() => { console.log(`${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(",") + "&": ""}${_premium ? "premium=1" : ""}`);
           getRecipes()}}>Zastosuj</div>
       </div>
     )
@@ -138,12 +144,12 @@ const RecipeList = () => {
     for(let i = 0, l = data.length; i < l; i++)
     {
       const {id, imageURL, lvl, name, speed, text, type, user} = data[i];
-      res.push( <RecipeComp key={id} id={id} image={imageURL} name={name} speed={speed} lvl={lvl} text={text} type={type} user={user} /> );
+      res.push( <div key={id} className={UF.GetRecipeDivClass(user.type)}><RecipeComp key={id} id={id} image={imageURL} name={name} speed={speed} lvl={lvl} text={text} type={type} user={user} /></div> );
     }
     setRecipes( res );
   }
 
-  const getRecipes = () => fetch(`${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(",").replace("#",""): ""}`, {
+  const getRecipes = () => fetch(`${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(",").replace("#","") + "&": ""}${_premium ? "premium=1" : ""}`, {
       method: 'get',
       headers: { 
           'Access-token': USER.token,
@@ -182,7 +188,7 @@ const RecipeList = () => {
         <h2>RecipeList</h2>
         <Filter />
         <Buttons.AddRecipeButton />{/* id, id_user, name, text, type */}
-        <pre>{recipes}</pre>
+        {recipes}
       </div>
     );
   }

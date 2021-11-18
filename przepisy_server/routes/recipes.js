@@ -60,9 +60,10 @@ getRecipes = (req, res) => {
     var type = req.query.type != undefined ? " r.type IN (" + req.query.type.split(",") + ")" : " TRUE ";
     var spd = req.query.speed != undefined ? " r.speed IN (" + req.query.speed.split(",") + ")" : " TRUE ";
     var lvl = req.query.lvl != undefined ? " r.lvl IN (" + req.query.lvl.split(",") + ")" : " TRUE ";
+    var premium = req.query.premium != undefined ? " r.id_user in ( SELECT id FROM accounts a WHERE a.type = 1 OR a.type = 2 OR a.type = 3 ) " : " TRUE ";
     var tag = req.query.tags != undefined ? "r.id in (SELECT tags_connection.id_recipe FROM tags, tags_connection WHERE tags.TEXT in (\"" + req.query.tags.split(",").join("\", \"") + "\") AND tags.id = tags_connection.id_tag )": "true";
 
-    var q = `SELECT r.id AS id, r.name as name, r.text as text, r.type as type, r.speed as speed, r.lvl as lvl, ir.img_src as imageUrl, u.id as user_id, u.nick as user_name, u.type as user_type, ia.img_src as user_imageUrl FROM recipe r LEFT JOIN accounts u ON r.id_user = u.id LEFT JOIN images ir ON r.id_mainimage = ir.id LEFT JOIN images ia ON u.id_profile_image = ia.id WHERE ${type} AND ${spd} AND ${lvl} AND ${tag}`
+    var q = `SELECT r.id AS id, r.name as name, r.text as text, r.type as type, r.speed as speed, r.lvl as lvl, ir.img_src as imageUrl, u.id as user_id, u.nick as user_name, u.type as user_type, ia.img_src as user_imageUrl FROM recipe r LEFT JOIN accounts u ON r.id_user = u.id LEFT JOIN images ir ON r.id_mainimage = ir.id LEFT JOIN images ia ON u.id_profile_image = ia.id WHERE ${type} AND ${spd} AND ${lvl} AND ${tag} AND ${premium}`
     db.query(
         q, [], 
         function(error, results, fields) {

@@ -12,10 +12,6 @@ const RecipeImagesForm = (props) =>
     console.log(images);
     console.log(imagesTable);
     console.log(idTable);
-    //TODO !!!!!!!:
-    /*
-    -zrobić kurwa żęby działąło za dużo usuwa nie wiadomom ocb sadge wrr
-    */
     
     useEffect(() => callback ? callback(idTable) : console.log("nie ustawiono funkcji zwrotnej"), [idTable]);
     function addID(v){
@@ -28,14 +24,16 @@ const RecipeImagesForm = (props) =>
         return 0;
     }
 
-    /*function logIDs(v, table){
+    /*
+    function logIDs(v, table){
         console.log(`wciśnięto: ${v}`);
         let t = idTable.indexOf(v);
         console.log(`indeks: ${t}`);
         console.log(`długość ids ${idTable.length}`);
         console.log(`długość obrazów ${imagesTable.length}`);
         console.log(`długość obrazów lokalnych?? ${table}`);
-    }*/
+    }
+    */
 
     function removeID(v){
         //console.log(`usuwam ${v}`);
@@ -106,17 +104,16 @@ const ImageInput = (props) => {
     const [ selectedFile, setSelectedFile ] = useState(null);
 	
 	const onFileChange = event => {
-    setSelectedFile( event.target.files[0] );
+        setSelectedFile( event.target.files[0] );
 	};
 	
 	const onFileUpload = () => {   
-        let form = new FormData();
-        form.append(
+        let formData = new FormData();
+        formData.append(
             'uploaded_image',
             selectedFile
         );
-        console.log(selectedFile);
-        axios.post(`${API_ADDRESS}${postAddress}/`, form, { headers: {'Access-token': token, 'Content-Type': 'application/json' }})
+        axios.post(`${API_ADDRESS}${postAddress}/`, formData, { headers: {'Access-token': token, 'Content-Type': 'application/json' }})
         .then( v  => {
             console.log(`status: ${v.status}`);
             console.log(`id: ${v.data.id}`);
@@ -129,9 +126,7 @@ const ImageInput = (props) => {
 	return (
         <div>
             <input type="file" onChange={v => onFileChange(v)} />
-            <button onClick={() => onFileUpload()}>
-            Dodaj!
-            </button>
+            <button onClick={() => onFileUpload()}>Dodaj!</button>
         </div>
 	);
 }

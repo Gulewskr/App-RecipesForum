@@ -52,7 +52,7 @@ const NewCommentForm = (props) => {
 }
 
 const SingleComment = (props) => {
-    const {id, id_recipe, id_user, text, owner, mod, token, callback} = props;
+    const {id, id_recipe, id_user, text, editable, token, callback} = props;
     const [newCommentV, setV] = useState(false);
 
     const changeV = () => setV(!newCommentV);
@@ -116,7 +116,7 @@ const SingleComment = (props) => {
             <p>Treść: {text}</p>
             <a onClick={() => changeV()}> { newCommentV ? "Anuluj" : "Odpowiedz" }</a>
             { newCommentV && <NewCommentForm id_recipe={id_recipe} id_user={id_user} id_comment={id} token={token} callback={callback}/> }
-            {owner || mod ? <Delete /> : <div>brak uprawnień do usunięcia</div>}
+            { editable ? <Delete /> : <div>brak uprawnień do usunięcia</div>}
         </div>
     );
 }

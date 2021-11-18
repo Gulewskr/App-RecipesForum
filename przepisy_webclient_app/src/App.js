@@ -13,6 +13,7 @@ import UserContextProvider , {UserContext} from './data/User';
 
 //Styles
 import './styles/App.scss';
+import './styles/TypeUser.scss';
 
 const App = () => {
 
