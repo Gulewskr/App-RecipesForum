@@ -8,7 +8,7 @@ login = (request, response) => {
 	var password = request.body.password;
 	if (username && password) {
 		db.query(
-			'SELECT * FROM ACCOUNTS WHERE LOGIN = ? AND PASSWORD = ?', 
+			'SELECT * FROM ACCOUNTS WHERE LOGIN = ? AND PASSWORD IN (SELECT SHA2(?, 256))', 
 			[username, password], 
 			function(error, results, fields) {
 				if(error){
@@ -93,7 +93,7 @@ register = (request, response) => {
 	 */
 	if (username && password && nick && email) {
 		db.query(
-			'INSERT INTO accounts (login, password, nick, email, type) VALUES ( ?, ?, ?, ?, 4);', 
+			'INSERT INTO accounts (login, password, nick, email, type) SELECT  ?, SHA2(?, 256), ?, ?, 4;', 
 			[username, password, nick, email], 
 			function(error, results, fields) {
 				if(error){
@@ -102,7 +102,7 @@ register = (request, response) => {
 					return;
 				}
 				db.query(
-					'SELECT * FROM ACCOUNTS WHERE LOGIN = ? AND PASSWORD = ?', 
+					'SELECT * FROM ACCOUNTS WHERE LOGIN = ? AND PASSWORD IN (SELECT SHA2(?, 256))', 
 					[username, password], 
 					function(error, results, fields) {
 						if(error){
