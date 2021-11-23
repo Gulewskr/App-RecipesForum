@@ -1,5 +1,4 @@
 const mysql = require('mysql');
-var async = require("async");
 
 const db = mysql.createConnection({
 	host     : 'localhost',
@@ -186,4 +185,6 @@ checkIfRecipeExists = async (id_recipe, id_user) => {
 };
 
 
-module.exports = {db, checkIfRecipeExists, deleteUserDataRecipes, deleteNotUsingTags, deleteUserDataScoreForRecipe, deleteUserDataScore, deleteUserDataComments, deleteUserDataCommentsForRecipe, deleteRecipeDataScore, deleteRecipeDataComments};
+module.exports = {db, checkIfRecipeExists, deleteUserDataRecipes, deleteNotUsingTags, deleteUserDataScoreForRecipe, 
+	deleteUserDataScore, deleteUserDataComments, deleteUserDataCommentsForRecipe, 
+	deleteRecipeDataScore, deleteRecipeDataComments};

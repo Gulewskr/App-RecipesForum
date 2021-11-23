@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -18,9 +18,6 @@ import './styles/TypeUser.scss';
 const App = () => {
 
   const { USER, token } = useContext(UserContext);
-
-  console.log(USER);
-  console.log(token);
 
   const Hdr = () => {
     return (

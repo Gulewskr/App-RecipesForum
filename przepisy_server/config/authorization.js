@@ -33,7 +33,7 @@ decodeExtraToken = (req, res, next) => {
         return;
     }
   
-    console.log(`Extra token ${token}`);
+    //console.log(`Extra token ${token}`);
     jwt.verify(token, config.jwtKey, (err, decoded) => {
       if (err) {
         console.log("Bad format extra token provided!"); 

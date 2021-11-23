@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const rF = require('../config/responses');
 const iF = require('../routes/images');
 const { db, checkIfRecipeExists, deleteRecipeDataScore, deleteRecipeDataComments, deleteNotUsingTags } = require('../DATABASE QUERIES/DB');
+const { updateRecipeImages } = require('../DATABASE QUERIES/DB_recipe_images');
+const { updateRecipeTags }  = require('../DATABASE QUERIES/DB_recipe_tags');
 
 getTagsForRecipe = (req, res) => {
     if(req.query.id)
@@ -29,7 +31,6 @@ getTagsForRecipe = (req, res) => {
     }
     return;
 };
-
 getImagesForRecipe = (req, res) => {
     if(req.query.id)
     {
@@ -55,7 +56,6 @@ getImagesForRecipe = (req, res) => {
     }
     return;
 };
-
 getRecipes = (req, res) => {
     var type = req.query.type != undefined ? " r.type IN (" + req.query.type.split(",") + ")" : " TRUE ";
     var spd = req.query.speed != undefined ? " r.speed IN (" + req.query.speed.split(",") + ")" : " TRUE ";
@@ -114,7 +114,6 @@ getRecipes = (req, res) => {
         }
     );
 };
-
 getTags = (req, res) => {
     db.query(
         'SELECT * FROM TAGS', [], 
@@ -144,8 +143,6 @@ getTags = (req, res) => {
         }
     );
 };
-
-
 getRecipe = (req, res) => {
     if(req.query.id)
     {
@@ -159,7 +156,7 @@ getRecipe = (req, res) => {
                     return;
                 }
                 if (results.length == 1) {
-                    console.log(results[0]);
+                    //console.log(results[0]);
                     var data = JSON.parse(JSON.stringify(results[0]));
                     var owner = data.id_user == req.userID;
                     var mod = req.userMOD || req.userADM;
@@ -225,74 +222,23 @@ postRecipe = (req, res) => {
                 if (results.affectedRows == 1) {
                     console.log(`dodano nowy przepis "${_name}" do bazy danych`);
                     var recipeID = results.insertId;
-                    for(i in _tags)
-                    {
-                        var tag = _tags[i];
-                        console.log(`tag: ${tag}`);
-                        db.query(
-                            'INSERT INTO tags (TEXT) VALUES ( ? ) ON DUPLICATE KEY UPDATE TEXT = ?;', 
-                            [tag, tag], 
-                            function(error, results, fields) {
-                                if(error){
-                                    console.log(error);
-                                    return;
-                                }
-                                var tagID = results.insertId;
-                                if(tagID != 0){
-                                    db.query(
-                                        'INSERT INTO tags_connection (id_tag, id_recipe) VALUES (?, ?);', 
-                                        [tagID, recipeID], 
-                                        function(error, results, fields) { 
-                                            if(error){
-                                                console.log(error);
-                                                return;
-                                            }
-                                            console.log(`dodano tag ${tagID} do przepisu ${recipeID}`)  
-                                            return;        
-                                        }
-                                    );
-                                }else{
-                                    db.query(
-                                        'SELECT * FROM tags WHERE TEXT = ?;', 
-                                        [tag, tag],
-                                        function(error, results, fields) {
-                                            if(error){
-                                                console.log(error);
-                                                return;
-                                            }
-                                            var tagID = JSON.parse(JSON.stringify(results[0])).id;
-                                            if(tagID)
-                                            {
-                                                console.log(tagID);
-                                                db.query(
-                                                    'INSERT INTO tags_connection (id_tag, id_recipe) VALUES (?, ?);', 
-                                                    [tagID, recipeID], 
-                                                    function(error, results, fields) { 
-                                                        if(error){
-                                                            console.log(error);
-                                                            return;
-                                                        }
-                                                        console.log(`dodano tag ${tagID} do przepisu ${recipeID}`)  
-                                                        return;        
-                                                    }
-                                                );
-                                            }
-                                        }
-                                    );
-                                }
-                            }
-                        );
+                    //Update zdjęć
+                    if(Array.isArray(_images)){
+                        updateRecipeImages(recipeID, _images)
+                        .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
+                    }else{
+                        updateRecipeImages(recipeID, [])
+                        .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
                     }
-                    if(_images != undefined && _images.length > 0)
-                    {
-                        iF.setMainImageToRecipe(_images[0], recipeID)
-                        .then(() => {
-                            for(let i = 1; i < _images.length; i++)
-                            {
-                                iF.addConnectionToImage( _images[i], recipeID);
-                            }
-                        })
-                        .catch(err => console.log(err))
+                    //Update tagów
+                    console.log(`\u001B[35m ${_tags} \u001B[0m`);
+
+                    if(Array.isArray(_tags)){
+                        updateRecipeTags(recipeID, _tags)
+                        .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
+                    }else{
+                        updateRecipeTags(recipeID, [])
+                        .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
                     }
                     rF.CorrectWData(res, {
                         id: recipeID, 
@@ -310,7 +256,6 @@ postRecipe = (req, res) => {
 		rF.ReqError(res);
 	}
 };
-
 deleteRecipe = (req, res) => {
     var id = req.query.id;
     if(id && req.userID && !req.userMOD && !req.userADM)
@@ -381,7 +326,6 @@ deleteRecipe = (req, res) => {
     deleteNotUsingTags();
     return;
 };
-
 updateRecipe = (req, res) => {
     var id = req.query.id;
     if(req.query.id && req.userID)
@@ -392,7 +336,8 @@ updateRecipe = (req, res) => {
         var _tags = req.body.tags;
         var _speed = req.body.speed;
         var _lvl = req.body.lvl;
-
+        var _images = req.body.images;
+        
         if(name && text && type && _speed && _lvl)
         {
             if(req.userMOD || req.userADM)
@@ -406,46 +351,28 @@ updateRecipe = (req, res) => {
                             return;
                         }
                         if (results.affectedRows == 1) {
-                            console.log(`zaktualizowano przepis "${_name}" w bazie danych`);
-                            db.query(
-                                'DELETE FROM tags_connection WHERE id_recipe = ?;', 
-                                [id], 
-                                function(error, results, fields) {
-                                    console.log(`dodawanie tagów: ${_tags}`);
-                                    for(i in _tags)
-                                    {
-                                        var tag = _tags[i];
-                                        console.log(`tag: ${tag}`);
-                                        db.query(
-                                            'INSERT INTO tags (TEXT) VALUES ( ?);', 
-                                            [tag], 
-                                            function(error, results, fields) {
-                                                if(error){
-                                                    console.log(error);
-                                                    return;
-                                                }
-                                                var tagID = results.insertId;
-                                                db.query(
-                                                    'INSERT INTO tags_connection (id_tag, id_recipe) VALUES (?, ?);', 
-                                                    [tagID, id], 
-                                                    function(error, results, fields) { 
-                                                        if(error){
-                                                            console.log(error);
-                                                            return;
-                                                        }
-                                                        console.log(`dodano tag ${tagID} do przepisu ${id}`)  
-                                                        return;        
-                                                    }
-                                                );
-                                            }
-                                        );
-                                    }
-                                }
-                            );
-                            deleteNotUsingTags();
+                            console.log(`zaktualizowano przepis "${name}" w bazie danych`);
+                            //Update zdjęć
+                            if(Array.isArray(_images)){
+                                updateRecipeImages(id, _images)
+                                .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
+                            }else{
+                                updateRecipeImages(id, [])
+                                .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
+                            }
+                            //Update tagów
+                            console.log(`\u001B[35m ${_tags} \u001B[0m`);
+
+                            if(Array.isArray(_tags)){
+                                updateRecipeTags(id, _tags)
+                                .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
+                            }else{
+                                updateRecipeTags(id, [])
+                                .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
+                            }
                             rF.Correct(res);
                         }else{
-                            if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");
+                            if(results.affectedRows > 1) console.log("\u001B[31mERROR: Multiple recipe rows updated.\u001B[0m");
                             rF.DBError(res);
                         }
                         return;
@@ -462,42 +389,24 @@ updateRecipe = (req, res) => {
                         }
                         if (results.affectedRows == 1) {
                             console.log(`zaktualizowano przepis "${name}" w bazie danych`);
-                            db.query(
-                                'DELETE FROM tags_connection WHERE id_recipe = ?;', 
-                                [id], 
-                                function(error, results, fields) {
-                                    console.log(`dodawanie tagów: ${_tags}`);
-                                    for(i in _tags)
-                                    {
-                                        var tag = _tags[i];
-                                        console.log(`tag: ${tag}`);
-                                        db.query(
-                                            'INSERT INTO tags (TEXT) VALUES ( ?);', 
-                                            [tag], 
-                                            function(error, results, fields) {
-                                                if(error){
-                                                    console.log(error);
-                                                    return;
-                                                }
-                                                var tagID = results.insertId;
-                                                db.query(
-                                                    'INSERT INTO tags_connection (id_tag, id_recipe) VALUES (?, ?);', 
-                                                    [tagID, id], 
-                                                    function(error, results, fields) { 
-                                                        if(error){
-                                                            console.log(error);
-                                                            return;
-                                                        }
-                                                        console.log(`dodano tag ${tagID} do przepisu ${id}`)  
-                                                        return;        
-                                                    }
-                                                );
-                                            }
-                                        );
-                                    }
-                                }
-                            );
-                            deleteNotUsingTags();
+                            //Update zdjęć
+                            if(Array.isArray(_images)){
+                                updateRecipeImages(id, _images)
+                                .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
+                            }else{
+                                updateRecipeImages(id, [])
+                                .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
+                            }
+                            //Update tagów
+                            console.log(`\u001B[35m ${_tags} \u001B[0m`);
+
+                            if(Array.isArray(_tags)){
+                                updateRecipeTags(id, _tags)
+                                .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
+                            }else{
+                                updateRecipeTags(id, [])
+                                .catch((err) => console.log(`\u001B[32m ${err} \u001B[0m`));
+                            }
                             rF.Correct(res);
                         }else{
                             if(results.affectedRows > 1) console.log("SPRAWDZ BAZE DANYCH ERROR HASŁA ZMIANA");

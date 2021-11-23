@@ -47,7 +47,12 @@ const Recipe = (props) => {
     if(d.error == 0)
     {
       var res = [];
-      d.data.forEach(e => res.push(<SingleComment id={e.id} id_recipe={e.id_recipe} id_user={e.user.id_} text={e.text} editable={UserCanEdit(e.user.id_)} token={token} callback={refreshData}/>));
+      d.data.forEach(e => 
+        {
+          console.log(`Komentarza uprawnienia ${UserCanEdit(e.user.id_)}`);
+          res.push(<SingleComment id={e.id} id_recipe={e.id_recipe} id_user={e.user.id_} text={e.text} editable={UserCanEdit(e.user.id_)} token={token} callback={refreshData}/>);
+        }
+      );
       setComments(res);
     }else{
       setComments(<div>{d.errorMSG}</div>);
@@ -162,7 +167,7 @@ const Recipe = (props) => {
         console.log("data refreshed");
       }, 10000);
       return () => clearInterval(interval);
-  }, [id, token]);
+  }, [id, token, user]);
 
   const resetEdit = () =>
   {
@@ -291,7 +296,7 @@ const Recipe = (props) => {
     )
   }
 
-  const saveChange = (name, text, tag, type, speed, lvl) =>
+  const saveChange = (name, text, tag, type, speed, lvl, images) =>
   {
     setEditting(false);
     //przesłanie na serwer
@@ -309,7 +314,8 @@ const Recipe = (props) => {
         tags: tag,
         type: type,
         speed: speed,
-        lvl: lvl
+        lvl: lvl,
+        images: images
       })
     })
     .then( res => {

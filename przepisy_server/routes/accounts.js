@@ -57,15 +57,11 @@ loginByJWT = (req, res) => {
 				if (results.length == 1) {
 					var data = JSON.parse(JSON.stringify(results[0]));					
 					console.log("User: " + data.nick + " is online again in.");
-
-					//TODO
-					var accType = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
-
 					rF.CorrectWData(res,
 					{
 						id:	req.userID,
 						nick: data.nick,
-						type: accType,
+						type: data.type,
 						error: 0
 					});
 				} else {
