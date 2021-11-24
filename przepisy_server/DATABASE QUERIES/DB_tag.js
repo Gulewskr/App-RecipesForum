@@ -1,4 +1,4 @@
-const { db} = require('./DB');
+const { db } = require('./DB');
 
 module.exports.insertTag = async (tag) => {
 	return new Promise(
@@ -47,3 +47,15 @@ module.exports.selectTag = async (tag) => {
 		}}
 	);
 };
+
+module.exports.deleteNotUsingTags = () => {
+	db.query(
+		'DELETE FROM tags  WHERE NOT EXISTS (SELECT * FROM tags_connection WHERE id_tag = tags.id)', [],
+		function(error, results, fields){
+			if (error) {
+				console.log(error);
+			} else {
+				console.log("zaktualizowano dane");
+			}
+		});
+}

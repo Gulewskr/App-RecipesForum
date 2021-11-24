@@ -1,7 +1,7 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
 const rF = require('../config/responses');
-const { db, dbF } = require('../DATABASE QUERIES/DB');
+const { db } = require('../DATABASE QUERIES/DB');
 
 createComment  = (req, res) => { 
     var rec = req.body.recipeID;

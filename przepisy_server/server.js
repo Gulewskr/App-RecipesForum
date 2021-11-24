@@ -48,7 +48,8 @@ app.post('/register', AccF.register );
 //Moderatorzy i użytkownicy do których należy post
 
 app.get('/profile', [AuthF.decodeExtraToken], ProfF.getAccountProfile);
-app.post('/profile', [AuthF.verifyToken], ProfF.createAccount);
+//Chyba nie potrzebny endpoint
+//app.post('/profile', [AuthF.verifyToken], ProfF.createAccount);
 app.put('/profile', [AuthF.verifyToken], ProfF.updateAccount);
 app.put('/profile/pass', [AuthF.verifyToken], ProfF.updateAccountPasswd);
 app.delete('/profile', [AuthF.verifyToken], ProfF.deleteAccount);

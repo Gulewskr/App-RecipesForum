@@ -1,9 +1,11 @@
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
 const rF = require('../config/responses');
-const { db, deleteUserDataScore, deleteUserDataScoreForRecipe, deleteUserDataRecipes, deleteUserDataComments, deleteUserDataCommentsForRecipe  } = require('../DATABASE QUERIES/DB');
+const { db } = require('../DATABASE QUERIES/DB');
+const { updateUserImage, deleteUserDataScore, deleteUserDataScoreForRecipe, deleteUserDataRecipes, deleteUserDataComments, deleteUserDataCommentsForRecipe } = require('../DATABASE QUERIES/DB_accounts');
 
-createAccount  = (req, res) => { res.status(403); };
+//Chyba nie potrzebny endpoint
+//createAccount  = (req, res) => { res.status(403); };
 deleteAccount  = (req, res) => {
     var id = req.query.id;
     if(id && req.userID && (id == req.userID || req.userMOD || req.userADM))
@@ -84,6 +86,8 @@ updateAccount  = (req, res) => {
     {
         var nick = req.body.nick;
 	    var email = req.body.email;
+        var img = req.body.image;
+        if(img) updateUserImage(img, id); 
         if(nick && email){
             db.query(
                 'UPDATE ACCOUNTS SET nick = ?,  email = ?  WHERE ID = ?', [nick, email, id], 
@@ -117,7 +121,7 @@ getAccountProfile = (req,res) =>
     {
         var id = req.query.id;
         db.query(
-            'SELECT * FROM ACCOUNTS WHERE ID = ?', [id], 
+            'SELECT accounts.*, images.img_src FROM accounts LEFT JOIN images ON images.id = accounts.id_profile_image WHERE accounts.ID = ?', [id], 
             function(error, results, fields) {
                 if(error){
                     console.log(error);
@@ -126,26 +130,20 @@ getAccountProfile = (req,res) =>
                 }
                 if (results.length == 1) {
                     var data = JSON.parse(JSON.stringify(results[0]));
-                    /*
-                    own === true : false;
-                    nick = data !== "" ? data.name : "null";
-                    email = data !== "" ? data.email : "null";
-                    type = data !== "" ? data.type : "null";
-                    recipeNum = data !== "" ? data.rn : 0;
-                    commentNum = data !== "" ? data.cn : 0;
-                    avgScore = data !== "" ? data.scr : 0;
-                     */
                     var owner = req.userID == id;
                     var mod = req.userMOD || req.userADM;
-                    var type = (data.type > 1) ? (data.type > 2) ? (data.type === 3) ? "premium" : "normal" : "moderator" : "administrator";
                     rF.CorrectWData(res,
                     {
                         own : owner,
                         mod : mod,
                         name : data.nick,
                         email : data.email,
-                        type : type,
+                        type : data.type,
                         error : 0,
+                        image : {
+                            id : data.id_profile_image,
+                            src: data.img_src
+                        },
                         errorMSG : ""
                     });
                     res.end();
@@ -165,7 +163,6 @@ getAccountProfile = (req,res) =>
 };
 
 const Profile = {
-    createAccount : createAccount,
     deleteAccount : deleteAccount, 
     updateAccount : updateAccount,
     updateAccountPasswd : updateAccountPasswd,
