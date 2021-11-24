@@ -6,6 +6,9 @@ const { db, checkIfRecipeExists, deleteRecipeDataScore, deleteRecipeDataComments
 const { updateRecipeImages } = require('../DATABASE QUERIES/DB_recipe_images');
 const { updateRecipeTags }  = require('../DATABASE QUERIES/DB_recipe_tags');
 
+const allRecipesQuery1 = 'SELECT r.id AS id, r.name as name, r.text as text,  AVG(s.score) as \'avgSCR\', r.type as type, r.speed as speed, r.lvl as lvl, ir.img_src as imageUrl, u.id as user_id, u.nick as user_name, u.type as user_type, ia.img_src as user_imageUrl FROM recipe r LEFT JOIN accounts u ON r.id_user = u.id LEFT JOIN images ir ON r.id_mainimage = ir.id LEFT JOIN images ia ON u.id_profile_image = ia.id  LEFT JOIN score s ON s.id_recipe = r.id ';
+const allRecipesQuery2 = 'SELECT r.id AS id, r.name as name, r.text as text,  0 as \'avgSCR\', r.type as type, r.speed as speed, r.lvl as lvl, ir.img_src as imageUrl, u.id as user_id, u.nick as user_name, u.type as user_type, ia.img_src as user_imageUrl FROM recipe r LEFT JOIN accounts u ON r.id_user = u.id LEFT JOIN images ir ON r.id_mainimage = ir.id LEFT JOIN images ia ON u.id_profile_image = ia.id  LEFT JOIN score s ON s.id_recipe = r.id WHERE r.id NOT IN (SELECT id_recipe FROM score)';
+
 getTagsForRecipe = (req, res) => {
     if(req.query.id)
     {
@@ -63,7 +66,9 @@ getRecipes = (req, res) => {
     var premium = req.query.premium != undefined ? " r.id_user in ( SELECT id FROM accounts a WHERE a.type = 1 OR a.type = 2 OR a.type = 3 ) " : " TRUE ";
     var tag = req.query.tags != undefined ? "r.id in (SELECT tags_connection.id_recipe FROM tags, tags_connection WHERE tags.TEXT in (\"" + req.query.tags.split(",").join("\", \"") + "\") AND tags.id = tags_connection.id_tag )": "true";
 
-    var q = `SELECT r.id AS id, r.name as name, r.text as text, r.type as type, r.speed as speed, r.lvl as lvl, ir.img_src as imageUrl, u.id as user_id, u.nick as user_name, u.type as user_type, ia.img_src as user_imageUrl FROM recipe r LEFT JOIN accounts u ON r.id_user = u.id LEFT JOIN images ir ON r.id_mainimage = ir.id LEFT JOIN images ia ON u.id_profile_image = ia.id WHERE ${type} AND ${spd} AND ${lvl} AND ${tag} AND ${premium}`
+    //var q = `SELECT r.id AS id, r.name as name, r.text as text, r.type as type, r.speed as speed, r.lvl as lvl, ir.img_src as imageUrl, u.id as user_id, u.nick as user_name, u.type as user_type, ia.img_src as user_imageUrl FROM recipe r LEFT JOIN accounts u ON r.id_user = u.id LEFT JOIN images ir ON r.id_mainimage = ir.id LEFT JOIN images ia ON u.id_profile_image = ia.id WHERE ${type} AND ${spd} AND ${lvl} AND ${tag} AND ${premium}`
+    var q = `${allRecipesQuery1} WHERE ${type} AND ${spd} AND ${lvl} AND ${tag} AND ${premium} GROUP BY r.id ORDER BY avgSCR DESC`; //UNION ${allRecipesQuery2} AND ${type} AND ${spd} AND ${lvl} AND ${tag} AND ${premium} ORDER BY 'avgSRC' DESC`
+    //console.log(`\u001B[35m ${q} \u001B[0m`);
     db.query(
         q, [], 
         function(error, results, fields) {
@@ -84,6 +89,7 @@ getRecipes = (req, res) => {
                             text: results[i].text,
                             type: results[i].type,
                             speed: results[i].speed,
+                            score: results[i].avgSCR,
                             lvl: results[i].lvl,
                             imageURL: results[i].imageUrl,
                             user:

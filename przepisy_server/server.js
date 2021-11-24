@@ -88,6 +88,8 @@ app.delete('/recipe', [AuthF.verifyToken], ReciF.deleteRecipe);
 		-nr strony
 */
 app.get('/recipes', [AuthF.decodeExtraToken], ReciF.getRecipes);
+//TODO dodać sortowanie względem first top5
+app.get('/recipesTop', [AuthF.decodeExtraToken], ReciF.getRecipes);
 app.get('/tags', [AuthF.decodeExtraToken], ReciF.getTags);
 
 var storagePro = multer.diskStorage({

@@ -140,11 +140,11 @@ const RecipeList = () => {
   const [recipes, setRecipes] = useState("Brak przepisów");
 
   const createRecipeList = (data) => {
-    var res = []; //= <div>{JSON.stringify(data, null, '  ')}</div>;
+    var res = [];
     for(let i = 0, l = data.length; i < l; i++)
     {
-      const {id, imageURL, lvl, name, speed, text, type, user} = data[i];
-      res.push( <div key={id} className={UF.GetRecipeDivClass(user.type)}><RecipeComp key={id} id={id} image={imageURL} name={name} speed={speed} lvl={lvl} text={text} type={type} user={user} /></div> );
+      const {id, imageURL, lvl, name, score, speed, text, type, user} = data[i];
+      res.push( <div key={id} className={UF.GetRecipeDivClass(user.type)}><RecipeComp key={id} id={id} image={imageURL} name={name} score={score} speed={speed} lvl={lvl} text={text} type={type} user={user} /></div> );
     }
     setRecipes( res );
   }
@@ -164,12 +164,7 @@ const RecipeList = () => {
       };
     })
     .then((d) => {
-        //console.log(d.data[0]);
-        //console.log(JSON.stringify(d.data, null, '  '));
-        //console.log(d);
-        //console.log(d.data.length);
-        //console.log(d.data);
-        //setRecipes(d.data);
+        console.log(d.data);
         if(d.error == 0) createRecipeList(d.data);
         else setRecipes(<h1 style={{color: "red"}}>{d.errorMSG}</h1>)
     })

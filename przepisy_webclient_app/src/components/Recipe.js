@@ -3,7 +3,7 @@ import {RecipeImagesForm} from './index';
 import UF from '../data/UserTypes';
 
 const RecipeComp = (props) => {
-    const {id, image, name, speed, lvl, text, type, user} = props;
+    const {id, image, name, speed, score, lvl, text, type, user} = props;
     /*
         user:
         {
@@ -22,6 +22,7 @@ const RecipeComp = (props) => {
             Przepis typu: {type}<br/>
             Szybkość: {speed}<br/>
             Poziom: {lvl}<br/>
+            Ocena: {score}<br/>
             <div className={UF.GetNickNameStyle(user.id_)}>
                 Użytkownik:<br />
                 id: {user.id_}<br />
