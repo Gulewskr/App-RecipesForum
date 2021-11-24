@@ -3,8 +3,7 @@ const { db } = require('./DB');
 module.exports.updateUserImage = async (imageID, userID) => {
 	return new Promise(
 		(resolve, reject) => {
-        console.log(`${tag} -> ???`);
-        if(tag)
+        if(imageID && userID)
 		{
             db.query(
                 'UPDATE ACCOUNTS SET id_profile_image = ? WHERE ID = ?', [imageID, userID],

@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Buttons, Recipe } from "../components";
+import { Buttons, Recipe, ProfileImagesForm } from "../components";
 import {UserContext} from '../data/User';
 import { API_ADDRESS } from "../data/API_VARIABLES";
 
@@ -19,22 +19,29 @@ const Profile = (props) => {
   //const { USER, token } = useContext(UserContext);
   const [data, setData] = useState("");
 
-  const {owner, mod, nick, email, type, recipeNum, commentNum, avgScore} = useMemo(
+  const {owner, mod, nick, email, type, image, recipeNum, commentNum, avgScore} = useMemo(
     () => {console.log(data); return({
       owner : data !== "" ? data.own === true : false, 
       mod : data !== "" ? data.mod === true : false, 
       nick : data !== "" ? data.name : "null", 
       email : data !== "" ? data.email : "null", 
       type : data !== "" ? data.type : "null", 
+      image : data !== "" ? data.image : {id : 0, imageURL : ""},
       recipeNum : data !== "" ? data.rn : 0, 
       commentNum : data !== "" ? data.cn : 0, 
       avgScore : data !== "" ? data.scr : 0
     })}, [data]);
 
   const [editPassword, setEPassword] = useState(undefined);
+  const [editProfile, setEProfile] = useState(false);
   const [edit, setEditting] = useState(false);
 
+  //ProfileImagesForm
   useEffect(() => {
+    refreshData();
+  }, [id, token]);
+
+  const refreshData = () => {
     if(id){
       fetch(`${API_ADDRESS}/profile?id=${id}`, {
         method: 'get',
@@ -61,7 +68,7 @@ const Profile = (props) => {
     }else{
       console.log("brak id profilu");
     }
-  }, [id, token]);
+  }
 
   const EditUserData = () => {
     const [newNick, setNewNick] = useState(nick);
@@ -255,10 +262,62 @@ const Profile = (props) => {
     );
   };
 
+  const AvatarSettings = () => {
+    const EditProfilePicture = (v) => 
+    {
+        if(v != "")
+        {
+          fetch(`${API_ADDRESS}/profile/image?id=${id}`, {
+            method: 'put',
+            headers: { 
+              'Access-token': token,
+              'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify({
+              image : v
+            })
+          })
+          .then( res => {
+            try{
+              if(res.status == 200){
+                console.log("powodzenie zmiany danych");
+                refreshData();
+                setEProfile(false);
+              }else{
+                console.log(res);
+              }
+            }catch (err){
+              console.log(err);
+            };
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        }
+    }
+
+    return(
+      <div>
+        {
+          ( owner || mod ) && editProfile && <ProfileImagesForm image={image} postAddress={'/imagesProfile'} token={token} cb={EditProfilePicture} />
+        }
+        <img  src={image.imageURL} alt={"obraz użytkownika"}/><br/>
+        {
+          ( owner || mod ) 
+          && 
+            (!editProfile && <button onClick={ () => setEProfile(true) }>Edytuj zdjęcie profilowe</button>) 
+          || 
+            <button onClick={ () => setEProfile(false) }>Anuluj zmianę</button>
+        }
+      </div>
+    )
+  }
+  
   return (
     <div>
       <h2>Profile</h2>
-      <h1>AVATAR??</h1>
+      <h1>AVATAR</h1>
+      <AvatarSettings />
       <h1>{nick}</h1>
       <h1>email {email}</h1>
       {

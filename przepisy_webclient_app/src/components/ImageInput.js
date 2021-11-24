@@ -9,9 +9,6 @@ const RecipeImagesForm = (props) =>
     
     const idTable = useMemo(() => images ? images.map(({id_}) => id_) : [], []);
     const [imagesTable, setImagesTable] = useState(images ? images : []);
-    console.log(images);
-    console.log(imagesTable);
-    console.log(idTable);
     
     useEffect(() => callback ? callback(idTable) : console.log("nie ustawiono funkcji zwrotnej"), [idTable]);
     function addID(v){
@@ -23,17 +20,6 @@ const RecipeImagesForm = (props) =>
         console.log("Próbowano dodać id, które już jest w tabeli");
         return 0;
     }
-
-    /*
-    function logIDs(v, table){
-        console.log(`wciśnięto: ${v}`);
-        let t = idTable.indexOf(v);
-        console.log(`indeks: ${t}`);
-        console.log(`długość ids ${idTable.length}`);
-        console.log(`długość obrazów ${imagesTable.length}`);
-        console.log(`długość obrazów lokalnych?? ${table}`);
-    }
-    */
 
     function removeID(v){
         //console.log(`usuwam ${v}`);
@@ -94,7 +80,31 @@ const RecipeImagesForm = (props) =>
 
 const ProfileImagesForm = (props) =>
 {
+    const {image, postAddress, token, cb} = props;
     
+    const [currentImage, setCurrentImage] = useState(image ? image : {id: "", imageURL: ""});
+    const newImage = (id, url) => {
+        setCurrentImage(
+            {
+                id: id,
+                imageURL: url
+            }
+        )
+    }
+
+    return(
+        <div>
+            <div>
+            {currentImage.imageURL != "" ?
+                <img  src={currentImage.imageURL} alt={currentImage.id} />
+                    :
+                <div>Brak zdjęcia profilowego</div>
+            }
+            </div>
+            <ImageInput postAddress={postAddress} token={token} cb={newImage} />
+            <button onClick={() => cb(currentImage.id)}>Zapisz zmianę</button>
+        </div>
+    )
 }
 
 const ImageInput = (props) => {
@@ -115,9 +125,9 @@ const ImageInput = (props) => {
         );
         axios.post(`${API_ADDRESS}${postAddress}/`, formData, { headers: {'Access-token': token, 'Content-Type': 'application/json' }})
         .then( v  => {
-            console.log(`status: ${v.status}`);
-            console.log(`id: ${v.data.id}`);
-            console.log(`url: ${API_ADDRESS}${v.data.url}`);
+            //console.log(`status: ${v.status}`);
+            //console.log(`id: ${v.data.id}`);
+            //console.log(`url: ${API_ADDRESS}${v.data.url}`);
             cb(v.data.id, `${API_ADDRESS}${v.data.url}`);
         })
         .catch(e => console.log(e));

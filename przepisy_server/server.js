@@ -52,6 +52,7 @@ app.get('/profile', [AuthF.decodeExtraToken], ProfF.getAccountProfile);
 //app.post('/profile', [AuthF.verifyToken], ProfF.createAccount);
 app.put('/profile', [AuthF.verifyToken], ProfF.updateAccount);
 app.put('/profile/pass', [AuthF.verifyToken], ProfF.updateAccountPasswd);
+app.put('/profile/image', [AuthF.verifyToken], ProfF.updateAccountImage);
 app.delete('/profile', [AuthF.verifyToken], ProfF.deleteAccount);
 
 /*	prametry:

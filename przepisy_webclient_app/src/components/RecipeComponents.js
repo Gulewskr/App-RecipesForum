@@ -134,7 +134,7 @@ const RecipeForm = (props) => {
                 <option value={3}>trudne</option>
             </select>
             <p>Dodaj zdjęcia do przepisu</p>
-            <RecipeImagesForm images={images} postAddress={'/imagesProfile'} token={token} callback={setNewImageIDS} />
+            <RecipeImagesForm images={images} postAddress={'/imagesRecipe'} token={token} callback={setNewImageIDS} />
             <input type="text" form="formMain" onChange={v => setText(v.target.value)} name="password"  defaultValue={_text} placeholder="treść" autoComplete="off"  required />
             <input type="submit" form="formMain"/>
             <ErrorText />

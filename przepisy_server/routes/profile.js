@@ -80,6 +80,23 @@ updateAccountPasswd  = (req, res) => {
     }
     return;
 };
+updateAccountImage = (req, res) => { 
+    var id = req.query.id;
+    if(req.query.id && req.userID && id == req.userID || req.userMOD || req.userADM)
+    {
+        var image = req.body.image;
+        if(image){
+            updateUserImage(image, id)
+            .then(() => rF.Correct(res))
+            .catch(e => rF.DBError(res))
+        }else{
+            rF.ReqError(res);
+        }
+    }else{
+        rF.NoAuth(res);
+    }
+    return;
+};
 updateAccount  = (req, res) => { 
     var id = req.query.id;
     if(req.query.id && req.userID && (id == req.userID || req.userMOD || req.userADM))
@@ -142,7 +159,7 @@ getAccountProfile = (req,res) =>
                         error : 0,
                         image : {
                             id : data.id_profile_image,
-                            src: data.img_src
+                            imageURL: data.img_src
                         },
                         errorMSG : ""
                     });
@@ -166,6 +183,7 @@ const Profile = {
     deleteAccount : deleteAccount, 
     updateAccount : updateAccount,
     updateAccountPasswd : updateAccountPasswd,
+    updateAccountImage : updateAccountImage,
     getAccountProfile : getAccountProfile
 }
 
