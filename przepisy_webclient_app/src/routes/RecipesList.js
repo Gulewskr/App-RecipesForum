@@ -6,12 +6,9 @@ import UF from "../data/UserTypes";
 
 const RecipeList = () => {
 
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  //Do filtrowania
-  //const type = urlParams.get('type')
-  //const tags = urlParams.get('tags')
-
+  //const queryString = window.location.search;
+  //const urlParams = new URLSearchParams(queryString);
+  
   const { _type, _lvl, _speed, _TAGS } = useMemo(() => ({
     _type: [],
     _lvl: [],
@@ -20,6 +17,12 @@ const RecipeList = () => {
   }), []);
   const [ allTags, setAllTags ] = useState([]);
   const [_premium, setPremium] = useState(false);
+  const { USER } = useContext(UserContext);
+  
+  const [recipesData, setRecipesData] = useState("Brak przepisów");
+  const [recipes, setRecipes] = useState("Brak przepisów");
+  const [filtr, setFiltr] = useState("");
+
 
   const refreshTags = () => {
     fetch(`${API_ADDRESS}/tags`, {
@@ -134,11 +137,6 @@ const RecipeList = () => {
     )
   }
   
-
-
-  const { USER } = useContext(UserContext);
-  const [recipes, setRecipes] = useState("Brak przepisów");
-
   const getRecipes = () => fetch(`${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(",").replace("#","") + "&": ""}${_premium ? "premium=1" : ""}`, {
       method: 'get',
       headers: { 
@@ -154,7 +152,7 @@ const RecipeList = () => {
       };
     })
     .then((d) => {
-        if(d.error == 0) setRecipes(createRecipeList(d.data));
+        if(d.error == 0) setRecipesData(d.data);
         else setRecipes(<h1 style={{color: "red"}}>{d.errorMSG}</h1>)
     })
     .catch(err => {
@@ -166,13 +164,29 @@ const RecipeList = () => {
       refreshTags();
     },[]);
 
+    useEffect(() => {
+      setRecipes(createRecipeList(recipesData, filtr));
+    },[recipesData, filtr])
+
 
     return (
       <div>
         <h2>RecipeList</h2>
-        <Filter />
-        <Buttons.AddRecipeButton />{/* id, id_user, name, text, type */}
-        {recipes}
+        <div>
+          <div>
+            <p>Wyszukiwarka przepisów</p>
+            <input type="text" placeholder={"wyszukaj przepis"} onChange={(v) => setFiltr(v.target.value)}></input>
+          </div>
+          <div style={{display:"flex", flexDirection:"row"}}>
+            <div style={{display:"flex"}}>
+              <Filter />
+            </div>
+            <div style={{display:"flex", flexDirection:"column"}}>
+              <Buttons.AddRecipeButton />{/* id, id_user, name, text, type */}
+              {recipes}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {API_ADDRESS} from '../data/API_VARIABLES';
+import { validationCommentForm } from '../data/Validation';
 
 const NewCommentForm = (props) => {
     const {id_recipe, id_user, id_comment, token, callback} = props;
@@ -32,7 +33,14 @@ const NewCommentForm = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        tryAddComment();
+        //let val = validationCommentForm(e.target["komentarz"].value);
+        let val = validationCommentForm(text, id_recipe, id_comment);
+        if(!val.error){
+          tryAddComment();
+          alert(val.errorMSG);
+        }else{
+          alert(val.errorMSG);
+        }
     }
 
     return (

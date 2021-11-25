@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState } from "react";
 //DATA
 import {API_ADDRESS} from '../data/API_VARIABLES';
 import {UserContext} from '../data/User';
+import {validationRegisterForm} from '../data/Validation'
 //Styles
 import '../styles/App.scss';
 
@@ -82,7 +83,12 @@ const Register = () => {
     
       const handleSubmit = (e) => {
         e.preventDefault();
-        tryRegister();
+        let val = validationRegisterForm(_username, _password, _nick, _email);
+        if(!val.error){
+          tryRegister();
+        }else{
+          alert(val.errorMSG);
+        }
       }
     
       const ErrorText = () => {

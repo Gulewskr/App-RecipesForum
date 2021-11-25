@@ -1,6 +1,7 @@
 import React, {useContext, useState} from 'react';
 import {RecipeImagesForm} from './index';
 import UF from '../data/UserTypes';
+import {validationRecipeForm} from '../data/Validation'
 
 const RecipeComp = (props) => {
     const {id, image, name, speed, score, lvl, text, type, user} = props;
@@ -50,7 +51,12 @@ const RecipeForm = (props) => {
     const handleSubmit = (e) => {
         console.log(e);
         e.preventDefault();
-        callback(_name, _text, tagsTable, _type, _speed, _lvl, _imagesID);
+        let val = validationRecipeForm(_name, _text, tagsTable, _type, _speed, _lvl, _imagesID);
+        if(!val.error){
+            callback(_name, _text, tagsTable, _type, _speed, _lvl, _imagesID);
+        }else{
+          alert(val.errorMSG);
+        }
     }
 
     const setNewImageIDS = (v) => { setImageIDs(v); };
@@ -142,12 +148,28 @@ const RecipeForm = (props) => {
     );
 }
 
-const createRecipeList = (data) => {
+const createRecipeList = (data, filter) => {
     var res = [];
+    if(filter != undefined && Array.isArray(data)){
+        data = data.filter(({name, text}) => {
+            let tmp = false
+            if(typeof name == "string" && !tmp){
+                tmp = name.toLowerCase().includes(filter.toLowerCase());
+            }
+            if(typeof text == "string" && !tmp){
+                tmp = text.toLowerCase().includes(filter.toLowerCase());
+            }
+            return tmp
+        })
+    }
     for(let i = 0, l = data.length; i < l; i++)
     {
       const {id, imageURL, lvl, name, score, speed, text, type, user} = data[i];
-      res.push( <div key={id} className={UF.GetRecipeDivClass(user.type)}><RecipeComp key={id} id={id} image={imageURL} name={name} score={score} speed={speed} lvl={lvl} text={text} type={type} user={user} /></div> );
+      if(user != undefined){
+        res.push( <div key={id} className={UF.GetRecipeDivClass(user.type)}><RecipeComp key={id} id={id} image={imageURL} name={name} score={score} speed={speed} lvl={lvl} text={text} type={type} user={user} /></div> );
+      }else{
+        break;
+      }
     }
     return res;
   }

@@ -1,15 +1,11 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Buttons, Recipe, ProfileImagesForm, createRecipeList } from "../components";
 import {UserContext} from '../data/User';
+import {validationPasswordChange, validationRProflieForm} from '../data/Validation'
 import { API_ADDRESS } from "../data/API_VARIABLES";
 
 const Profile = (props) => {
-  //TODO: 
-  // -przycisk dezaktywowanie konta
-  // -formularze edycji konta
-  // -formularz edycji hasła
-  // -przesłanie żądań na serwer
-
+ 
   const {user, token} = props;
 
   const queryString = window.location.search;
@@ -19,6 +15,7 @@ const Profile = (props) => {
   //const { USER, token } = useContext(UserContext);
   const [data, setData] = useState("");
   const [dataRecipies, setDataRecipies] = useState([]);
+  const [recipiesObject, setRecipiesObject] = useState(<></>);
 
   const {owner, mod, nick, email, type, image, recipeNum, commentNum, avgScore} = useMemo(
     () => {console.log(data); return({
@@ -27,10 +24,10 @@ const Profile = (props) => {
       nick : data !== "" ? data.name : "null", 
       email : data !== "" ? data.email : "null", 
       type : data !== "" ? data.type : "null", 
-      image : data !== "" ? data.image : {id : 0, imageURL : ""},
+      image : data !== "" ? data.image ? data.image : {id : 0, imageURL : ""} : {id : 0, imageURL : ""},
       recipeNum : data !== "" ? data.recipeNum : 0, 
       commentNum : data !== "" ? data.commentNum : 0, 
-      avgScore : data !== "" ? data.avgScore : 0
+      avgScore : data !== "" ? data.avgScore != null ? data.avgScore : 0 : 0
     })}, [data]);
 
   const [editPassword, setEPassword] = useState(undefined);
@@ -41,6 +38,10 @@ const Profile = (props) => {
   useEffect(() => {
     refreshData();
   }, [id, token]);
+
+  useEffect(() => {
+    setRecipiesObject(createRecipeList( dataRecipies ));
+  }, [dataRecipies])
 
   const refreshData = () => {
     if(id){
@@ -76,7 +77,6 @@ const Profile = (props) => {
       })
       .then( res => {
         try{
-          //console.log(res);
           return res.json();
         }catch (err){
           console.log(err);
@@ -84,7 +84,7 @@ const Profile = (props) => {
       })
       .then((d) => {
         console.log(d);
-        if(d.error == 0) setDataRecipies(createRecipeList(d.data));
+        if(d.error == 0) setDataRecipies(d.data);
         else setDataRecipies(<h1 style={{color: "red"}}>{d.errorMSG}</h1>)
       })
       .catch(err => {
@@ -153,12 +153,22 @@ const Profile = (props) => {
       });
     };
 
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      let val = validationRProflieForm(newNick, newEmail);
+      if(!val.error){
+        saveChange();
+      }else{
+        alert(val.errorMSG);
+      }
+    }
+
     return (
       <div>
         <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
           <h3>Edycja danych</h3>
           <div className="login-form">
-            <form onSubmit={saveChange}>
+            <form onSubmit={handleSubmit}>
               <input type="text" onChange={v => setNewNick(v.target.value)} name="username" value={newNick} placeholder="nazwa użytkownika" required/>
               <input type="text" onChange={v => setNewEmail(v.target.value)} name="password" value={newEmail} placeholder="email"  required />
               <input type="submit"/>
@@ -226,15 +236,12 @@ const Profile = (props) => {
     const resetEdit = () =>
     {
       setEPassword(false);
-      //setEUserData(userData);
     };
 
     const saveChange = () =>
     {
-      setEPassword(false);
       if(newPasswd == newPasswdR)
       {
-      //przesłanie na serwer
       fetch(`${API_ADDRESS}/profile/pass?id=${id}`, {
         method: 'put',
         headers: { 
@@ -248,11 +255,12 @@ const Profile = (props) => {
       })
       .then( res => {
         try{
-          //jak git to zamień jak nie to błąd wyświetl
           if(res.status == 200){
+            setEPassword(false);
             console.log("powodzenie zmiany hasła");
             return {error: 0}
           }else{
+            //TODO wyświetl błąd
             console.log(res);
           }
           return res.json();
@@ -268,21 +276,30 @@ const Profile = (props) => {
         console.log(err);
       });
     };
-  }
+    }
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      let val = validationPasswordChange(newPasswd);
+      if(!val.error){
+        saveChange();
+      }else{
+        alert(val.errorMSG);
+      }
+    }
 
     return (
       <div>
         <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
           <h3>Edycja hasła</h3>
           <div className="login-form">
-            <form onSubmit={saveChange}>
+            <form onSubmit={handleSubmit}>
               <input type="password" onChange={v => setOldPasswd(v.target.value)} name="username" placeholder="stare hasło" required/>
               <input type="password" onChange={v => setNewPasswd(v.target.value)} name="password" placeholder="nowe hasło"  required />
               <input type="password" onChange={v => setNewPasswdR(v.target.value)} name="password" placeholder="powtórz nowe hasło"  required />
               <input type="submit"/>
             </form>
           </div>
-        <a className="przycisk" onClick={() => saveChange()}> Zapisz </a>
       </div>
     );
   };
@@ -372,7 +389,7 @@ const Profile = (props) => {
       <p>Liczba komentarzy: {commentNum}</p>
       <p>Status: {type}</p>
       <p>Przepisy użytkownika <b>{nick}</b></p>
-      {dataRecipies}
+      {recipiesObject}
     </div>
   );
 }

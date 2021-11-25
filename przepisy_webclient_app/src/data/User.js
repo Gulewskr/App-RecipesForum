@@ -78,9 +78,9 @@ const UserContextProvider = ({ children }) => {
     const UserIsMod = () => USER.type == 1 || USER.type == 2
     const UserHaveTheSameId = (v) => USER.id == v
     const UserCanEdit = (v) => {
-      console.log("User type: " + USER.type + " " + UserIsMod());
-      console.log("User id: " + USER.id + "Otrzymane id: " + v + " " + UserHaveTheSameId(v));
-      console.log(UserIsMod() || UserHaveTheSameId(v));
+      //console.log("User type: " + USER.type + " " + UserIsMod());
+      //console.log("User id: " + USER.id + "Otrzymane id: " + v + " " + UserHaveTheSameId(v));
+      //console.log(UserIsMod() || UserHaveTheSameId(v));
       return (UserIsMod() || UserHaveTheSameId(v));
     }
 

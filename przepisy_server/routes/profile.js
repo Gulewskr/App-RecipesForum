@@ -55,7 +55,7 @@ updateAccountPasswd  = (req, res) => {
         var passwdNew = req.body.passwdNew;
         if(passwdOld && passwdNew){
             db.query(
-                'UPDATE ACCOUNTS SET password = ?  WHERE ID = ? AND password = ?', [passwdNew, id, passwdOld], 
+                'UPDATE ACCOUNTS SET password = ?  WHERE ID = ? AND password = SHA2(?, 256)', [passwdNew, id, passwdOld], 
                 function(error, results, fields) {
                     if(error){
                         console.log(error);

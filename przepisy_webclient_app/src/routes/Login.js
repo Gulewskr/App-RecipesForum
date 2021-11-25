@@ -2,15 +2,9 @@ import React, {useState, useContext} from 'react';
 //DATA
 import {API_ADDRESS} from '../data/API_VARIABLES';
 import {UserContext} from '../data/User';
+import {validationLoginForm} from '../data/Validation';
 //Styles
 import '../styles/App.scss';
-
-/*
-  TODO 
-  -dodać szyfrowanie hasła
-  -dodać walidacje wprowadzonych danych
-
-*/
 
 const Login = () => {
 
@@ -63,7 +57,13 @@ const Login = () => {
 
     const handleSubmit = (e) => {
       e.preventDefault();
-      tryLogin();
+      //let val = validationLoginForm(e.target["username"].value, e.target["password"].value);
+      let val = validationLoginForm(_username, _password);
+      if(!val.error){
+        tryLogin();
+      }else{
+        alert(val.errorMSG);
+      }
     }
 
     const ErrorText = () => {

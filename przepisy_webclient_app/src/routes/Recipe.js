@@ -49,7 +49,7 @@ const Recipe = (props) => {
       var res = [];
       d.data.forEach(e => 
         {
-          console.log(`Komentarza uprawnienia ${UserCanEdit(e.user.id_)}`);
+          //console.log(`Komentarza uprawnienia ${UserCanEdit(e.user.id_)}`);
           res.push(<SingleComment id={e.id} id_recipe={e.id_recipe} id_user={e.user.id_} text={e.text} editable={UserCanEdit(e.user.id_)} token={token} callback={refreshData}/>);
         }
       );

@@ -105,7 +105,7 @@ var storagePro = multer.diskStorage({
 })
 var storageRec = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null, 'images/recipes')
+		cb(null, 'images/recipies')
 	},
 	filename: function (req, file, cb) {
 		cb(null, Date.now() + '.png') //Appending .jpg
