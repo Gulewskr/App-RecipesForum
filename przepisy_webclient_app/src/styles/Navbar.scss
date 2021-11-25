@@ -1,0 +1,65 @@
+.navbar{
+    display: flex;
+    width: 100%;
+    position: fixed;
+    top: 0;
+}
+.navbar ul{
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    padding-left: 300px;
+    border-bottom: 1px solid black;
+    background-color: #ffffff;
+    width: 100%;
+}
+.navbar li{
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font: 22px Snell Roundhand, cursive;
+    color: black;
+    border-bottom: 1px solid black;
+    background-color: #ffffff;
+    transition: 1s;
+}
+.navbar li:hover:not(:last-child){
+    font: 25px Snell Roundhand, cursive;
+    width: 110%;
+    height: 110%;
+}
+.navbar li:hover .logout_button{
+    background-color: #3bd16f;
+}
+.logout_button{
+    background-color: #01b636;
+    padding: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    color: white;
+    border-radius: 10px;
+    font: 20px Snell Roundhand, cursive;
+    transition: 0.3s;
+}
+/*
+.navbar li div::before{
+    content: '';
+    position: absolute;
+    display: block;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    height: 10px;
+    transition: 1s;
+    background-color: #52ab98;
+}
+.navbar li:hover div::before{
+    width: 100%;
+}*/

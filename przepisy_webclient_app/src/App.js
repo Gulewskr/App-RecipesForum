@@ -8,12 +8,19 @@ import { Home, Login, Profile, Register, Recipe, RecipeNew,  RecipesList } from 
 import { Navbar } from './components';
 
 //DATA
-import {API_ADDRESS} from './data/API_VARIABLES';
-import UserContextProvider , {UserContext} from './data/User';
+import {UserContext} from './data/User';
 
 //Styles
 import './styles/App.scss';
 import './styles/TypeUser.scss';
+import './styles/Navbar.scss';
+import './styles/Form.scss';
+import './styles/Filter.scss';
+import './styles/CommentComponent.scss';
+import './styles/RecipeComponent.scss';
+import './styles/ProfileSite.scss';
+import './styles/RecipeSite.scss';
+import './styles/Other.scss';
 
 const App = () => {
 
@@ -35,8 +42,13 @@ const App = () => {
         div>/ <h1>⚡ Elektryzujące ⚡ <br> 🍳 Przepisy 🍳</h1> 
         <h1>👹 Boxdelowe ⛄ <br/> 🍨 LOUUUUDY 🍨</h1>
       </div>*/}
-      <Hdr/>
-      <Navbar />
+      <div style={{display:'none'}}>
+        <Hdr/>
+      </div>
+      <div className="navbar">
+        <Navbar />
+      </div>
+      <div className="siteContent">
       <Switch>
           <Route path="/login">
             <Login />
@@ -61,6 +73,7 @@ const App = () => {
             <Home token={token} />
           </Route>
         </Switch>
+        </div>
     </Router>
     );
 }

@@ -62,3 +62,37 @@ img{
   width: 200px;
   height: 200px;
 }
+.siteTitle{
+  height: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.mainDiv{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.md{
+  width: 90%;
+  border-radius: 5px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+body{
+  background-color: #ebebeb;
+  overflow-x: hidden;
+}
+.siteContent{
+  margin-top: 60px;
+}
+.line{
+  width: 100%;
+  height: 1px;
+  background-color: black;
+}

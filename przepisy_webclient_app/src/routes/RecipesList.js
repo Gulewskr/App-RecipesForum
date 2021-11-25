@@ -108,31 +108,47 @@ const RecipeList = () => {
       'Ciasto' : 5
      */
     return(
-      <div>
-        <h1>Filtry</h1>
-        <p>Typ</p>
-        <SingleFilter name={"Danie główne"} v={1} l={_type} choosed={_type.indexOf(1) != -1}/>
-        <SingleFilter name={"Przekąska"} v={2} l={_type} choosed={_type.indexOf(2) != -1}/>
-        <SingleFilter name={"Sałatka"} v={3} l={_type} choosed={_type.indexOf(3) != -1}/>
-        <SingleFilter name={"Zupa"} v={4} l={_type} choosed={_type.indexOf(4) != -1}/>
-        <SingleFilter name={"Deser"} v={5} l={_type} choosed={_type.indexOf(5) != -1}/>
-        <SingleFilter name={"Ciasto"} v={6} l={_type} choosed={_type.indexOf(6) != -1}/>
-        <p>Długość przygotowania</p>
-        <SingleFilter name={"szybki"} v={1} l={_speed} choosed={_speed.indexOf(1) != -1}/>
-        <SingleFilter name={"średni"} v={2} l={_speed} choosed={_speed.indexOf(2) != -1}/>
-        <SingleFilter name={"długi"} v={3} l={_speed} choosed={_speed.indexOf(3) != -1}/>
-        <p>Stopień trudności</p>
-        <SingleFilter name={"łatwe"} v={1} l={_lvl} choosed={_lvl.indexOf(1) != -1}/>
-        <SingleFilter name={"średnie"} v={2} l={_lvl} choosed={_lvl.indexOf(2) != -1}/>
-        <SingleFilter name={"trudne"} v={3} l={_lvl} choosed={_lvl.indexOf(3) != -1}/>
-        <p>Tagi</p>
-        <TagsFilter />
-        <p>Tylko Premium</p>
-        <div onClick={() => setPremium(!_premium)}>
-          {_premium ? <a  style={{"color" : "green"}}>Wybrano</a> : <a  style={{"color" : "orange"}}>Nie wybrano</a>}
+      <div className="filters">
+        <div className="filter-cont" id="cont1">
+          <h1>Filtry</h1>
         </div>
-        <div onClick={() => { console.log(`${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(",") + "&": ""}${_premium ? "premium=1" : ""}`);
-          getRecipes()}}>Zastosuj</div>
+        <div className="line" />
+        <div className="filter-cont">
+          <p>Typ</p>
+          <SingleFilter name={"Danie główne"} v={1} l={_type} choosed={_type.indexOf(1) != -1}/>
+          <SingleFilter name={"Przekąska"} v={2} l={_type} choosed={_type.indexOf(2) != -1}/>
+          <SingleFilter name={"Sałatka"} v={3} l={_type} choosed={_type.indexOf(3) != -1}/>
+          <SingleFilter name={"Zupa"} v={4} l={_type} choosed={_type.indexOf(4) != -1}/>
+          <SingleFilter name={"Deser"} v={5} l={_type} choosed={_type.indexOf(5) != -1}/>
+          <SingleFilter name={"Ciasto"} v={6} l={_type} choosed={_type.indexOf(6) != -1}/>
+        </div>
+        <div className="line" />
+        <div className="filter-cont">
+          <p>Długość przygotowania</p>
+          <SingleFilter name={"szybki"} v={1} l={_speed} choosed={_speed.indexOf(1) != -1}/>
+          <SingleFilter name={"średni"} v={2} l={_speed} choosed={_speed.indexOf(2) != -1}/>
+          <SingleFilter name={"długi"} v={3} l={_speed} choosed={_speed.indexOf(3) != -1}/>
+        </div>
+        <div className="line" />
+        <div className="filter-cont">
+          <p>Stopień trudności</p>
+          <SingleFilter name={"łatwe"} v={1} l={_lvl} choosed={_lvl.indexOf(1) != -1}/>
+          <SingleFilter name={"średnie"} v={2} l={_lvl} choosed={_lvl.indexOf(2) != -1}/>
+          <SingleFilter name={"trudne"} v={3} l={_lvl} choosed={_lvl.indexOf(3) != -1}/>
+        </div>
+        <div className="line" />
+        <div className="filter-cont">
+          <p>Tylko Premium</p>
+          <div onClick={() => setPremium(!_premium)}>
+            {_premium ? <a  style={{"color" : "green"}}>Wybrano</a> : <a  style={{"color" : "orange"}}>Nie wybrano</a>}
+          </div>
+        </div>
+        <div className="line" />
+        <div className="filter-cont">
+          <p>Tagi</p>
+          <TagsFilter />
+        </div>        
+        <div id="filterButton" onClick={() => {getRecipes()}}>Zastosuj</div>
       </div>
     )
   }
@@ -170,19 +186,26 @@ const RecipeList = () => {
 
 
     return (
-      <div>
-        <h2>RecipeList</h2>
-        <div>
-          <div>
-            <p>Wyszukiwarka przepisów</p>
-            <input type="text" placeholder={"wyszukaj przepis"} onChange={(v) => setFiltr(v.target.value)}></input>
-          </div>
+      <div className="mainDiv">
+        {/*
+          <div className="siteTitle">
+          <h2>RecipeList</h2>
+        </div>
+        */}
+        <div className="search">
+          <p>Wyszukiwarka przepisów</p>
+          <input type="text" placeholder={"wyszukaj przepis"} onChange={(v) => setFiltr(v.target.value)}></input>
+          <div style={{width:"75px"}}/>
+          <div className="newRecipeButton" onClick={() => window.location.assign("/recipe/new")}>
+          <Buttons.AddRecipeButton />
+        </div>
+        </div>
+        <div className="md">
           <div style={{display:"flex", flexDirection:"row"}}>
             <div style={{display:"flex"}}>
               <Filter />
             </div>
             <div style={{display:"flex", flexDirection:"column"}}>
-              <Buttons.AddRecipeButton />{/* id, id_user, name, text, type */}
               {recipes}
             </div>
           </div>

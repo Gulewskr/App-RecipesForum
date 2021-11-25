@@ -4,22 +4,21 @@ import { UserContext } from '../data/User';
 
 const Navbar = () => {
     const { USER, LogOut } = useContext(UserContext);
-    /* wersja bez używania komponentów react-router-dom
-    */
+    /* wersja bez używania komponentów react-router-dom */
     return (
       <ul>
-        <li onClick={() => window.location.assign("/")}> Home </li>
-        <li onClick={() => window.location.assign("/recipes")}> Lista przepisów </li>
+        <li onClick={() => window.location.assign("/")}><div> Home </div></li>
+        <li onClick={() => window.location.assign("/recipes")}><div> Lista przepisów </div></li>
         {
           USER.id ? 
           <>
-          <li onClick={() => window.location.assign("/profile?id=" + USER.id)}>Profil użytkownika</li>
-          <li onClick={LogOut} >Wyloguj</li>
+          <li onClick={() => window.location.assign("/profile?id=" + USER.id)}><div>Profil użytkownika</div></li>
+          <li onClick={LogOut}><div className="logout_button">Wyloguj</div> </li>
           </>
             :
           <>
-            <li onClick={() => window.location.assign("/login")}> Logowanie </li>
-            <li onClick={() => window.location.assign("/register")}> Rejestracja </li>
+            <li onClick={() => window.location.assign("/login")}><div>Logowanie</div></li>
+            <li onClick={() => window.location.assign("/register")}><div>Rejestracja</div></li>
           </>
         }
       </ul>
