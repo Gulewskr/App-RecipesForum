@@ -142,4 +142,14 @@ const RecipeForm = (props) => {
     );
 }
 
-export { RecipeComp , RecipeForm };
+const createRecipeList = (data) => {
+    var res = [];
+    for(let i = 0, l = data.length; i < l; i++)
+    {
+      const {id, imageURL, lvl, name, score, speed, text, type, user} = data[i];
+      res.push( <div key={id} className={UF.GetRecipeDivClass(user.type)}><RecipeComp key={id} id={id} image={imageURL} name={name} score={score} speed={speed} lvl={lvl} text={text} type={type} user={user} /></div> );
+    }
+    return res;
+  }
+
+export { RecipeComp , RecipeForm , createRecipeList};

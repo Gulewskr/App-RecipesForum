@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Buttons, Recipe, ProfileImagesForm } from "../components";
+import { Buttons, Recipe, ProfileImagesForm, createRecipeList } from "../components";
 import {UserContext} from '../data/User';
 import { API_ADDRESS } from "../data/API_VARIABLES";
 
@@ -18,6 +18,7 @@ const Profile = (props) => {
 
   //const { USER, token } = useContext(UserContext);
   const [data, setData] = useState("");
+  const [dataRecipies, setDataRecipies] = useState([]);
 
   const {owner, mod, nick, email, type, image, recipeNum, commentNum, avgScore} = useMemo(
     () => {console.log(data); return({
@@ -27,9 +28,9 @@ const Profile = (props) => {
       email : data !== "" ? data.email : "null", 
       type : data !== "" ? data.type : "null", 
       image : data !== "" ? data.image : {id : 0, imageURL : ""},
-      recipeNum : data !== "" ? data.rn : 0, 
-      commentNum : data !== "" ? data.cn : 0, 
-      avgScore : data !== "" ? data.scr : 0
+      recipeNum : data !== "" ? data.recipeNum : 0, 
+      commentNum : data !== "" ? data.commentNum : 0, 
+      avgScore : data !== "" ? data.avgScore : 0
     })}, [data]);
 
   const [editPassword, setEPassword] = useState(undefined);
@@ -61,6 +62,30 @@ const Profile = (props) => {
       })
       .then((data) => {
         setData(data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+      fetch(`${API_ADDRESS}/profile/recipies?id=${id}`, {
+        method: 'get',
+        headers: { 
+          'Access-token': token,
+          'Content-Type': 'application/json' 
+        },
+      })
+      .then( res => {
+        try{
+          //console.log(res);
+          return res.json();
+        }catch (err){
+          console.log(err);
+        };
+      })
+      .then((d) => {
+        console.log(d);
+        if(d.error == 0) setDataRecipies(createRecipeList(d.data));
+        else setDataRecipies(<h1 style={{color: "red"}}>{d.errorMSG}</h1>)
       })
       .catch(err => {
         console.log(err);
@@ -298,17 +323,20 @@ const Profile = (props) => {
 
     return(
       <div>
+        <div>
         {
           ( owner || mod ) && editProfile && <ProfileImagesForm image={image} postAddress={'/imagesProfile'} token={token} cb={EditProfilePicture} />
         }
-        <img  src={image.imageURL} alt={"obraz użytkownika"}/><br/>
         {
-          ( owner || mod ) 
-          && 
+          ( owner || mod ) &&
+          ( 
             (!editProfile && <button onClick={ () => setEProfile(true) }>Edytuj zdjęcie profilowe</button>) 
           || 
             <button onClick={ () => setEProfile(false) }>Anuluj zmianę</button>
+          )
         }
+        </div>
+        <img  src={image.imageURL} alt={"obraz użytkownika"}/><br/>
       </div>
     )
   }
@@ -344,6 +372,7 @@ const Profile = (props) => {
       <p>Liczba komentarzy: {commentNum}</p>
       <p>Status: {type}</p>
       <p>Przepisy użytkownika <b>{nick}</b></p>
+      {dataRecipies}
     </div>
   );
 }

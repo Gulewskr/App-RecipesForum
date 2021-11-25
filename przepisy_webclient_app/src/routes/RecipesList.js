@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from "react";
-import { Buttons, RecipeComp } from "../components";
+import { Buttons, RecipeComp, createRecipeList } from "../components";
 import {UserContext} from '../data/User';
 import { API_ADDRESS } from "../data/API_VARIABLES";
 import UF from "../data/UserTypes";
@@ -139,16 +139,6 @@ const RecipeList = () => {
   const { USER } = useContext(UserContext);
   const [recipes, setRecipes] = useState("Brak przepisów");
 
-  const createRecipeList = (data) => {
-    var res = [];
-    for(let i = 0, l = data.length; i < l; i++)
-    {
-      const {id, imageURL, lvl, name, score, speed, text, type, user} = data[i];
-      res.push( <div key={id} className={UF.GetRecipeDivClass(user.type)}><RecipeComp key={id} id={id} image={imageURL} name={name} score={score} speed={speed} lvl={lvl} text={text} type={type} user={user} /></div> );
-    }
-    setRecipes( res );
-  }
-
   const getRecipes = () => fetch(`${API_ADDRESS}/recipes?${_type.length > 0 ? "type=" + _type.join(",") + "&": ""}${_speed.length > 0 ? "speed=" + _speed.join(",") + "&": ""}${_lvl.length > 0 ? "lvl=" + _lvl.join(",") + "&": ""}${_TAGS.length > 0 ? "tags=" + _TAGS.join(",").replace("#","") + "&": ""}${_premium ? "premium=1" : ""}`, {
       method: 'get',
       headers: { 
@@ -164,8 +154,7 @@ const RecipeList = () => {
       };
     })
     .then((d) => {
-        console.log(d.data);
-        if(d.error == 0) createRecipeList(d.data);
+        if(d.error == 0) setRecipes(createRecipeList(d.data));
         else setRecipes(<h1 style={{color: "red"}}>{d.errorMSG}</h1>)
     })
     .catch(err => {
