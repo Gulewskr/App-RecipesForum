@@ -1,4 +1,5 @@
 **/node_modules/
 **/Przepisy.code-workspace
 funkcjonalności.txt
-przepisy_server/images
+przepisy_server/images/recipies/*
+przepisy_server/images/profile/*

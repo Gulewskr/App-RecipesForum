@@ -18,6 +18,7 @@ import './styles/Form.scss';
 import './styles/Filter.scss';
 import './styles/CommentComponent.scss';
 import './styles/RecipeComponent.scss';
+import './styles/ProfileComponent.scss';
 import './styles/ProfileSite.scss';
 import './styles/RecipeSite.scss';
 import './styles/Other.scss';

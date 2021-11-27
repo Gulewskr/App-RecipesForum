@@ -8,18 +8,17 @@
     width: 100%;
     background: white;
     border-bottom: 1px solid black;
+    z-index: 10;
 }
 .search input{
     margin-left: 30px;
     width: 66%;
     padding-left: 20px;
-    border-radius: 10px;
     border: 2px solid black;
 }
 .newRecipeButton{
     color: white;
     background-color: #01b636;
-    border-radius: 20px;
     padding-left: 10px;
     padding-right: 10px;
     transition: 1s;
@@ -30,6 +29,13 @@
 }
 .filters{
     border: 1px solid black;
-    width: 250px;
+    width: 300px;
     background-color: #ffffff;
+}
+.recipesCont{
+    display: flex;
+    flex-direction: column;
+    padding-left: 50px;
+    padding-right: 50px;
+    width: 100%;
 }

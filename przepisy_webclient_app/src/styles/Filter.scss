@@ -37,3 +37,39 @@
 #filterButton:hover{
     background-color: #3bd16f;
 }
+.filter-box{
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    margin-bottom: 5px;
+    justify-content: right;
+    padding-right: 80px;
+    text-align: right;
+}
+.checkmarkBox{
+    background-color: #ebebeb;
+    position: absolute;
+    right: 35px;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    transform: translate(0, -50%);
+    cursor: pointer;
+    border: 1px solid black;
+}
+.checkmarkBox:hover{
+    background-color: #d1d0d0;
+}
+.checkmarkBox>div{
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.checkmark{
+    width: 150%;
+    height: 150%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}

@@ -1,36 +1,104 @@
 import React, {useContext, useState} from 'react';
-import {RecipeImagesForm} from './index';
+import {RecipeImagesForm, ProfileComp} from './index';
 import UF from '../data/UserTypes';
 import {validationRecipeForm} from '../data/Validation'
 
 const RecipeComp = (props) => {
     const {id, image, name, speed, score, lvl, text, type, user} = props;
-    /*
-        user:
-        {
-            "id_":4,
-            "name":"zwykły użytkownik",
-            "type":4,
-            "imageURL":null
+
+    const translateLVL = (v) => {
+        switch (v) {
+            case 1: return "Łatwe do przygotowania";
+            case 2: return "Średnie do przygotowania";
+            case 3: return "Trudne do przygotowania";
         }
-    */
+        return "Brak";
+    }
+
+    const translateTime = (v) => {
+        switch (v) {
+            case 1: return "Krótki czas przygotowania";
+            case 2: return "Sredni czas przygotowania";
+            case 3: return "Długi czas przygotowania";
+        }
+        return "Brak";
+    }
+
+    const translateType = (v) => {
+        switch (v) {
+            case 1: return "Danie główne";
+            case 2: return "Przekąska";
+            case 3: return "Sałatka";
+            case 4: return "Zupa";
+            case 5: return "Deser";
+            case 6: return "Ciasto";
+        }
+        return "Brak";
+    }
+
+    const translateScore = (v) => {
+        let t = v;
+        let res = [];
+        for(let i = 0; i < 6; i++)
+        {
+            if(t < 0.9)
+            {
+                if(t < 0)
+                    res.push(<img src="http://localhost:3001/images/static/starL.png" alt="N"/>)
+                else
+                    res.push(<img src="http://localhost:3001/images/static/starH.png" alt="H"/>)
+            }else{
+                res.push(<img src="http://localhost:3001/images/static/starF.png" alt="F"/>)
+            }
+            t -= 1;
+        }
+        res.push(<div style={{marginLeft: "5px", color:"#3bd16f"}}>{typeof(v) == 'number' ? v.toFixed(2) : v}</div>);
+        console.log(v);
+        return v == null ? <div style={{marginLeft: "5px", color:"#3bd16f"}}>Brak Ocen</div> : res;
+    }
+
     return(
-        <div className="container" onClick={ () => window.location.replace('/recipe?id=' + id)} key={id}>
-            Przepis nr: {id}<br/>
-            Nazwa: {name}<br/>
-            <img  src={image} alt={"obraz przepisu"}/><br/>
-            {text}<br/>
-            Przepis typu: {type}<br/>
-            Szybkość: {speed}<br/>
-            Poziom: {lvl}<br/>
-            Ocena: {score}<br/>
-            <div className={UF.GetNickNameStyle(user.id_)}>
-                Użytkownik:<br />
-                id: {user.id_}<br />
-                name: {user.name}<br />
-                typ: {UF.GetTypeName(user.type)}<br />
-                zdjęcie: {user.imageURL}
+        <div className="container-Recipe" key={id}>
+            <div className="cR-l">
+                <ProfileComp user={user}/>
+                <div className="line" />
+                <div className="imgCont">
+                    <img src={image ? image : "http://localhost:3001/images/static/recipe.jpg"} alt={"obraz przepisu"}/>
+                </div>
             </div>
+            <div className="lineV"></div>
+            <div className="cR-r">
+                <div className="cr-r-c">
+                    {name}
+                </div>
+                <div className="line" />
+                <div className="cr-r-c">
+                    <div>Ocena</div>
+                    <div className="cr-score-stars">{translateScore(score)}</div>
+                </div>
+                <div className="line" />
+                <div className="cr-r-cL">
+                    <div>
+                        <div className="cr-icons"><img src="http://localhost:3001/images/static/clock.png" alt="Szybkość:"/></div>
+                        <div>{translateTime(speed)}</div>
+                    </div>
+                    <div>
+                        <div className="cr-icons"><img src="http://localhost:3001/images/static/lvl.png" alt="Poziom:"/></div>
+                        <div>{translateLVL(lvl)}</div>
+                    </div>
+                    <div>
+                        <div className="cr-icons"><img src="http://localhost:3001/images/static/dish.png" alt="Typ:"/></div>
+                        <div>{translateType(type)}</div>
+                    </div>
+                </div>
+                <div className="line" />
+                <div className="cr-r-text">
+                    <div>{text}</div>
+                </div>
+                <div className="button" onClick={ () => {
+                window.location.replace('/recipe?id=' + id);
+                }} >Przejdź do strony przepisu</div>
+            </div>            
         </div>
     );
 };

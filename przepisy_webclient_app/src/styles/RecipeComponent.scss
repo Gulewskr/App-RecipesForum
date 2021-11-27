@@ -1,0 +1,116 @@
+.container-Recipe{
+    margin-bottom: 20px;
+    width: 1200px;
+    //border: 1px solid black;   
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+    position: relative;
+}
+.cR-l,
+.cR-r{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 1px solid black;
+}
+.cR-r{
+    width: 100%;
+    align-items: center;
+    border-left: none;
+}
+.cR-l{
+    width: 410px;
+}
+.cr-r-c{
+    padding: 3px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+}
+.cr-r-c:first-child{
+    height: 69px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+.cr-r-c:last-child{
+    background-color: blue;
+    margin-top: 20px;
+}
+.cr-r-text{
+    width: 100%;
+    height: 125px;
+    padding-top: 2px;
+    padding-left: 10px;
+    overflow: hidden;
+}
+.cr-r-cL{
+    display: flex;
+    width: 100%;
+    position: relative;
+    flex-direction: row;
+}
+.cr-r-cL > div{
+    width: 33%;
+    padding: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-left: 1px solid black;
+}
+.cr-r-cL > div:first-child{
+    border-left: none;
+}
+.cR-r .button{
+    background-color: #01b636;
+    padding: 10px;
+    color: white;
+    transition: 0.3s;
+    cursor: pointer;
+    position: absolute;
+    bottom: 10px;
+}
+.cR-r .button:hover{
+    background-color: #3bd16f;
+}
+.cr-icons{
+    width: 40px;
+    height: 40px;
+}
+.cr-icons img{
+    width: 100%;
+    height: auto;
+}
+.cr-score-stars{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.cr-score-stars>img{
+    width: 30px;
+    height: 30px;
+}
+.imgCont{
+    height: 300px;
+    width: 400px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 2px;
+}
+/*
+.imgCont img{
+    max-width: 100%;
+    height: auto;
+}
+*/
+.imgCont img{
+    max-height: 100%;
+    width: auto;
+}

@@ -37,30 +37,8 @@ li{
   padding: 5px;
   padding-left: 50px;
 }
-.przycisk{
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  height: 50px;
-  width: 100px;
-  margin-left: 10px;
-  margin-right: 10px;
-  border: 1px solid black;
-  background-color: #ffffff;
-  cursor: pointer;
-}
-.przycisk:hover{
-  height: 50px;
-  width: 100px;
-  background-color: #4d4d4d;
-  color: white;
-}
 .comment{
   background-color: whitesmoke;
-}
-img{
-  width: 200px;
-  height: 200px;
 }
 .siteTitle{
   height: 50px;
@@ -78,15 +56,15 @@ img{
 }
 .md{
   width: 90%;
-  border-radius: 5px;
   padding-left: 50px;
   padding-right: 50px;
   padding-top: 20px;
   padding-bottom: 20px;
 }
 body{
-  background-color: #ebebeb;
+  background-color: #e7f5eb;
   overflow-x: hidden;
+  cursor: default;
 }
 .siteContent{
   margin-top: 60px;
@@ -95,4 +73,7 @@ body{
   width: 100%;
   height: 1px;
   background-color: black;
+}
+.typeName{
+  font-weight: 600;
 }

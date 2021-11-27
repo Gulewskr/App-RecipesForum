@@ -13,7 +13,7 @@ const Navbar = () => {
           USER.id ? 
           <>
           <li onClick={() => window.location.assign("/profile?id=" + USER.id)}><div>Profil użytkownika</div></li>
-          <li onClick={LogOut}><div className="logout_button">Wyloguj</div> </li>
+          <li className="li_offStyle" onClick={LogOut}><div className="logout_button">Wyloguj</div> </li>
           </>
             :
           <>

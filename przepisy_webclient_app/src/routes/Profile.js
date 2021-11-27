@@ -388,8 +388,10 @@ const Profile = (props) => {
       <p>Średnia ocena: {avgScore}</p>
       <p>Liczba komentarzy: {commentNum}</p>
       <p>Status: {type}</p>
-      <p>Przepisy użytkownika <b>{nick}</b></p>
-      {recipiesObject}
+      <div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
+        <p>Przepisy użytkownika <b>{nick}</b></p>
+        {recipiesObject}
+      </div>
     </div>
   );
 }

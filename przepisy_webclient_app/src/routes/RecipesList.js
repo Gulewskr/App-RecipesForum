@@ -3,6 +3,7 @@ import { Buttons, RecipeComp, createRecipeList } from "../components";
 import {UserContext} from '../data/User';
 import { API_ADDRESS } from "../data/API_VARIABLES";
 import UF from "../data/UserTypes";
+//image
 
 const RecipeList = () => {
 
@@ -65,13 +66,13 @@ const RecipeList = () => {
       }
 
       return( 
-        <div>
+        <div className="filter-box">
           <div>{name}</div>
           {
             choosen ? 
-            <div style={{"color" : "green"}} onClick={() => changeState(false) }>wybrany</div>
-            :
-            <div style={{"color" : "orange"}} onClick={() => changeState(true) }>wybierz</div>
+            <div className="checkmarkBox" onClick={() => changeState(false) }><div><img className="checkmark" src={"http://localhost:3001/images/static/checkmark.png"} alt="wybrano"/></div></div>
+              :
+            <div className="checkmarkBox" onClick={() => changeState(true) }></div>
           }
         </div>
       )
@@ -138,9 +139,16 @@ const RecipeList = () => {
         </div>
         <div className="line" />
         <div className="filter-cont">
-          <p>Tylko Premium</p>
-          <div onClick={() => setPremium(!_premium)}>
-            {_premium ? <a  style={{"color" : "green"}}>Wybrano</a> : <a  style={{"color" : "orange"}}>Nie wybrano</a>}
+          <p>Premium</p>
+          <div className="filter-box">
+            <div>Wyświetl tylko przepisy użytkowników premium</div>
+            <div onClick={() => setPremium(!_premium)}>
+              {
+              _premium ? <div className="checkmarkBox"><img className="checkmark" src={"http://localhost:3001/images/static/checkmark.png"} alt="wybrano"/></div>
+                : 
+              <div className="checkmarkBox"> </div>
+              }
+            </div>
           </div>
         </div>
         <div className="line" />
@@ -205,7 +213,7 @@ const RecipeList = () => {
             <div style={{display:"flex"}}>
               <Filter />
             </div>
-            <div style={{display:"flex", flexDirection:"column"}}>
+            <div className="recipesCont" >
               {recipes}
             </div>
           </div>

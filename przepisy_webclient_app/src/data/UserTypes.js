@@ -36,9 +36,19 @@ const GetTypeName = (v) => {
     switch (Number(v)) {
         case 1 : return "aministrator";
         case 2 : return "moderator";
-        case 3 : return "użytkownik premium";
-        case 4 : return "użytkownik";
-        default : return "błąd";
+        case 3 : return "premium";
+        case 4 : return "";
+        default : return "";
+    }
+}
+
+const GetStyledTypeName = (v) => {
+    switch (Number(v)) {
+        case 1 : return <div style={{color:"red"}} className="typeName">ADMIN 👹</div>;
+        case 2 : return <div style={{color:"red"}} className="typeName">MOD 🛡️</div>;
+        case 3 : return <div style={{color:"gold"}} className="typeName">Premium 👑</div>;
+        case 4 : return <></>;
+        default : return <></>;
     }
 }
 
@@ -49,7 +59,8 @@ const UserType = {
     GetRecipeDivClass : GetRecipeDivClass,
     GetProfileImageClass : GetProfileImageClass,
     GetNickNameStyle : GetNickNameStyle,
-    GetTypeName : GetTypeName
+    GetTypeName : GetTypeName,
+    GetStyledTypeName : GetStyledTypeName
 }
 
 export default UserType;

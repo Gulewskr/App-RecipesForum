@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {API_ADDRESS} from '../data/API_VARIABLES';
 import { validationCommentForm } from '../data/Validation';
+import {ProfileComp} from './index';
 
 const NewCommentForm = (props) => {
     const {id_recipe, id_user, id_comment, token, callback} = props;
@@ -116,11 +117,19 @@ const SingleComment = (props) => {
       );
     }
 
+    let user = {
+      name : "user",
+      type : 2
+    }
+
     return (
         <div className="comment">
+            <ProfileComp user={user}/>
+            {/*
             <p>Id komentarzu: {id}</p>
             <p>Przepis ID: {id_recipe}</p>
             <p>Użytkownik ID: {id_user}</p>
+            */}
             <p>Treść: {text}</p>
             <a onClick={() => changeV()}> { newCommentV ? "Anuluj" : "Odpowiedz" }</a>
             { newCommentV && <NewCommentForm id_recipe={id_recipe} id_user={id_user} id_comment={id} token={token} callback={callback}/> }
