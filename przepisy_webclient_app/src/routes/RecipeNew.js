@@ -6,13 +6,6 @@ import {UserContext} from '../data/User';
 //Styles
 import '../styles/App.scss';
 
-/*
-  TODO 
-  -dodać szyfrowanie hasła
-  -dodać walidacje wprowadzonych danych
-
-*/
-
 const RecipeNew = () => {
   const { USER } = useContext(UserContext);
 
@@ -62,9 +55,11 @@ const RecipeNew = () => {
   }
 
     return (
-      <div>
+      <div className="centerInFlex">
         <h2>Formularz nowego przepisu</h2>
-        <RecipeForm token={USER.token} callback={tryCreateNewRecipe} />
+        <div id="formDiv">
+          <RecipeForm token={USER.token} callback={tryCreateNewRecipe} />
+        </div>
       </div>
     );
   }

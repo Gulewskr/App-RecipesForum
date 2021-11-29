@@ -359,7 +359,7 @@ const Profile = (props) => {
   }
   
   return (
-    <div>
+    <div className="centerInFlex">
       <h2>Profile</h2>
       <h1>AVATAR</h1>
       <AvatarSettings />

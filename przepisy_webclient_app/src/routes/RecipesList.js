@@ -70,9 +70,9 @@ const RecipeList = () => {
           <div>{name}</div>
           {
             choosen ? 
-            <div className="checkmarkBox" onClick={() => changeState(false) }><div><img className="checkmark" src={"http://localhost:3001/images/static/checkmark.png"} alt="wybrano"/></div></div>
+            <div className="checkmarkBox" onClick={() => changeState(false) }><div className="divNormal"><img className="checkmark" src={"http://localhost:3001/images/static/checkmark.png"} alt="wybrano"/></div></div>
               :
-            <div className="checkmarkBox" onClick={() => changeState(true) }></div>
+            <div className="checkmarkBox" onClick={() => changeState(true) }><div></div></div>
           }
         </div>
       )

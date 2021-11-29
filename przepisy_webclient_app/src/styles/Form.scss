@@ -1,0 +1,78 @@
+.login-form {
+    width: 900px;
+    margin: 0 auto;
+    font-family: Tahoma, Geneva, sans-serif;
+}
+.login-form input[type="password"],
+.login-form input[type="text"]{
+    width: 100%;
+    height: 100%;
+    min-height: 50px;
+    box-sizing:border-box;
+}
+.login-form textarea {
+    width: 880px;
+    height: auto;  padding:10px;
+
+    resize: none;
+}
+.login-form input:focus,
+.login-form textarea {
+    outline: none;
+}
+.login-form input[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    position: relative;
+    margin-top: 15px;
+    background-color: #01b636;
+    border: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+    color: #ffffff;
+}
+.login-form input[type="submit"]:hover {
+    background-color: #3bd16f;
+}
+.selectorContainer{
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    min-height: 50px;
+    padding-top: 5px;
+    box-sizing: border-box;
+}
+.selectorContainer > #head {
+    width: 25%;
+    text-align: right;
+    padding-right: 20px;
+}
+.selectorContainer > .bordered{
+    background-color: #01b636;
+    color: white;
+    border: 1px solid black;
+}
+.selectorContainer > #val {
+    box-sizing: border-box;
+    width: 75%;
+    height: 50px;
+    position: relative;
+    border-left: none;
+    background-color: yellowgreen;
+}
+#val > select{
+    height: 50px;
+    width: 100%;
+}
+#tagCont{
+    margin-left: 27%;
+    width: 73%;
+    word-wrap: normal;
+    display: flex;
+    flex-wrap: wrap;
+}
+.taginput{
+    height: 100%;
+}

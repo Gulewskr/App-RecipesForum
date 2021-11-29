@@ -69,11 +69,10 @@ const RecipeImagesForm = (props) =>
 
     return(
         <div>
-            <p>Formularz:</p>
             <ImageInput postAddress={postAddress} token={token} cb={addImage} />
-            <p>Indeksy: {idTable.join(",")}</p>
-            <p>Dodane:</p>
+            <div className="imageDrawer">
             { imagesTable.map(({id_, imageURL} ) => <SingleImageFromArray id={id_} url={imageURL} />) }
+            </div>
         </div>
     )
 }

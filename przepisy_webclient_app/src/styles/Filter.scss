@@ -63,8 +63,15 @@
 .checkmarkBox>div{
     position: relative;
     display: block;
+    width: 25%;
+    height: 25%;
+    rotate: 7200deg;
+    transition: 0.5s;
+}
+.checkmarkBox > .divNormal{
     width: 100%;
     height: 100%;
+    rotate: 0deg;
 }
 .checkmark{
     width: 150%;

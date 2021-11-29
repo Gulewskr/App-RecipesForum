@@ -178,40 +178,84 @@ const RecipeForm = (props) => {
         }
     }
 
+    const autoResizeTextArea = () => { 
+        let textarea = document.getElementById('trescTextAreaBox');
+        textarea.style.cssText = 'height:auto; padding:0';
+        textarea.style.cssText = 'height:' + textarea.scrollHeight + 'px';
+    }
+
     return(
         <div className="login-form">
             <form onSubmit={handleSubmit} id="formMain"></form>
-            <input type="text" form="formMain" onChange={v => setName(v.target.value)} name="username" defaultValue={_name} placeholder="nazwa przepisu" autoComplete="off" required/>
-            <div className="taginput" form="formMain">
-                { tagsTable.map((v, i) => <a key={i} onClick={() => deleteTagByIndex(i)} style={{color: "blue", paddingLeft: "5px"}}>#{v.replaceAll(' ', '_').replaceAll('#','')}</a>) }
-                <input type="text" onChange={v => changedTags(v.target.value, v)} onFocus={v => getLastItem(v)} onBlur={v => changedTags(v.target.value, v, true)} name="username" autoComplete="off"/>
+            <div className="selectorContainer">
+                <div id="head" className="bordered">
+                    <p>Nazwa przepisu</p>
+                </div>
+                <div id="val">
+                    <input type="text" form="formMain" onChange={v => setName(v.target.value)} name="username" defaultValue={_name} autoComplete="off" required/>
+                </div>
             </div>
-            <p>Rodzaj dania</p>
-            <select form="formMain" value={_type} onChange={v => setType(v.target.value)}>            
-                <option value={1}>Danie główne</option>
-                <option value={2}>Przekąska</option>
-                <option value={3}>Sałatka</option>
-                <option value={4}>Zupa</option>
-                <option value={5}>Deser</option>
-                <option value={6}>Ciasto</option>
-            </select>
-            <p>Czas przygotowania</p>
-            <select form="formMain" value={_speed} onChange={v => setSpeed(v.target.value)}>            
-                <option value={1}>krótki</option>
-                <option value={2}>średni</option>
-                <option value={3}>długi</option>
-            </select>
-            <p>Stopień zaawansowania dania</p>
-            <select form="formMain" value={_lvl} onChange={v => setLVL(v.target.value)}>            
-                <option value={1}>łatwe</option>
-                <option value={2}>średnie</option>
-                <option value={3}>trudne</option>
-            </select>
-            <p>Dodaj zdjęcia do przepisu</p>
-            <RecipeImagesForm images={images} postAddress={'/imagesRecipe'} token={token} callback={setNewImageIDS} />
-            <input type="text" form="formMain" onChange={v => setText(v.target.value)} name="password"  defaultValue={_text} placeholder="treść" autoComplete="off"  required />
+            <div id="tagCont">
+                { tagsTable.map((v, i) => <a key={i} onClick={() => deleteTagByIndex(i)} style={{color: "blue", paddingLeft: "5px"}}>#{v.replaceAll(' ', '_').replaceAll('#','')}</a>) }
+            </div>
+            <div className="selectorContainer">
+                <div id="head" className="bordered">
+                    <p>Tagi</p>
+                </div>
+                <div id="val">
+                    <div className="taginput" form="formMain">
+                        <input type="text" onChange={v => changedTags(v.target.value, v)} onFocus={v => getLastItem(v)} onBlur={v => changedTags(v.target.value, v, true)} name="username" autoComplete="off"/>
+                    </div>
+                </div>
+            </div>
+            <div className="selectorContainer">
+                <div id="head" className="bordered">
+                    <p>Rodzaj dania</p>
+                </div>
+                <div id="val" className="bordered">
+                    <select form="formMain" value={_type} onChange={v => setType(v.target.value)}>            
+                        <option value={1}>Danie główne</option>
+                        <option value={2}>Przekąska</option>
+                        <option value={3}>Sałatka</option>
+                        <option value={4}>Zupa</option>
+                        <option value={5}>Deser</option>
+                        <option value={6}>Ciasto</option>
+                    </select>
+                </div>
+            </div>
+            <div className="selectorContainer">
+                <div id="head" className="bordered">
+                    <p>Czas przygotowania</p>
+                </div>
+                <div id="val" className="bordered">
+                    <select form="formMain" value={_speed} onChange={v => setSpeed(v.target.value)}>            
+                        <option value={1}>krótki</option>
+                        <option value={2}>średni</option>
+                        <option value={3}>długi</option>
+                    </select>
+                </div>
+            </div>
+            <div className="selectorContainer">
+                <div id="head" className="bordered">
+                    <p>Stopień zaawansowania dania</p>
+                </div>
+                <div id="val" className="bordered">
+                    <select form="formMain" value={_lvl} onChange={v => setLVL(v.target.value)}>            
+                        <option value={1}>łatwe</option>
+                        <option value={2}>średnie</option>
+                        <option value={3}>trudne</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <p>Dodaj zdjęcia do przepisu:</p>
+                <RecipeImagesForm images={images} postAddress={'/imagesRecipe'} token={token} callback={setNewImageIDS} />
+            </div>
+            <div>
+                <p>Treść przepisu:</p>
+                <textarea id="trescTextAreaBox" type="text" form="formMain" aria-multiline="true" onChange={v => {setText(v.target.value); autoResizeTextArea()}} name="password"  defaultValue={_text} placeholder="treść" autoComplete="off"  required />
+            </div>
             <input type="submit" form="formMain"/>
-            <ErrorText />
         </div>
     );
 }

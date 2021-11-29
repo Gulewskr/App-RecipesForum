@@ -43,9 +43,8 @@ const getRecipes = () =>
   });
 
   return (
-    <div>
+    <div className="centerInFlex">
       <h2>Home</h2>
-      <img src="http://localhost:3001/images/static/1.png" alt="Zdjęcie z serwera"/>
       {reciepiesTable.map((v, i) => {
         if(i < 2){
           let {id, imageURL, lvl, name, speed, text, type, user} = reciepiesTable[i];
