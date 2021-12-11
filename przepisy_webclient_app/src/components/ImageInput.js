@@ -49,10 +49,11 @@ const RecipeImagesForm = (props) =>
     }
 
     const SingleImageFromArray = (props) => {
-        const {id, url} = props;
+        const {id, url, mainID} = props;
         return (
-            <div key={id}>
+            <div className="singleImage" key={id}>
                 <img  src={url} alt={id} onClick={() => setMainImage(id)}/>
+                {id == mainID && <div>Main Image</div>}
                 <button onClick={() => removeID(id)}>Cofnij</button>
             </div>
         )
@@ -71,7 +72,7 @@ const RecipeImagesForm = (props) =>
         <div>
             <ImageInput postAddress={postAddress} token={token} cb={addImage} />
             <div className="imageDrawer">
-            { imagesTable.map(({id_, imageURL} ) => <SingleImageFromArray id={id_} url={imageURL} />) }
+                { imagesTable.map(({id_, imageURL} ) => <SingleImageFromArray id={id_} url={imageURL} mainID={imagesTable[0].id_} />) }
             </div>
         </div>
     )
@@ -93,7 +94,7 @@ const ProfileImagesForm = (props) =>
 
     return(
         <div>
-            <div>
+            <div id="imgEditCont">
             {currentImage.imageURL != "" ?
                 <img  src={currentImage.imageURL} alt={currentImage.id} />
                     :
@@ -101,7 +102,7 @@ const ProfileImagesForm = (props) =>
             }
             </div>
             <ImageInput postAddress={postAddress} token={token} cb={newImage} />
-            <button onClick={() => cb(currentImage.id)}>Zapisz zmianę</button>
+            <div id="SaveImage" onClick={() => cb(currentImage.id)}>Zapisz zmianę</div>
         </div>
     )
 }
@@ -133,7 +134,7 @@ const ImageInput = (props) => {
 	};
 	
 	return (
-        <div>
+        <div className="imageInsertBar">
             <input type="file" onChange={v => onFileChange(v)} />
             <button onClick={() => onFileUpload()}>Dodaj!</button>
         </div>

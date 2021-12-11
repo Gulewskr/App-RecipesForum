@@ -57,14 +57,15 @@
 .selectorContainer > #val {
     box-sizing: border-box;
     width: 75%;
-    height: 50px;
+    height: 55px;
     position: relative;
     border-left: none;
-    background-color: yellowgreen;
 }
 #val > select{
-    height: 50px;
+    height: 100%;
     width: 100%;
+    border-radius: 0;
+    border: none;
 }
 #tagCont{
     margin-left: 27%;
@@ -75,4 +76,58 @@
 }
 .taginput{
     height: 100%;
+}
+.imageInsertBar{
+    width: 100%;
+    background-color: rgb(219, 219, 219);
+    height: 30px;
+    position: relative;
+    border: 1px solid black;
+    margin-bottom: 15px;
+}
+.imageInsertBar > input{
+    width: 70%;
+    height: 100%;
+}
+.imageInsertBar > button{
+    width: 30%;
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid black;
+    height: 100%;
+    color: white;
+    background-color: #01b636;
+}
+.imageInsertBar > button:hover{
+    background-color: #3bd16f;
+}
+.singleImage{
+    height: 300px;
+    width: 300px;
+    box-sizing: border-box;
+    border: 1px solid black;
+    position: relative;
+}
+.singleImage > img{
+    width: 290px;
+    height: 290px;
+    top: 0;
+    left: 0;
+    transform: translate(5px, 5px);
+}
+.singleImage > div{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 4;
+}
+.singleImage > button{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 4;
+}
+.imageDrawer{
+    display: inline-flex;
+    flex-wrap: wrap;
 }

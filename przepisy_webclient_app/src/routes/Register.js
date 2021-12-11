@@ -108,9 +108,13 @@ const Register = () => {
         <div className="login-form">
           <form onSubmit={handleSubmit}>
             <input type="text" onChange={v => setNick(v.target.value)} name="username" placeholder="nazwa użytkownika" autoComplete="off" required/>
+            <div style={{height: 10}} />
             <input type="text" onChange={v => setUsername(v.target.value)} name="username" placeholder="login" autoComplete="off" required/>
+            <div style={{height: 10}} />
             <input type="password" onChange={v => setPassword(v.target.value)} name="password" placeholder="hasło" autoComplete="off"  required />
+            <div style={{height: 10}} />
             <input type="password" onChange={v => setRepPassword(v.target.value)} name="password" placeholder="powtórz hasło" autoComplete="off"  required />
+            <div style={{height: 10}} />
             <input type="text" onChange={v => setEmail(v.target.value)} name="username" placeholder="email" autoComplete="off" required/>
             <input type="submit"/>
           </form>

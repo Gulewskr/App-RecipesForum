@@ -110,10 +110,44 @@ deleteScoreDB = (res, recipeID, userID, score) => {
 }
 
 getRecipeScore = (req, res) => { res.status(403); };
+getMyRecipeScore = (req, res) => { 
+    var id = req.query.id;
+    if(id && req.userID)
+    {
+        db.query(
+            'SELECT score FROM score WHERE ID_recipe = ? AND id_user = ?',
+            [id, req.userID], 
+            function(error, results, fields) {
+                if(error){
+                    console.log(error);
+                    rF.DBError(res);
+                    return;
+                }
+                if (results.length == 1) {
+                    var data = JSON.parse(JSON.stringify(results[0]));
+                    rF.CorrectWData(res,
+                    {
+                        score: results[0].score
+                    });
+                    return;
+                } else {
+                    rF.CorrectWData(res,
+                    {
+                        score: 0
+                    });
+                    return;
+                }		 	
+            }
+        );
+    }else{
+        rF.ReqError(res);
+    }
+};
 
 const Score = {
     updateScore : updateScore,
-    getRecipeScore: getRecipeScore
+    getRecipeScore: getRecipeScore,
+    getMyRecipeScore: getMyRecipeScore
 }
 
 module.exports = Score;

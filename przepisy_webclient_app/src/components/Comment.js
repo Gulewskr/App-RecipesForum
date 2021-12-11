@@ -45,23 +45,23 @@ const NewCommentForm = (props) => {
     }
 
     return (
-        <div className="login-form">
-            <div>
+        <div className="comment-form">
+            {/*<div>
                 <p>Dane testowe:</p>
                 <p>ID przepisu komentowanego: {id_recipe}</p>
                 <p>ID użytkownika piszącego: {id_user}</p>
                 <p>ID komentarzu odpowiadanego: {id_comment}</p>
-            </div>
+            </div>*/}
             <form onSubmit={handleSubmit}>
                 <input type="text" onChange={v => setText(v.target.value)} name="komentarz" placeholder="komentarz" autoComplete="off" required/>
-                <input type="submit"/>
+                <input id="send" type="submit"/>
             </form>
         </div>
     );
 }
 
 const SingleComment = (props) => {
-    const {id, id_recipe, id_user, text, editable, token, callback} = props;
+    const {id, id_recipe, id_user, user, text, editable, token, callback} = props;
     const [newCommentV, setV] = useState(false);
 
     const changeV = () => setV(!newCommentV);
@@ -105,35 +105,29 @@ const SingleComment = (props) => {
       return (
         <div>
           {v ? 
-            <div>
-              <p>Czy na pewno chcesz usunąć komentarz (tej operacji nie da się cofnąć)</p>
-              <a onClick={() => setV(false)}>Nie</a>
-              <a onClick={() => deleteData()}>Tak usuń komentarz</a>
+            <div className="confirm_field">
+              <p><b>Czy na pewno chcesz usunąć komentarz?</b><br /> (tej operacji nie da się cofnąć)</p>
+              <div id="buttons">
+                <div onClick={() => setV(false)}>Anuluj</div>
+                <div onClick={() => deleteData()}>Usuń</div>
+              </div>
             </div>
             :
-            <div onClick={() => setV(true)}>USUŃ KOMENTARZ</div>
+            <div className="deleteButton" onClick={() => setV(true)}>USUŃ KOMENTARZ</div>
           }
         </div>
       );
     }
 
-    let user = {
-      name : "user",
-      type : 2
-    }
-
     return (
         <div className="comment">
             <ProfileComp user={user}/>
-            {/*
-            <p>Id komentarzu: {id}</p>
-            <p>Przepis ID: {id_recipe}</p>
-            <p>Użytkownik ID: {id_user}</p>
-            */}
-            <p>Treść: {text}</p>
-            <a onClick={() => changeV()}> { newCommentV ? "Anuluj" : "Odpowiedz" }</a>
+            <div id="line" />
+            <p>{text}</p>
+            { editable ? <Delete /> : ""}
             { newCommentV && <NewCommentForm id_recipe={id_recipe} id_user={id_user} id_comment={id} token={token} callback={callback}/> }
-            { editable ? <Delete /> : <div>brak uprawnień do usunięcia</div>}
+            { newCommentV ? <div id="cancButt" onClick={() => changeV()}> Anuluj </div> 
+                          : <div id="answButt"onClick={() => changeV()}> Odpowiedz </div>}
         </div>
     );
 }

@@ -1,0 +1,91 @@
+#profileBorderRecipies{
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+#avatarBorder{
+    box-sizing: border-box;
+    height: 100%;
+    width: 1202px;
+    border-bottom: 1px solid black;
+    align-items: center;
+    justify-content: center;
+}
+#avatarCont{
+    position: relative;
+}
+#avatarCont > div{
+    position: absolute;
+    bottom: 10px;
+    left: -200px;
+}
+.imgButt{
+    cursor: pointer;
+    background-color: #01b636;
+    color: white;
+    padding: 15px;
+}
+.imgButt:hover{
+    background-color: #3bd16f;
+}
+#avatarCont > img{
+    height: 350px;
+    border: 3px solid black;
+    border-radius: 200px;
+}
+#EditPassButt,
+#ACCDelButt,
+#CancImage,
+#SaveImage,
+#EditInfoButt{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    background-color: #01b636;
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    width: 140px;
+}
+#EditPassButt:hover,
+#ACCDelButt:hover,
+#EditInfoButt:hover{
+    background-color: #3bd16f;
+}
+#EditInfoButt{
+    top: 15px;
+    right: 15px;
+}
+#EditPassButt{
+    top: 85px;
+    right: 15px;
+}
+#ACCDelButt{
+    padding: 10px;
+    top: 20px;
+    right: 10px;
+}
+#CancImage,
+#SaveImage{
+    width: 300px;
+}
+#CancImage{
+    left: 150px;
+}
+#SaveImage{
+    right: 150px;
+}
+#imgEditCont{
+    height: 500px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+#imgEditCont > img{
+    max-height: 400px;
+    width: auto;
+}

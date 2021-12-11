@@ -83,6 +83,7 @@ const Login = () => {
       <div className="login-form">
         <form onSubmit={handleSubmit}>
           <input type="text" onChange={v => setUsername(v.target.value)} name="username" placeholder="login" autoComplete="off" required/>
+            <div style={{height: 10}} />
           <input type="password" onChange={v => setPassword(v.target.value)} name="password" placeholder="hasło" autoComplete="off"  required />
           <input type="submit"/>
         </form>

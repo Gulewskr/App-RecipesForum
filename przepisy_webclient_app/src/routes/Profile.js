@@ -165,11 +165,14 @@ const Profile = (props) => {
 
     return (
       <div>
-        <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
+          <div id="formButtonCont">
+                        <div onClick={() => resetEdit()}> Anuluj </div>
+          </div>
           <h3>Edycja danych</h3>
           <div className="login-form">
             <form onSubmit={handleSubmit}>
               <input type="text" onChange={v => setNewNick(v.target.value)} name="username" value={newNick} placeholder="nazwa użytkownika" required/>
+              <div style={{height: "10px"}} />
               <input type="text" onChange={v => setNewEmail(v.target.value)} name="password" value={newEmail} placeholder="email"  required />
               <input type="submit"/>
             </form>
@@ -216,13 +219,15 @@ const Profile = (props) => {
     return (
       <div>
         {v ? 
-          <div>
-            <p>Czy na pewno chcesz usunąć konto (tej operacji nie da się cofnąć, usunięte zostaną również wszelkie przepisy i komentarze)</p>
-            <a onClick={() => setV(false)}>Nie</a>
-            <a onClick={() => deleteAcc()}>Tak usuń konto</a>
+          <div className="confirm_field">
+            <p><b>Czy na pewno chcesz usunąć konto?</b><br /> (tej operacji nie da się cofnąć, usunięte zostaną również wszelkie przepisy i komentarze)</p>
+            <div id="buttons">
+                <div onClick={() => setV(false)}>Anuluj</div>
+                <div onClick={() => deleteAcc()}>Usuń</div>
+              </div>
           </div>
           :
-          <div onClick={() => setV(true)}>USUŃ KONTO</div>
+          <div id="ACCDelButt" onClick={() => setV(true)}>USUŃ KONTO</div>
         }
       </div>
     );
@@ -290,12 +295,16 @@ const Profile = (props) => {
 
     return (
       <div>
-        <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
+        <div id="formButtonCont">
+                        <div onClick={() => resetEdit()}> Anuluj </div>
+          </div>
           <h3>Edycja hasła</h3>
           <div className="login-form">
             <form onSubmit={handleSubmit}>
               <input type="password" onChange={v => setOldPasswd(v.target.value)} name="username" placeholder="stare hasło" required/>
+              <div style={{height: "10px"}} />
               <input type="password" onChange={v => setNewPasswd(v.target.value)} name="password" placeholder="nowe hasło"  required />
+              <div style={{height: "10px"}} />
               <input type="password" onChange={v => setNewPasswdR(v.target.value)} name="password" placeholder="powtórz nowe hasło"  required />
               <input type="submit"/>
             </form>
@@ -339,56 +348,82 @@ const Profile = (props) => {
     }
 
     return(
-      <div>
+      <div id="avatarCont">
         <div>
         {
-          ( owner || mod ) && editProfile && <ProfileImagesForm image={image} postAddress={'/imagesProfile'} token={token} cb={EditProfilePicture} />
+          ( owner || mod ) && editProfile && 
+          <div id="editFormCont">
+            <div>
+              <div id="background"></div>
+              <div id="editFormInCont" style={{overflow: "hidden", position: "relative", display: "flex", justifyContent: "center"}}>
+                <div style={{position: "relative", width: "98%"}} >
+                  <ProfileImagesForm image={image} postAddress={'/imagesProfile'} token={token} cb={EditProfilePicture} />
+                  <div id="CancImage" onClick={ () => setEProfile(false) }>Anuluj zmianę</div>
+                </div>
+              </div>
+            </div>
+          </div>
         }
         {
-          ( owner || mod ) &&
-          ( 
-            (!editProfile && <button onClick={ () => setEProfile(true) }>Edytuj zdjęcie profilowe</button>) 
-          || 
-            <button onClick={ () => setEProfile(false) }>Anuluj zmianę</button>
-          )
+          ( owner || mod ) && <div className="imgButt" onClick={ () => setEProfile(true) }>Edytuj zdjęcie profilowe</div>
         }
         </div>
-        <img  src={image.imageURL} alt={"obraz użytkownika"}/><br/>
+        <img  src={image.imageURL ? image.imageURL : "http://localhost:3001/images/static/profile.png"} alt={"obraz użytkownika"}/><br/>
       </div>
     )
   }
   
   return (
-    <div className="centerInFlex">
-      <h2>Profile</h2>
-      <h1>AVATAR</h1>
-      <AvatarSettings />
-      <h1>{nick}</h1>
-      <h1>email {email}</h1>
-      {
-        owner || mod ? 
-          <>
-            {edit ? 
-            <>
-              <EditUserData />
-              <DeleteAccount />
-            </>
-              :
-            <a className="przycisk" onClick={() => setEditting(true)}> Edytuj dane </a>}
-            {editPassword ? 
-            <EditPasswdData />
-              :
-            <a className="przycisk" onClick={() => setEPassword(true)}> Zmień hasło </a>}
-          </>
-        : 
-        <div />
-      }
-      <p>Dane użytkownika <b>{nick}</b></p>
-      <p>Liczba przepisów: {recipeNum}</p>
-      <p>Średnia ocena: {avgScore}</p>
-      <p>Liczba komentarzy: {commentNum}</p>
-      <p>Status: {type}</p>
-      <div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
+    <div style={{display: "flex", flexDirection:"column", alignItems:"center"}}>
+      <div id="recipeHead">
+        <div id="mainImageContainer">
+          <div className="profileBorder" id="avatarBorder" style={{flexDirection: "column"}}>
+                <AvatarSettings />
+          </div>
+        </div>
+      </div>
+      <div className="profileBorder" style={{flexDirection: "column"}}>
+        <div style={{marginLeft:"30px"}}>
+          <h1>{nick}</h1>
+          <h1>email {email}</h1>
+          {
+            ( owner || mod ) &&
+              <div>
+                <div id="EditInfoButt" onClick={() => setEditting(true)}> Edytuj dane </div>
+                <div id="EditPassButt" onClick={() => setEPassword(true)}> Zmień hasło </div>
+              </div>
+          }
+          {edit &&
+            <div id="editFormCont">
+              <div>
+                <div id="background"></div>
+                <div id="editFormInCont" style={{overflow: "hidden", position: "relative"}}>
+                  <EditUserData />
+                  <DeleteAccount />
+                </div>
+              </div>
+            </div>}
+          {editPassword &&
+            <div id="editFormCont">
+              <div>
+                <div id="background"></div>
+                <div id="editFormInCont" style={{overflow: "hidden"}}>
+                  <EditPasswdData />
+                </div>
+              </div>
+            </div>}
+          </div>
+      </div>
+      <div className="profileBorder" style={{flexDirection: "column"}}>
+        <p style={{marginLeft: "30px"}}>Statystyki użytkownika <b>{nick}</b></p>
+        <div id="statTable" style={{margin: "10px", marginTop:"0", marginLeft: "30px"}}>
+            <div style={{display: "flex", flexDirection: "row"}}><div style={{width:"200px"}}>Liczba przepisów:</div> <div>{recipeNum}</div></div>
+            <div style={{display: "flex", flexDirection: "row"}}><div style={{width:"200px"}}>Średnia ocena:</div>    <div>{avgScore}</div></div>
+            <div style={{display: "flex", flexDirection: "row"}}><div style={{width:"200px"}}>Liczba komentarzy:</div><div>{commentNum}</div></div>
+            <div style={{display: "flex", flexDirection: "row"}}><div style={{width:"200px"}}>Status:</div>           <div>{type}</div></div>
+        </div>
+      </div>
+      <div className="profileBorder" id="profileBorderRecipies" >
         <p>Przepisy użytkownika <b>{nick}</b></p>
         {recipiesObject}
       </div>

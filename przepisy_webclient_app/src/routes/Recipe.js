@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { Buttons, NewCommentForm, RecipeForm, SingleComment } from "../components";
 import { API_ADDRESS } from "../data/API_VARIABLES";
 import { UserContext } from "../data/User";
+import {translateLVL, translateTime, translateType, translateScore } from '../data/translation';
 
 const Recipe = (props) => {
 
@@ -17,16 +18,16 @@ const Recipe = (props) => {
   const [dataTags, setDataTags] = useState([]);  
   const [dataImages, setDataImages] = useState([]);  
 
-  const [score, setScore] = useState(0);
   const [comments, setComments] = useState(<div></div>);  
   const [extraImages, setExtraImages] = useState([]);
   
-  const {mod, name, text, type, image, _user, speed, lvl} = useMemo(
+  const {mod, name, text, type, image, _user, score, speed, lvl} = useMemo(
     () => {console.log(data); return({ 
       name : data !== "" ? data.name ? data.name : "null" : "null", 
       text : data !== "" ? data.text ? data.text : "null" : "null", 
       type : data !== "" ? data.type != undefined ? data.type : 1 : 1, 
-      speed : data !== "" ? data.speed != undefined ? data.speed : 1 : 1, 
+      speed : data !== "" ? data.speed != undefined ? data.speed : 1 : 1,
+      score : data !== "" ? data.score != undefined ? data.score : 0 : 0,
       lvl : data !== "" ? data.lvl != undefined ? data.lvl : 1 : 1,
       image : data !== "" ? data.image != undefined ? data.image : { imageURL : "image",  id_ : -1 } : { imageURL : "image",  id_ : -1 }, 
       _user : data !== "" ? data.user != undefined ? data.user : {id_ : 0, name : "", type : 4, imageURL : "brak obrazu"} : {id_ : 0, name : "", type : 4, imageURL : "brak obrazu"}
@@ -36,21 +37,28 @@ const Recipe = (props) => {
     {
       if(dataTags){
         let res = [];
-        dataTags.forEach((v,i) => res.push(<p key={i}>{v}</p>));
+        dataTags.forEach((v,i) => res.push(<div className="rec-tag" key={i}> #{v} </div>));
         return res;
       }else{
         return <p>brak</p>;
       }
     });
 
+  const [ysData, set_ysData] = useState("");
+  const {yourScr} = useMemo(
+    () => ({ 
+      yourScr : ysData !== "" ? ysData.score != undefined ? ysData.score : 0 : 0
+  }), [ysData]);
+
   const displayComments = (d) => {
+    console.log(d);
     if(d.error == 0)
     {
       var res = [];
       d.data.forEach(e => 
         {
           //console.log(`Komentarza uprawnienia ${UserCanEdit(e.user.id_)}`);
-          res.push(<SingleComment id={e.id} id_recipe={e.id_recipe} id_user={e.user.id_} text={e.text} editable={UserCanEdit(e.user.id_)} token={token} callback={refreshData}/>);
+          res.push(<SingleComment id={e.id} id_recipe={Number(e.id_recipe)} id_user={e.user.id_} user={e.user} text={e.text} editable={UserCanEdit(e.user.id_)} token={token} callback={refreshData}/>);
         }
       );
       setComments(res);
@@ -70,14 +78,14 @@ const Recipe = (props) => {
       })
       .then( res => {
         try{
-          console.log(res); 
           return res.json();
         }catch (err){
           console.log(err);
         };
       })
       .then((data) => {
-        setData(data);
+          console.log(data); 
+          setData(data);
       })
       .catch(err => {
         console.log(err);
@@ -92,7 +100,6 @@ const Recipe = (props) => {
       })
       .then( res => {
         try{
-          console.log(res); 
           return res.json();
         }catch (err){
           console.log(err);
@@ -119,7 +126,6 @@ const Recipe = (props) => {
       })
       .then( res => {
         try{
-          console.log(res);
           return res.json();
         }catch (err){
           console.log(err);
@@ -142,7 +148,6 @@ const Recipe = (props) => {
       })
       .then( res => {
         try{
-          console.log(res); 
           return res.json();
         }catch (err){
           console.log(err);
@@ -150,6 +155,30 @@ const Recipe = (props) => {
       })
       .then((data) => {
           setExtraImages(data.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+      fetch(`${API_ADDRESS}/myScore?id=${id}`, {
+        method: 'get',
+        headers: { 
+          'Access-token': token,
+          'Content-Type': 'application/json' 
+        },
+      })
+      .then( res => {
+        try{
+          if(res.status == 200)
+            return res.json();
+          else
+            return undefined;
+        }catch (err){
+          console.log(err);
+        };
+      })
+      .then((data) => {
+        set_ysData(data);
       })
       .catch(err => {
         console.log(err);
@@ -211,12 +240,14 @@ const Recipe = (props) => {
     };
 
     return (
-      <div>
+      <div >
         {v ? 
-          <div>
-            <p>Czy na pewno chcesz usunąć przepis (tej operacji nie da się cofnąć, usunięte zostaną również wszelkie związane komentarze)</p>
-            <a onClick={() => setV(false)}>Nie</a>
-            <a onClick={() => deleteData()}>Tak usuń konto</a>
+          <div className="confirm_field">
+            <p><b>Czy na pewno chcesz usunąć przepis?</b><br /> (tej operacji nie da się cofnąć, usunięte zostaną również wszelkie związane komentarze)</p>
+              <div id="buttons">
+                <div onClick={() => setV(false)}>Anuluj</div>
+                <div onClick={() => deleteData()}>Usuń</div>
+              </div>
           </div>
           :
           <div onClick={() => setV(true)}>USUŃ Przepis</div>
@@ -226,11 +257,9 @@ const Recipe = (props) => {
   }
 
   const ScoreField = () => {
-    const [yourScr, setYourScr] = useState(0);
 
     const setNewScore = (v) => {
-      setYourScr(v);
-      //TODO prześlij na serwer
+      set_ysData(v);
       fetch(`${API_ADDRESS}/score`, {
         method: 'put',
         headers: { 'Content-Type' : 'application/json',
@@ -250,7 +279,7 @@ const Recipe = (props) => {
         };
       })
       .then((data) => {
-        console.log(data);
+        refreshData();
       })
       .catch(err => {
         console.log(err);
@@ -258,20 +287,26 @@ const Recipe = (props) => {
     }
 
     return(
-      <div>
-        <div>
-          <p>Ocena przepisu: {score}</p>
-          <p>Twoja ocena przepisu: {yourScr ? yourScr : "brak oceny"}</p>
+      <div style={{paddingLeft:"40px"}}>
+        <b style={{fontSize: "20px", margin: "-20px"}}>Oceny:</b>
+        <div id="rec_score">
+          <div><b>Ocena przepisu:</b></div>
+          <div style={{alignSelf: "center"}}>{translateScore(score)}</div>
+          <div><b>Twoja ocena przepisu:</b></div>
+          <div style={{alignSelf: "center"}}>{yourScr ? translateScore(yourScr) : "Nie wystawiono jeszcze oceny" }</div>
+
         </div>
         <div>
-          <p>Oceń przepis</p>
-          <a onClick={() => setNewScore(1)}> 1 </a>
-          <a onClick={() => setNewScore(2)}> 2 </a>
-          <a onClick={() => setNewScore(3)}> 3 </a>
-          <a onClick={() => setNewScore(4)}> 4 </a>
-          <a onClick={() => setNewScore(5)}> 5 </a>
-          <a onClick={() => setNewScore(6)}> 6 </a>
-          <a onClick={() => setNewScore(0)}> x </a>
+          <div><b>Oceń przepis:</b></div>
+          <div style={{display: "flex", flexDirection: "row"}}>
+            <div className="score_set_f" onClick={() => setNewScore(1)}> 1 </div>
+            <div className="score_set_f" onClick={() => setNewScore(2)}> 2 </div>
+            <div className="score_set_f" onClick={() => setNewScore(3)}> 3 </div>
+            <div className="score_set_f" onClick={() => setNewScore(4)}> 4 </div>
+            <div className="score_set_f" onClick={() => setNewScore(5)}> 5 </div>
+            <div className="score_set_f" onClick={() => setNewScore(6)}> 6 </div>
+            <div className="score_set_f" onClick={() => setNewScore(0)}> anuluj ocenę </div>
+          </div>
         </div>
       </div>
     );
@@ -282,15 +317,15 @@ const Recipe = (props) => {
     const changeV = () => sV(!v) 
     return(
       <div>
-        <p>Sekcja komentarzy</p>
         {comments}
+        <div style={{height: "30px"}} />
         {v ?
           <div> 
-            <NewCommentForm id_recipe={id} id_user={user ? user.id : -1} id_comment={-1} token={token} callback={refreshData}/>
-            <a onClick={() => changeV()}>Anuluj komentarz</a>
+            <NewCommentForm id_recipe={Number(id)} id_user={user ? user.id : -1} id_comment={-1} token={token} callback={refreshData}/>
+            <div id="rec_comButton" onClick={() => changeV()}>Anuluj komentarz</div>
           </div>
         :
-          <a onClick={() => changeV()}>Dodaj komentarz</a>
+          <div id="rec_comButton" onClick={() => changeV()}>Dodaj komentarz</div>
         }
       </div>
     )
@@ -342,61 +377,142 @@ const Recipe = (props) => {
     });
   };
 
-  return (
-    <div>
-      <h2>Recipe {name}</h2>
-      { 
-        UserCanEdit(_user.id_) ?
-        <>
-          {
-          edit ? 
-          <>
-            <a className="przycisk" onClick={() => resetEdit()}> Anuluj </a>
-            <RecipeForm name={name} text={text}  type={type} speed={speed} lvl={lvl} tags={dataTags} images={image.id_ != -1 ? [image, ...extraImages] : undefined} token={token} callback={saveChange} />
-            <Delete />
-          </>
-            :
-          <a className="przycisk" onClick={() => setEditting(true)}> Edytuj dane </a>
-          }
-        </>
-      : 
-      <div />
+  const ImageCarousel = (props) => {
+    let {images} = props;
+    const [firstID, setFI] = useState(1);
+
+    let setNextID = () => {
+      let newID = firstID + 1;
+      if(images.length == newID) newID = 0;
+      setFI(newID);
+    }
+
+    let setPrevID = () => {
+      let newID = firstID - 1;
+      if(newID < 0 ) newID = images.length - 1;
+      setFI(newID);
+    }
+    
+    let getPrevID = (i = 1) => {
+      let newID = firstID - i;
+      if(newID < 0) newID += images.length;
+      return newID;
+    }
+
+    let getNextID = (i = 1) => {
+      let newID = firstID + i;
+      if(images.length <= newID) newID -= images.length;
+      return newID;
+    }
+
+    if(Array.isArray(images))
+    {
+      if(images.length > 3)
+      {
+        return (
+          <div id="imageCarousel">
+            <div id="prevButton" onClick={() => setPrevID()}>{"<"}</div>
+            <div className="singImage"><img key={images[getPrevID()].id} src={images[getPrevID()].imageURL} alt={images[getPrevID()].imageURL}/></div>
+            <div className="singImage"><img key={images[firstID].id} src={images[firstID].imageURL} alt={images[firstID].imageURL}/></div>
+            <div className="singImage"><img key={images[getNextID()].id} src={images[getNextID()].imageURL} alt={images[getNextID()].imageURL}/></div>
+            <div id="nextButton" onClick={() => setNextID()}>{">"}</div>
+          </div>
+        );
+      }else{
+        return(
+          <div id="imageCarousel">
+          {images.map(({id, imageURL}) => <div className="singImage"><img key={id} src={imageURL} alt={imageURL}/></div>)}
+          </div>
+        );
       }
-      <div>
-        Główne zdjęcie:<br/>
-        <img  src={image.imageURL} alt={`obraz id ${image.id_}`}/>
+    }
+    else
+      return <div></div>;
+  }
+
+  return (
+    <div style={{display: "flex", flexDirection:"column", alignItems:"center"}}>
+      <div id="recipeHead">
+        <div id="mainImageContainer">
+          <div className="profileBorder">
+            <img  src={image.imageURL ? image.imageURL : "http://localhost:3001/images/static/recipe.jpg"} alt={`obraz id ${image.id_}`}/>
+          </div>
+        </div>
+        <div className="line"></div>
+        <div className="profileBorder" style={{flexDirection: "column"}}>
+          <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+            <h2>{name}</h2>
+          </div>
+          <div className="line"></div>
+          <div style={{display: "flex", flexDirection:"row"}}>
+            <div className="headCont">
+              <div className="cr-icons"><img src="http://localhost:3001/images/static/dish.png" alt="Typ:"/></div>
+              <div>{translateType( type )}</div>
+            </div>
+            <div className="lineV"></div>
+            <div className="headCont">
+              <div className="cr-icons"><img src="http://localhost:3001/images/static/clock.png" alt="Szybkość:"/></div>
+              <div>{translateTime( speed )}</div>
+            </div>
+            <div className="lineV"></div>
+            <div className="headCont">
+              <div className="cr-icons"><img src="http://localhost:3001/images/static/lvl.png" alt="Poziom:"/></div>
+              <div>{translateLVL( lvl )}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="ImageCarusel profileBorder">
+        <ImageCarousel images={extraImages}/>
+      </div>
+      <div id="RecipeContent">
+        <div  className="profileBorder">
+          <div style={{display: "flex", flexDirection: "column"}}>
+            <div style={{display: "flex", flexDirection: "row", flexWrap:"wrap"}}><b style={{fontSize: "20px", margin: "5px"}}>Tagi:</b> {tags}</div>
+            <div>
+              <b style={{fontSize: "20px", margin: "5px"}}>Sposób przygotowania:</b>
+              <div>{text}</div>
+            </div>
+            { 
+              UserCanEdit(_user.id_) ?
+              <>
+                {
+                edit ? 
+                <div id="editFormCont">
+                  <div>
+                    <div id="background"></div>
+                    <div id="editFormInCont">
+                      <div id="formButtonCont">
+                        <div onClick={() => resetEdit()}> Anuluj </div>
+                        <Delete />
+                      </div>
+                      <RecipeForm name={name} text={text}  type={type} speed={speed} lvl={lvl} tags={dataTags} images={image.id_ != -1 ? [image, ...extraImages] : undefined} token={token} callback={saveChange} />
+                    </div>
+                  </div>
+                </div>
+                  :
+                <div id="editButton" className="przycisk" onClick={() => setEditting(true)}> Edytuj dane </div>
+                }
+              </>
+            : 
+            <div />
+            }
+          </div>
+        </div>
       </div>
       <div>
-        Dodatkowe zdjęcia:<br/>
-        {extraImages ? extraImages.map(({id, imageURL}) => <img key={id} src={imageURL} alt={imageURL}/>) : <div>BRAK</div>}
+        <div  className="profileBorder">
+          <ScoreField />
+        </div>
       </div>
-      <div>
-        Sposób przygotowania:<br/>
-        {text}
-      </div>
-      <div>
-        Typ:<br/>
-        {type}
-      </div>
-      <div>
-        Szybkość:<br/>
-        {speed}
-      </div>
-      <div>
-        Poziom:<br/>
-        {lvl}
-      </div>
-      <div>
-        Tagi:<br/>
-        {tags}
-      </div>
-      <div>
-        Oceny: <br />
-        <ScoreField />
-      </div>
-      <div>
-        Komentarze:<br/>
-        <CommentsSection />
+      <div id="RecipeComentSection">
+        <div  className="profileBorder">
+          <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems:"center", width: "100%"}}>
+            <b style={{fontSize: "20px", margin: "5px"}}>Komentarze:</b>
+            <CommentsSection />
+            <div style={{height: "250px"}} />
+          </div>
+        </div>
       </div>
     </div>
   );

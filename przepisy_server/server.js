@@ -71,9 +71,9 @@ app.delete('/comment', [AuthF.verifyToken], CommF.deleteComment);
 		-id przepisu
 */
 app.get('/score', [AuthF.decodeExtraToken], ScrF.getRecipeScore);
+app.get('/myScore', [AuthF.verifyToken], ScrF.getMyRecipeScore);
 //		-ocena
 app.put('/score', [AuthF.verifyToken], ScrF.updateScore);
-
 
 /*	prametry:
 		-id

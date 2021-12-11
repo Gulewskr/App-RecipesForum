@@ -1,0 +1,93 @@
+.comment{
+    width: 800px;
+    margin: 5px;
+    border: 1px solid black;
+    padding: 5px;
+    position: relative;
+}
+.comment > #line{
+    height: 1px;
+    width: 810px;
+    margin-left: -5px;
+    background-color: black;
+}
+.comment-form > form {
+    width: 100%;
+    min-height: 30px;
+}
+.comment-form input {
+    width: calc(100% - 5px);
+    height: 30px;
+}
+.comment #cancButt,
+.comment #answButt,
+.deleteButton,
+.comment-form #send{
+    width: 200px;
+    height: 30px;
+    cursor: pointer;
+    box-sizing: border-box;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #01b636;
+    color: #ffffff;
+}
+.comment-form #send{
+    margin-left: 600px;
+}
+.comment #cancButt{
+    position: absolute;
+    left: 5px;
+    bottom: 5px;
+}
+.comment #cancButt:hover,
+.comment #answButt:hover,
+.deleteButton:hover,
+.comment-form #send:hover{
+    background-color: #3bd16f;
+}
+.deleteButton{
+    right: 5px;
+    top: 5px;
+    position: absolute;
+}
+.confirm_field{
+    background-color: #a3e4b9;
+    top: 50%;
+    left: 50%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid black;
+    color: black;
+    position: fixed;
+    z-index: 11;
+    transform: translate(-50%, -50%);
+}
+.confirm_field #buttons{
+    justify-content: center;
+    width: 100%;
+    display: flex;
+}
+.confirm_field #buttons div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 5px;
+    width: 100px;
+    margin-left: 30px;
+    margin-right: 30px;
+    background-color: #01b636;
+    cursor: pointer;
+}
+.confirm_field #buttons div:hover{
+    background-color: #3bd16f;
+}

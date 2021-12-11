@@ -45,3 +45,217 @@
     width: 50%;
     border: 1px solid black;
 }
+#recipeHead{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+#recipeHead > div{
+    display: flex;
+    flex-direction: row;
+}
+#RecipeContent{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+#RecipeComentSection{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+#mainImageContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    width: 100%;
+    overflow: hidden;
+    background-color: #a3e4b9;
+}
+#mainImageContainer > img {
+    border: 1px solid black;
+    width: 1200px;
+}
+.profileBorder{
+    display: flex;
+    background-color: white;
+    width: 1200px;
+    border: 1px solid black;
+    border-top: none;
+    position: relative;
+}
+.ImageCarusel{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.ImageCarusel > #leftArrow{
+    position: absolute;
+}
+.ImageCarusel > #rightArrow{
+    position: absolute;
+}
+.headCont{
+    display: flex;
+    flex-direction: column;
+    width: 33%;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid black;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.headCont:last-of-type{
+    border: none;
+}
+.rec-tag{
+    background-color: #3bd16f;
+    color: #ffffff;
+    margin: 5px;
+    padding: 3px;
+    font-size: 18px;
+}
+#rec_comButton{
+    width: 300px;
+    cursor: pointer;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: #01b636;
+    color: white;
+}
+#rec_comButton:hover{
+    background-color: #3bd16f;
+}
+#rec_score{
+    display: flex;
+    flex-direction: column;
+    width: 1120px;
+    height: 180px;
+}
+#rec_score img{
+    height: 50px;
+    width: auto;
+}
+.score_set_f{
+    color: white;
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin: 5px;
+    background-color: #01b636;
+}
+.score_set_f:hover{
+    background-color: #3bd16f;
+}
+#imageCarousel{
+    background-color: #a3e4b9;
+    height: 400px;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+.singImage{
+    width: 33%;
+    display: flex;
+    justify-content: center;
+}
+#imageCarousel #prevButton,
+#imageCarousel #nextButton{
+    position: absolute;
+    top: 50%;
+    padding: 5px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transform: translate(0, -50%);
+    background-color: #01b636;
+}
+#imageCarousel #prevButton:hover,
+#imageCarousel #nextButton:hover{
+    background-color: #3bd16f;
+}
+#imageCarousel #prevButton{
+    left: 2px;
+}
+#imageCarousel #nextButton{
+    right: 2px;
+}
+#editButton{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    padding: 10px;
+    background-color: #01b636;
+    color: #ffffff;
+}
+#editButton:hover{
+    background-color: #3bd16f;
+}
+#editFormCont{
+    position: fixed;
+    z-index: 10;
+    top: calc(50% + 60px);
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    align-self: center;
+}
+#editFormCont > div{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    height: 100%;
+}
+#background{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: black;
+    opacity: 60%;
+}
+#editFormInCont{
+    height: calc(100% - 60px);
+    width: 1200px;
+    overflow-y: scroll;
+    background-color: #ffffff;
+    z-index: 5;
+}
+#formButtonCont{
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+#formButtonCont > div{
+    width: 200px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 140px;
+    margin-right: 140px;
+    background-color: #01b636;
+    cursor: pointer;
+    color: #ffffff;
+    position: relative;
+}
+#formButtonCont > div:hover{
+    background-color: #3bd16f;
+}
