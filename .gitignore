@@ -1,5 +1,6 @@
 **/node_modules/
 **/Przepisy.code-workspace
+**/.vs
 funkcjonalności.txt
 przepisy_server/images/recipies/*
 przepisy_server/images/profile/*
