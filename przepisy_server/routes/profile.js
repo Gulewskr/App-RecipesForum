@@ -10,9 +10,10 @@ deleteAccount  = (req, res) => {
     var id = req.query.id;
     if(id && req.userID && (id == req.userID || req.userMOD || req.userADM))
     {
+        console.log("usuwanie konta");
         deleteUserDataScoreForRecipe(id)
         .then(
-            () =>  deleteUserDataCommentsForRecipe(id)
+            () => deleteUserDataCommentsForRecipe(id)
         ).then(
             () => deleteUserDataRecipes(id)
         ).then(
@@ -40,6 +41,7 @@ deleteAccount  = (req, res) => {
                 }
             )
         ).catch(err => {
+            console.log("błąd");
             console.log(err);
           });
     }else{

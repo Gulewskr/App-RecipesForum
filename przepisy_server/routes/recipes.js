@@ -4,9 +4,9 @@ const rF = require('../config/responses');
 const iF = require('../routes/images');
 const { db } = require('../DATABASE QUERIES/DB');
 const { updateRecipeImages } = require('../DATABASE QUERIES/DB_recipe_images');
-const { updateRecipeTags }  = require('../DATABASE QUERIES/DB_recipe_tags');
+const { updateRecipeTags, deleteRecipeDataTags }  = require('../DATABASE QUERIES/DB_recipe_tags');
 const { deleteNotUsingTags } = require('../DATABASE QUERIES/DB_tag');
-const { checkIfRecipeExists, deleteRecipeDataScore, deleteRecipeDataComments } = require('../DATABASE QUERIES/DB_recipe');
+const { checkIfRecipeExists, deleteRecipeDataScore, deleteRecipeDataComments, deleteRecipeDataImages } = require('../DATABASE QUERIES/DB_recipe');
 
 const allRecipesQuery   = 'SELECT r.id AS id, r.name as name, r.text as text,  AVG(s.score) as \'avgSCR\', r.type as type, r.speed as speed, r.lvl as lvl, ir.img_src as imageUrl, u.id as user_id, u.nick as user_name, u.type as user_type, ia.img_src as user_imageUrl FROM recipe r LEFT JOIN accounts u ON r.id_user = u.id LEFT JOIN images ir ON r.id_mainimage = ir.id LEFT JOIN images ia ON u.id_profile_image = ia.id  LEFT JOIN score s ON s.id_recipe = r.id ';
 //const allRecipesQuery2 = 'SELECT r.id AS id, r.name as name, r.text as text,  0 as \'avgSCR\', r.type as type, r.speed as speed, r.lvl as lvl, ir.img_src as imageUrl, u.id as user_id, u.nick as user_name, u.type as user_type, ia.img_src as user_imageUrl FROM recipe r LEFT JOIN accounts u ON r.id_user = u.id LEFT JOIN images ir ON r.id_mainimage = ir.id LEFT JOIN images ia ON u.id_profile_image = ia.id  LEFT JOIN score s ON s.id_recipe = r.id WHERE r.id NOT IN (SELECT id_recipe FROM score)';
@@ -277,6 +277,10 @@ deleteRecipe = (req, res) => {
         ).then(
             () =>  deleteRecipeDataScore(id)
         ).then(
+            () =>  deleteRecipeDataTags(id)
+        ).then(
+            () => deleteRecipeDataImages(id)
+        ).then(
             () =>
             db.query(
                 'DELETE FROM recipe WHERE ID = ?', [id], 
@@ -306,6 +310,10 @@ deleteRecipe = (req, res) => {
             deleteRecipeDataComments(id)
             .then(
                 () =>  deleteRecipeDataScore(id)
+            ).then(
+                () =>  deleteRecipeDataTags(id)
+            ).then(
+                () => deleteRecipeDataImages(id)
             ).then(
                 () =>
                 db.query(

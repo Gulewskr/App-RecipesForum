@@ -61,9 +61,12 @@ module.exports.validationRecipeForm = (name, text, tagsTable, type, speed, lvl, 
             if(typeof(tagsTable[i]) != 'string' || !validateText(tagsTable[i])){ m += " Błędny tag (znaki niedopuszczalne: <, >) \n"; break}
         }
     }
-    if(typeof(type) != 'number' || type < 1 || type > 7 ){ m += " Błędny typ dania \n" }
-    if(typeof(speed) != 'number' || speed < 1 || speed > 3 ){ m += " Błędny czas przygotowania dania \n" }
-    if(typeof(lvl) != 'number' || lvl < 1 || type > 3 ){ m += " Błędny poziom dania \n" }
+    type = Number(type);
+    speed = Number(speed);
+    lvl = Number(lvl);
+    if(type < 1 || type > 7 ){ m += " Błędny typ dania \n" }
+    if(speed < 1 || speed > 3 ){ m += " Błędny czas przygotowania dania \n" }
+    if(lvl < 1 || lvl > 3 ){ m += " Błędny poziom dania \n" }
     if(!Array.isArray(tagsTable)){ m += " Błędne id obrazów\n" }
     if(m == ""){
         return {error: false, errorMSG: ""};

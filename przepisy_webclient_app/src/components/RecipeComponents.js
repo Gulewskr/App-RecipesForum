@@ -45,7 +45,7 @@ const RecipeComp = (props) => {
                 </div>
                 <div className="line" />
                 <div className="cr-r-text">
-                    <div>{text}</div>
+                    <div><pre style={{fontFamily: "arial"}}>{text}</pre></div>
                 </div>
                 <div className="button" onClick={ () => {
                 window.location.replace('/recipe?id=' + id);

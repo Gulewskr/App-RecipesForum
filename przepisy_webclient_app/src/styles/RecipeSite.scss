@@ -79,12 +79,17 @@
     overflow: hidden;
     background-color: #a3e4b9;
 }
-#mainImageContainer > img {
+#mainImageContainerImg {
     border: 1px solid black;
-    width: 1200px;
+    width: auto;
+    max-width: 1200px;
+    height: auto;
+    min-height: 400px;
 }
 .profileBorder{
     display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
     background-color: white;
     width: 1200px;
     border: 1px solid black;

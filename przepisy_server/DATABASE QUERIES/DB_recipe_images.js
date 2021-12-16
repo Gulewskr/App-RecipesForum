@@ -6,7 +6,7 @@ module.exports.updateRecipeImages = async (idRecipe, idImageTable) => {
 		(resolve, reject) => {
 		if(idRecipe && Array.isArray(idImageTable))
         {
-            deleteRecipeDataImages(idRecipe)
+            deleteRecipeConnection(idRecipe)
 			.then(() => {
 				if(idImageTable.length > 0)
 				{
@@ -41,7 +41,7 @@ module.exports.updateRecipeImages = async (idRecipe, idImageTable) => {
 	);
 }
 
-deleteRecipeDataImages = async (id) => {
+const deleteRecipeConnection = async (id) => {
 	return new Promise(
 		(resolve, reject) => {
 		if(id)
@@ -59,6 +59,20 @@ deleteRecipeDataImages = async (id) => {
 		}}
 	);
 };
+
+module.exports.deleteRecipeConnection = deleteRecipeConnection;
+
+module.exports.deleteImage = async (id) => {
+	db.query(
+		'DELETE FROM images WHERE id = ?', [id],
+		function(error, results, fields){
+			if (error) {
+				console.log(`Error accured during deleting image from database.`)
+			} else {
+				console.log(`Deleted image id: ${id}.`)
+			}
+		});
+}
 
 updateRecipeMainDataImages = async (idRecipe, idImage) => {
 	return new Promise(

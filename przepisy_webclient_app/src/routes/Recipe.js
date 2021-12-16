@@ -46,9 +46,18 @@ const Recipe = (props) => {
 
   const [ysData, set_ysData] = useState("");
   const {yourScr} = useMemo(
-    () => ({ 
-      yourScr : ysData !== "" ? ysData.score != undefined ? ysData.score : 0 : 0
-  }), [ysData]);
+    () => {
+      if(ysData != undefined && ysData != "")
+      {
+        return {
+          yourScr : ysData.score != undefined ? ysData.score : 0
+        }
+      }else{
+        return {
+          yourScr : 0
+        }
+      }
+  }, [ysData]);
 
   const displayComments = (d) => {
     console.log(d);
@@ -435,7 +444,7 @@ const Recipe = (props) => {
       <div id="recipeHead">
         <div id="mainImageContainer">
           <div className="profileBorder">
-            <img  src={image.imageURL ? image.imageURL : "http://localhost:3001/images/static/recipe.jpg"} alt={`obraz id ${image.id_}`}/>
+            <img id="mainImageContainerImg" src={image.imageURL ? image.imageURL : "http://localhost:3001/images/static/recipe.jpg"} alt={`obraz id ${image.id_}`}/>
           </div>
         </div>
         <div className="line"></div>
@@ -467,11 +476,11 @@ const Recipe = (props) => {
       </div>
       <div id="RecipeContent">
         <div  className="profileBorder">
-          <div style={{display: "flex", flexDirection: "column"}}>
+          <div style={{display: "flex", flexDirection: "column", width: "1190px"}}>
             <div style={{display: "flex", flexDirection: "row", flexWrap:"wrap"}}><b style={{fontSize: "20px", margin: "5px"}}>Tagi:</b> {tags}</div>
             <div>
               <b style={{fontSize: "20px", margin: "5px"}}>Sposób przygotowania:</b>
-              <div>{text}</div>
+              <div><pre style={{whiteSpace: "pre-wrap"}}>{text}</pre></div>
             </div>
             { 
               UserCanEdit(_user.id_) ?

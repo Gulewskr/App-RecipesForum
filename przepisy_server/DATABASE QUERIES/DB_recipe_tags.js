@@ -30,7 +30,7 @@ module.exports.updateRecipeTags = async (idRecipe, tagsTable) => {
 	);
 }
 
-deleteRecipeDataTags = async (id) => {
+const deleteRecipeDataTags = async (id) => {
 	return new Promise(
 		(resolve, reject) => {
 		if(id)
@@ -48,6 +48,8 @@ deleteRecipeDataTags = async (id) => {
 		}}
 	);
 };
+
+module.exports.deleteRecipeDataTags = deleteRecipeDataTags;
 
 addTagsToRecipe = async (idRecipe, tagsTable) => {
     return new Promise(
